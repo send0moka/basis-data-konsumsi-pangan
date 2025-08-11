@@ -24,20 +24,34 @@
     @endif
 
     <!-- Search & Per Page -->
-    <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <flux:input 
-            wire:model.live="search" 
-            placeholder="Cari berdasarkan nama atau email..."
-            class="w-full max-w-md"
-        />
-        <div class="flex items-center space-x-2">
-            <label class="text-sm text-neutral-600 dark:text-neutral-400">Tampil</label>
-            <select wire:model.live="perPage" class="text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200 focus:ring-accent focus:border-accent">
-                @foreach($perPageOptions as $size)
-                    <option value="{{ $size }}">{{ $size }}</option>
-                @endforeach
-            </select>
-            <span class="text-sm text-neutral-600 dark:text-neutral-400">/ halaman</span>
+    <div class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
+            <flux:input 
+                wire:model.live="search" 
+                placeholder="Cari berdasarkan nama atau email..."
+                class="w-full sm:max-w-sm"
+            />
+            <div class="flex items-center space-x-2">
+                <label class="text-sm text-neutral-600 dark:text-neutral-400">Tampil</label>
+                <select wire:model.live="perPage" class="text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    @foreach($perPageOptions as $size)
+                        <option value="{{ $size }}">{{ $size }}</option>
+                    @endforeach
+                </select>
+                <span class="text-sm text-neutral-600 dark:text-neutral-400">/ halaman</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="flex items-center space-x-2">
+                <label for="exportFormat" class="text-sm text-neutral-600 dark:text-neutral-400">Export</label>
+                <select id="exportFormat" wire:model="exportFormat" class="text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="xlsx">XLSX</option>
+                    <option value="csv">CSV</option>
+                </select>
+            </div>
+            <flux:button wire:click="export" variant="ghost" class="!px-4">
+                Download
+            </flux:button>
         </div>
     </div>
 

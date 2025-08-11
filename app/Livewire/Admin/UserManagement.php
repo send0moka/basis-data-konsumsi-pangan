@@ -6,6 +6,8 @@ use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Spatie\Permission\Models\Role;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsersExport;
 
 class UserManagement extends Component
 {
@@ -24,6 +26,7 @@ class UserManagement extends Component
     public $selectedRole = '';
     public $editingUser = null;
     public $deletingUser = null;
+    public $exportFormat = 'xlsx';
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -186,5 +189,17 @@ class UserManagement extends Component
             'users' => $users,
             'roles' => $roles,
         ]);
+    }
+
+    public function export()
+    {
+        $format = strtolower($this->exportFormat ?? 'xlsx');
+        if (! in_array($format, ['xlsx','csv'], true)) {
+            $format = 'xlsx';
+        }
+
+        $filename = 'users-' . now()->format('Ymd-His') . '.' . $format;
+
+        return Excel::download(new UsersExport($this->search ?: null), $filename, $format === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
     }
 }
