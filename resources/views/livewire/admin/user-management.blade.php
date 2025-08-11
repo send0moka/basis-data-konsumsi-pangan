@@ -23,13 +23,22 @@
         </div>
     @endif
 
-    <!-- Search -->
-    <div class="mb-4">
+    <!-- Search & Per Page -->
+    <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <flux:input 
             wire:model.live="search" 
             placeholder="Cari berdasarkan nama atau email..."
             class="w-full max-w-md"
         />
+        <div class="flex items-center space-x-2">
+            <label class="text-sm text-neutral-600 dark:text-neutral-400">Tampil</label>
+            <select wire:model.live="perPage" class="text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                @foreach($perPageOptions as $size)
+                    <option value="{{ $size }}">{{ $size }}</option>
+                @endforeach
+            </select>
+            <span class="text-sm text-neutral-600 dark:text-neutral-400">/ halaman</span>
+        </div>
     </div>
 
     <!-- Users Table -->
@@ -91,8 +100,17 @@
         </div>
         
         <!-- Pagination -->
-        <div class="px-6 py-3">
-            {{ $users->links() }}
+        <div class="px-6 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="text-xs text-neutral-600 dark:text-neutral-400 md:mr-auto">
+                Menampilkan
+                <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ $users->firstItem() }}</span>
+                -
+                <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ $users->lastItem() }}</span>
+                dari
+                <span class="font-medium text-neutral-800 dark:text-neutral-200">{{ $users->total() }}</span>
+                user
+            </div>
+            {{ $users->links('vendor.pagination.tailwind') }}
         </div>
     </div>
 

@@ -12,6 +12,8 @@ class UserManagement extends Component
     use WithPagination;
 
     public $search = '';
+    public $perPage = 10;
+    public array $perPageOptions = [5, 10, 25, 100];
     public $showCreateModal = false;
     public $showEditModal = false;
     public $showDeleteModal = false;
@@ -23,6 +25,15 @@ class UserManagement extends Component
     public $editingUser = null;
     public $deletingUser = null;
 
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'perPage' => ['except' => 10],
+    ];
+
+    protected $casts = [
+        'perPage' => 'integer',
+    ];
+
     protected $rules = [
         'name' => 'required|min:3',
         'email' => 'required|email|unique:users,email',
@@ -32,6 +43,20 @@ class UserManagement extends Component
 
     public function updatingSearch()
     {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage($value)
+    {
+        if (! in_array((int)$value, $this->perPageOptions, true)) {
+            $this->perPage = 10; // fallback
+        }
+        $this->resetPage();
+    }
+
+    public function updatingPerPage($value)
+    {
+        // Reset pagination before value changes to avoid out-of-range page
         $this->resetPage();
     }
 
@@ -143,10 +168,17 @@ class UserManagement extends Component
 
     public function render()
     {
+        $perPage = (int) $this->perPage;
+        if (! in_array($perPage, $this->perPageOptions, true)) {
+            $perPage = 10;
+        }
+
         $users = User::when($this->search, function ($query) {
-            $query->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('email', 'like', '%' . $this->search . '%');
-        })->with('roles')->paginate(10);
+                $query->where(function($q) {
+                    $q->where('name', 'like', '%' . $this->search . '%')
+                      ->orWhere('email', 'like', '%' . $this->search . '%');
+                });
+        })->with('roles')->paginate($perPage);
 
         $roles = Role::all();
 
