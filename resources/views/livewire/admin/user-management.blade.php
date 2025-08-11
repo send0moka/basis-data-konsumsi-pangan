@@ -52,20 +52,23 @@
             <flux:button wire:click="export" variant="ghost" class="!px-4">
                 Download
             </flux:button>
+            <flux:button wire:click="print" variant="ghost" class="!px-4">
+                Print
+            </flux:button>
         </div>
     </div>
 
     <!-- Users Table -->
-    <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow-sm rounded-lg border border-neutral-200 dark:border-neutral-700">
+    <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow-sm rounded-lg border border-neutral-200 dark:border-neutral-700" id="users-table-wrapper">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
+            <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400" id="users-table">
                 <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">Nama</th>
                         <th scope="col" class="px-6 py-3">Email</th>
                         <th scope="col" class="px-6 py-3">Role</th>
                         <th scope="col" class="px-6 py-3">Bergabung</th>
-                        <th scope="col" class="px-6 py-3">Aksi</th>
+                        <th scope="col" class="px-6 py-3 no-print">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,7 +90,7 @@
                         <td class="px-6 py-4">
                             {{ $user->created_at->format('d/m/Y') }}
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 no-print">
                             <div class="flex space-x-2">
                                 @can('edit users')
                                 <flux:button wire:click="openEditModal({{ $user->id }})" variant="ghost" size="sm">
@@ -230,3 +233,5 @@
     </div>
     @endif
 </div>
+
+{{-- Print JS dipindah ke resources/js/app.js --}}

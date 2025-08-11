@@ -202,4 +202,10 @@ class UserManagement extends Component
 
         return Excel::download(new UsersExport($this->search ?: null), $filename, $format === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
     }
+
+    public function print()
+    {
+        // Trigger browser print via JS listener
+        $this->dispatch('print-users');
+    }
 }
