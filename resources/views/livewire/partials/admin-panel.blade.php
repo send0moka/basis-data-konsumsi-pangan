@@ -79,52 +79,54 @@
         </div>
     </div>
 
-    <!-- Recent Users -->
-    <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700">
-        <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-neutral-900 dark:text-white mb-4">
-                User Terbaru
-            </h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
-                    <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">Nama</th>
-                            <th scope="col" class="px-6 py-3">Email</th>
-                            <th scope="col" class="px-6 py-3">Role</th>
-                            <th scope="col" class="px-6 py-3">Bergabung</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($recentUsers as $user)
-                        <tr class="bg-white border-b dark:!bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:!bg-neutral-700 transition-colors">
-                            <td class="px-6 py-4 font-medium text-neutral-900 dark:text-white">
-                                {{ $user->name }}
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ $user->email }}
-                            </td>
-                            <td class="px-6 py-4">
-                                @foreach($user->roles as $role)
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                                        {{ ucfirst($role->name) }}
-                                    </span>
-                                @endforeach
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ $user->created_at->format('d/m/Y H:i') }}
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-neutral-500">
-                                Belum ada user
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+    @if(auth()->user()->hasRole('superadmin'))
+        <!-- Recent Users (Only for Superadmin) -->
+        <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-neutral-900 dark:text-white mb-4">
+                    User Terbaru
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
+                        <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Nama</th>
+                                <th scope="col" class="px-6 py-3">Email</th>
+                                <th scope="col" class="px-6 py-3">Role</th>
+                                <th scope="col" class="px-6 py-3">Bergabung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($recentUsers as $user)
+                            <tr class="bg-white border-b dark:!bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:!bg-neutral-700 transition-colors">
+                                <td class="px-6 py-4 font-medium text-neutral-900 dark:text-white">
+                                    {{ $user->name }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ $user->email }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    @foreach($user->roles as $role)
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                                            {{ ucfirst($role->name) }}
+                                        </span>
+                                    @endforeach
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ $user->created_at->format('d/m/Y H:i') }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-4 text-center text-neutral-500">
+                                    Belum ada user
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 </div>
