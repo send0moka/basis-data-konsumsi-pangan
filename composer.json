@@ -61,6 +61,13 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "pest": [
+            "@php artisan optimize:clear --ansi",
+            "@php artisan migrate:fresh --quiet --ansi",
+            "@php artisan db:seed --class=RolePermissionSeeder --ansi",
+            "@php artisan view:clear --ansi",
+            "./vendor/bin/pest --colors=always"
         ]
     },
     "extra": {
