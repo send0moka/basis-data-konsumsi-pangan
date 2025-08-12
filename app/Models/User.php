@@ -9,6 +9,16 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * @method bool hasRole($role)
+ * @method bool hasAnyRole($roles)
+ * @method bool hasAllRoles($roles)
+ * @method \Illuminate\Database\Eloquent\Collection getRoleNames()
+ * @method \Illuminate\Database\Eloquent\Relations\BelongsToMany roles()
+ * @method self assignRole($role)
+ * @method self removeRole($role)
+ * @method self syncRoles($roles)
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -58,5 +68,22 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /**
+     * Check if user is admin or superadmin
+     * Helper method untuk IDE completion
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(['admin', 'superadmin']);
+    }
+
+    /**
+     * Check if user is superadmin only
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole('superadmin');
     }
 }

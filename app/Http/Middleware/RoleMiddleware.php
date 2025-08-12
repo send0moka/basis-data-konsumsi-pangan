@@ -19,8 +19,11 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        
         foreach ($roles as $role) {
-            if (auth()->user()->hasRole($role)) {
+            if ($user->hasRole($role)) {
                 return $next($request);
             }
         }

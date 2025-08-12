@@ -1,0 +1,280 @@
+<div>
+    <flux:header>
+        <flux:heading size="xl">Data Susenas</flux:heading>
+        <flux:subheading>Daftar data konsumsi pangan dari survei susenas.</flux:subheading>
+
+        <x-slot name="actions">
+            <flux:button wire:click="create" icon="plus">Tambah Data Susenas</flux:button>
+        </x-slot>
+    </flux:header>
+
+    <!-- Flash Messages -->
+    @if (session()->has('message'))
+        <flux:banner variant="success" class="mb-6">
+            {{ session('message') }}
+        </flux:banner>
+    @endif
+
+    @if (session()->has('error'))
+        <flux:banner variant="danger" class="mb-6">
+            {{ session('error') }}
+        </flux:banner>
+    @endif
+
+    <!-- Search -->
+    <div class="mb-6">
+        <flux:input wire:model.live="search" 
+                   type="search" 
+                   placeholder="Cari berdasarkan tahun, kelompok BPS, atau komoditi BPS..."
+                   icon="magnifying-glass" />
+    </div>
+
+        <!-- Table -->
+        <div class="mt-8 flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 dark:ring-white dark:ring-opacity-10 sm:rounded-lg">
+                        <table class="min-w-full divide-y divide-neutral-300 dark:divide-neutral-700">
+                            <thead class="bg-neutral-50 dark:bg-neutral-800">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">
+                                        Tahun
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">
+                                        Kelompok BPS
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">
+                                        Komoditi BPS
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">
+                                        Konsumsi (Kuantitas)
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">
+                                        Aksi
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+                                @forelse($susenas as $item)
+                                    <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-white">
+                                            {{ $item->tahun }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
+                                            <div class="text-sm font-medium text-neutral-900 dark:text-white">
+                                                {{ $item->kelompokbps->nm_kelompokbps ?? '-' }}
+                                            </div>
+                                            <div class="text-sm text-neutral-500 dark:text-neutral-400">
+                                                {{ $item->kd_kelompokbps }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
+                                            <div class="text-sm font-medium text-neutral-900 dark:text-white">
+                                                {{ $item->komoditibps->nm_komoditibps ?? '-' }}
+                                            </div>
+                                            <div class="text-sm text-neutral-500 dark:text-neutral-400">
+                                                {{ $item->kd_komoditibps }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-white">
+                                            {{ number_format($item->konsumsi_kuantity, 2) }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button wire:click="edit({{ $item->id }})"
+                                                class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4 font-medium">
+                                                Edit
+                                            </button>
+                                            <button wire:click="confirmDelete({{ $item->id }})"
+                                                class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 font-medium">
+                                                Hapus
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-12 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400 text-center">
+                                            <div class="flex flex-col items-center">
+                                                <svg class="h-12 w-12 text-neutral-400 dark:text-neutral-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                                </svg>
+                                                <p class="text-neutral-500 dark:text-neutral-400 font-medium">Tidak ada data susenas</p>
+                                                <p class="text-neutral-400 dark:text-neutral-500 text-xs mt-1">Klik "Tambah Data Susenas" untuk menambah data baru</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        @if($susenas->hasPages())
+            <div class="mt-6">
+                {{ $susenas->links() }}
+            </div>
+        @endif
+    </div>
+
+    <!-- Create/Edit Modal -->
+    @if($showModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-neutral-500 bg-opacity-75 dark:bg-neutral-900 dark:bg-opacity-75 transition-opacity" wire:click="closeModal"></div>
+
+                <!-- This element is to trick the browser into centering the modal contents. -->
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div class="inline-block align-bottom bg-white dark:bg-neutral-800 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 border border-neutral-200 dark:border-neutral-700">
+                    <form wire:submit.prevent="save">
+                        <div>
+                            <div class="flex items-center mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/20 rounded-lg flex items-center justify-center">
+                                        @if($editingId)
+                                            <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                        @else
+                                            <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                            </svg>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-lg leading-6 font-medium text-neutral-900 dark:text-white">
+                                        {{ $editingId ? 'Edit Data Susenas' : 'Tambah Data Susenas' }}
+                                    </h3>
+                                    <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                        {{ $editingId ? 'Perbarui informasi data susenas' : 'Isi informasi data susenas baru' }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="tahun" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                        Tahun
+                                    </label>
+                                    <input wire:model="tahun" type="number" id="tahun" min="1900" max="2100"
+                                        class="mt-1 block w-full rounded-md border-0 py-1.5 text-neutral-900 dark:text-white bg-white dark:bg-neutral-700 shadow-sm ring-1 ring-inset ring-neutral-300 dark:ring-neutral-600 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm @error('tahun') ring-red-500 @enderror">
+                                    @error('tahun')
+                                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="kd_kelompokbps" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                        Kelompok BPS
+                                    </label>
+                                    <select wire:model="kd_kelompokbps" id="kd_kelompokbps"
+                                        class="mt-1 block w-full rounded-md border-0 py-1.5 text-neutral-900 dark:text-white bg-white dark:bg-neutral-700 shadow-sm ring-1 ring-inset ring-neutral-300 dark:ring-neutral-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm @error('kd_kelompokbps') ring-red-500 @enderror">
+                                        <option value="">Pilih Kelompok BPS</option>
+                                        @foreach($kelompokbps as $kelompok)
+                                            <option value="{{ $kelompok->kd_kelompokbps }}">
+                                                {{ $kelompok->kd_kelompokbps }} - {{ $kelompok->nm_kelompokbps }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('kd_kelompokbps')
+                                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="kd_komoditibps" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                        Komoditi BPS
+                                    </label>
+                                    <select wire:model="kd_komoditibps" id="kd_komoditibps"
+                                        class="mt-1 block w-full rounded-md border-0 py-1.5 text-neutral-900 dark:text-white bg-white dark:bg-neutral-700 shadow-sm ring-1 ring-inset ring-neutral-300 dark:ring-neutral-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm @error('kd_komoditibps') ring-red-500 @enderror">
+                                        <option value="">Pilih Komoditi BPS</option>
+                                        @foreach($komoditibps as $komoditi)
+                                            <option value="{{ $komoditi->kd_komoditibps }}">
+                                                {{ $komoditi->kd_komoditibps }} - {{ $komoditi->nm_komoditibps }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('kd_komoditibps')
+                                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="konsumsi_kuantity" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                        Konsumsi Kuantitas
+                                    </label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <input wire:model="konsumsi_kuantity" type="number" step="0.01" id="konsumsi_kuantity"
+                                            class="block w-full rounded-md border-0 py-1.5 pr-12 text-neutral-900 dark:text-white bg-white dark:bg-neutral-700 ring-1 ring-inset ring-neutral-300 dark:ring-neutral-600 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm @error('konsumsi_kuantity') ring-red-500 @enderror"
+                                            placeholder="0.00">
+                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                                            <span class="text-neutral-500 dark:text-neutral-400 sm:text-sm">kg</span>
+                                        </div>
+                                    </div>
+                                    @error('konsumsi_kuantity')
+                                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                            <button type="button" wire:click="closeModal"
+                                class="inline-flex justify-center rounded-md bg-white dark:bg-neutral-700 px-3 py-2 text-sm font-semibold text-neutral-900 dark:text-white shadow-sm ring-1 ring-inset ring-neutral-300 dark:ring-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-600">
+                                Batal
+                            </button>
+                            <button type="submit"
+                                class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                {{ $editingId ? 'Update' : 'Simpan' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Delete Confirmation Modal -->
+    @if($confirmingDeletion)
+        <div class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-neutral-500 bg-opacity-75 dark:bg-neutral-900 dark:bg-opacity-75 transition-opacity" wire:click="cancelDelete"></div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div class="inline-block align-bottom bg-white dark:bg-neutral-800 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 border border-neutral-200 dark:border-neutral-700">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/20 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-neutral-900 dark:text-white">
+                                Hapus Data Susenas
+                            </h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                    Apakah Anda yakin ingin menghapus data susenas ini? Tindakan ini tidak dapat dibatalkan dan akan menghapus semua informasi terkait.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-5 sm:mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                        <button type="button" wire:click="cancelDelete"
+                            class="inline-flex justify-center rounded-md bg-white dark:bg-neutral-700 px-3 py-2 text-sm font-semibold text-neutral-900 dark:text-white shadow-sm ring-1 ring-inset ring-neutral-300 dark:ring-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-600">
+                            Batal
+                        </button>
+                        <button type="button" wire:click="delete"
+                            class="inline-flex justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                            Hapus
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+</div>

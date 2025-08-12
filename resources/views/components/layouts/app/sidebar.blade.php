@@ -23,6 +23,23 @@
                     </flux:navlist.item>
                     @endcan
                 </flux:navlist.group>
+
+                <!-- Admin menu for data management -->
+                @if(auth()->user() && auth()->user()->isAdmin())
+                <flux:navlist.group :heading="__('Data Susenas')" class="grid">
+                    <flux:navlist.item icon="rectangle-group" :href="route('admin.kelompok-bps')" :current="request()->routeIs('admin.kelompok-bps')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.kelompok-bps') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Kelompok BPS') }}</span>
+                    </flux:navlist.item>
+                    
+                    <flux:navlist.item icon="cube" :href="route('admin.komoditi-bps')" :current="request()->routeIs('admin.komoditi-bps')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.komoditi-bps') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Komoditi BPS') }}</span>
+                    </flux:navlist.item>
+
+                    <flux:navlist.item icon="chart-bar" :href="route('admin.susenas')" :current="request()->routeIs('admin.susenas')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.susenas') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Data Susenas') }}</span>
+                    </flux:navlist.item>
+                </flux:navlist.group>
+                @endif
             </flux:navlist>
 
             <flux:spacer />

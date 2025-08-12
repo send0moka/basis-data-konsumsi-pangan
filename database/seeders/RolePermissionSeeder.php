@@ -26,6 +26,27 @@ class RolePermissionSeeder extends Seeder
             'delete users',
             'manage roles',
             'view dashboard',
+            
+            // Susenas permissions
+            'manage susenas',
+            'view susenas',
+            'create susenas',
+            'edit susenas',
+            'delete susenas',
+            
+            // Kelompok BPS permissions
+            'manage kelompokbps',
+            'view kelompokbps',
+            'create kelompokbps',
+            'edit kelompokbps',
+            'delete kelompokbps',
+            
+            // Komoditi BPS permissions
+            'manage komoditibps',
+            'view komoditibps',
+            'create komoditibps',
+            'edit komoditibps',
+            'delete komoditibps',
         ];
 
         foreach ($permissions as $permission) {
@@ -39,9 +60,24 @@ class RolePermissionSeeder extends Seeder
         // Assign permissions idempotently
         $superadminRole->syncPermissions(Permission::all());
 
-        // Admin now restricted ONLY to dashboard view (remove user management permissions)
+        // Admin now with susenas access
         $adminRole->syncPermissions([
             'view dashboard',
+            'manage susenas',
+            'view susenas',
+            'create susenas',
+            'edit susenas',
+            'delete susenas',
+            'manage kelompokbps',
+            'view kelompokbps',
+            'create kelompokbps',
+            'edit kelompokbps',
+            'delete kelompokbps',
+            'manage komoditibps',
+            'view komoditibps',
+            'create komoditibps',
+            'edit komoditibps',
+            'delete komoditibps',
         ]);
 
         // Create a superadmin user if it doesn't exist
