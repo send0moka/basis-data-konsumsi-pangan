@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             KelompokSeeder::class,
             KomoditiSeeder::class,
             TransaksiNbmSeeder::class,
+            KelompokBpsSeeder::class,
+            KomoditiBpsSeeder::class,
+            SusenasSeeder::class,
         ]);
 
         // User::factory(10)->create();
