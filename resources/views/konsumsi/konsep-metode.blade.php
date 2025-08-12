@@ -1,6 +1,6 @@
-<x-layouts.landing>
+<x-layouts.landing title="Konsep dan Metode Konsumsi Pangan">
     <div class="py-12 bg-white">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Breadcrumb -->
             <nav class="flex mb-8" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -29,7 +29,7 @@
             </nav>
 
             <!-- Header -->
-            <div class="mb-12">
+            <div class="mb-8">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                     Konsep dan Metode Konsumsi Pangan
                 </h1>
@@ -38,130 +38,343 @@
                 </p>
             </div>
 
-            <!-- Content -->
-            <div class="prose prose-lg max-w-none">
-                <h2>Pengertian Susenas Konsumsi</h2>
-                <p>
-                    Survei Sosial Ekonomi Nasional (Susenas) Konsumsi adalah survei yang dilakukan oleh Badan Pusat Statistik (BPS) 
-                    untuk mengumpulkan data konsumsi pangan dan non-pangan rumah tangga di Indonesia. Data ini digunakan untuk 
-                    mengukur tingkat konsumsi dan pola makan masyarakat Indonesia.
-                </p>
-
-                <h2>Tujuan Susenas Konsumsi</h2>
-                <ul>
-                    <li>Menyediakan data konsumsi pangan untuk perhitungan tingkat ketahanan pangan</li>
-                    <li>Mengukur kecukupan gizi masyarakat Indonesia</li>
-                    <li>Menyediakan data untuk perencanaan program pangan dan gizi</li>
-                    <li>Monitoring pencapaian target Sustainable Development Goals (SDGs)</li>
-                    <li>Evaluasi efektivitas program pembangunan pangan</li>
-                </ul>
-
-                <h2>Metodologi Pengumpulan Data</h2>
-                <h3>Desain Survei</h3>
-                <ul>
-                    <li><strong>Jenis Survei:</strong> Survei sampel dengan desain two-stage stratified sampling</li>
-                    <li><strong>Unit Observasi:</strong> Rumah tangga</li>
-                    <li><strong>Unit Sampling:</strong> Blok sensus</li>
-                    <li><strong>Periode Referensi:</strong> Seminggu yang lalu (7 hari)</li>
-                </ul>
-
-                <h3>Cakupan Wilayah dan Waktu</h3>
-                <ul>
-                    <li><strong>Cakupan Wilayah:</strong> Seluruh Indonesia (34 provinsi)</li>
-                    <li><strong>Klasifikasi Daerah:</strong> Perkotaan dan perdesaan</li>
-                    <li><strong>Frekuensi:</strong> Triwulanan (Maret, Juni, September, Desember)</li>
-                    <li><strong>Periode Data:</strong> Tersedia mulai tahun 1993</li>
-                </ul>
-
-                <h2>Jenis Data yang Dikumpulkan</h2>
-                <h3>Data Konsumsi Pangan</h3>
-                <ul>
-                    <li><strong>Konsumsi Kalori:</strong> Jumlah energi yang dikonsumsi per kapita per hari</li>
-                    <li><strong>Konsumsi Protein:</strong> Jumlah protein yang dikonsumsi per kapita per hari</li>
-                    <li><strong>Konsumsi per Komoditas:</strong> Kuantitas konsumsi untuk setiap jenis pangan</li>
-                    <li><strong>Pengeluaran Pangan:</strong> Nilai pengeluaran rumah tangga untuk konsumsi pangan</li>
-                </ul>
-
-                <h3>Kelompok Pangan yang Diamati</h3>
-                <div class="bg-blue-50 p-6 rounded-lg">
-                    <ol>
-                        <li>Padi-padian (beras, jagung, terigu, dll.)</li>
-                        <li>Umbi-umbian (ubi kayu, ubi jalar, kentang, dll.)</li>
-                        <li>Ikan/udang/cumi/kerang</li>
-                        <li>Daging</li>
-                        <li>Telur dan susu</li>
-                        <li>Sayur-sayuran</li>
-                        <li>Kacang-kacangan</li>
-                        <li>Buah-buahan</li>
-                        <li>Minyak dan lemak</li>
-                        <li>Bahan minuman</li>
-                        <li>Bumbu-bumbuan</li>
-                        <li>Konsumsi lainnya</li>
-                        <li>Makanan dan minuman jadi</li>
-                        <li>Tembakau dan sirih</li>
-                    </ol>
+            <!-- Two Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8" x-data="{ activeSection: 'konsep' }">
+                <!-- Sidebar Navigation -->
+                <div class="lg:col-span-1">
+                    <div class="bg-gray-50 rounded-lg p-4 sticky top-24">
+                        <h3 class="font-semibold text-gray-900 mb-4">Daftar Isi</h3>
+                        <nav class="space-y-2">
+                            <button @click="activeSection = 'konsep'" 
+                                    :class="activeSection === 'konsep' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-gray-600 hover:text-blue-600'"
+                                    class="w-full text-left px-3 py-2 rounded-md text-sm font-medium border transition-colors">
+                                Konsep & Metode
+                            </button>
+                            <button @click="activeSection = 'perkembangan'" 
+                                    :class="activeSection === 'perkembangan' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-gray-600 hover:text-blue-600'"
+                                    class="w-full text-left px-3 py-2 rounded-md text-sm font-medium border transition-colors">
+                                Perkembangan Susenas
+                            </button>
+                            <button @click="activeSection = 'metodologi'" 
+                                    :class="activeSection === 'metodologi' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-gray-600 hover:text-blue-600'"
+                                    class="w-full text-left px-3 py-2 rounded-md text-sm font-medium border transition-colors">
+                                Metodologi
+                            </button>
+                            <button @click="activeSection = 'jenis-data'" 
+                                    :class="activeSection === 'jenis-data' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-gray-600 hover:text-blue-600'"
+                                    class="w-full text-left px-3 py-2 rounded-md text-sm font-medium border transition-colors">
+                                Jenis Data
+                            </button>
+                            <button @click="activeSection = 'indikator'" 
+                                    :class="activeSection === 'indikator' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-gray-600 hover:text-blue-600'"
+                                    class="w-full text-left px-3 py-2 rounded-md text-sm font-medium border transition-colors">
+                                Indikator Utama
+                            </button>
+                        </nav>
+                    </div>
                 </div>
 
-                <h2>Metode Pengukuran Konsumsi</h2>
-                <h3>Pendekatan Kuantitas</h3>
-                <ul>
-                    <li><strong>Satuan:</strong> Gram, kilogram, liter, dll.</li>
-                    <li><strong>Konversi:</strong> Penyeragaman ke dalam gram per kapita per hari</li>
-                    <li><strong>Recall Period:</strong> Konsumsi dalam 7 hari terakhir</li>
-                </ul>
+                <!-- Main Content -->
+                <div class="lg:col-span-3">
+                    <!-- Konsep & Metode Section -->
+                    <div x-show="activeSection === 'konsep'" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 transform translate-y-4"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         class="bg-white rounded-lg border p-6">
+                        
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Konsep & Metode Pengumpulan Data Konsumsi</h2>
+                        <p class="text-gray-700 leading-relaxed mb-6">
+                            Data konsumsi yang dimaksud adalah konsumsi di rumah tangga yang bersumber dari Survei Sosial Ekonomi Nasional (Susenas). 
+                            Susenas merupakan salah satu survei yang diselenggarakan oleh BPS.
+                        </p>
 
-                <h3>Konversi ke Nilai Gizi</h3>
-                <ul>
-                    <li><strong>Tabel Komposisi Pangan Indonesia (TKPI)</strong></li>
-                    <li><strong>Konversi Energi:</strong> Kkal per 100 gram bahan pangan</li>
-                    <li><strong>Konversi Protein:</strong> Gram protein per 100 gram bahan pangan</li>
-                </ul>
+                        <!-- Expandable Details -->
+                        <div x-data="{ expanded: false }" class="border rounded-lg">
+                            <button @click="expanded = !expanded" 
+                                    class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50 transition-colors">
+                                <span class="font-medium text-gray-900">Detail Aspek Sosial Ekonomi</span>
+                                <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                    <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
+                                </svg>
+                            </button>
+                            <div x-show="expanded" x-collapse class="px-4 pb-4">
+                                <p class="text-gray-600 mb-3">Hasil dari Susenas merupakan data mengenai berbagai aspek sosial ekonomi dan pemenuhan kebutuhan hidup:</p>
+                                <ul class="list-disc list-inside space-y-1 text-gray-600 ml-4">
+                                    <li>Sandang (pakaian dan tekstil)</li>
+                                    <li>Pangan (makanan dan minuman)</li>
+                                    <li>Papan (perumahan dan fasilitas)</li>
+                                    <li>Pendidikan</li>
+                                    <li>Kesehatan</li>
+                                    <li>Keamanan</li>
+                                    <li>Kesempatan kerja</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
-                <h2>Indikator Utama</h2>
-                <h3>Konsumsi Energi</h3>
-                <ul>
-                    <li><strong>Konsumsi Energi per Kapita:</strong> Kkal/kapita/hari</li>
-                    <li><strong>Tingkat Kecukupan Energi:</strong> Persentase terhadap Angka Kecukupan Gizi (AKG)</li>
-                    <li><strong>Prevalensi Kurang Energi:</strong> Persentase penduduk dengan konsumsi < 70% AKG</li>
-                </ul>
+                    <!-- Perkembangan Section -->
+                    <div x-show="activeSection === 'perkembangan'" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 transform translate-y-4"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         class="bg-white rounded-lg border p-6">
+                        
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Perkembangan Pelaksanaan Susenas</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                <h3 class="font-semibold text-blue-900 mb-2">Sebelum 2011</h3>
+                                <ul class="text-blue-800 space-y-1 text-sm">
+                                    <li>• Susenas Panel</li>
+                                    <li>• Dilaksanakan bulan Maret</li>
+                                    <li>• Frekuensi: Tahunan</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                                <h3 class="font-semibold text-green-900 mb-2">Sejak 2011</h3>
+                                <ul class="text-green-800 space-y-1 text-sm">
+                                    <li>• Susenas Triwulanan</li>
+                                    <li>• Database: Data Maret (Triwulan I)</li>
+                                    <li>• Kuesioner: Modul konsumsi/pengeluaran</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
-                <h3>Konsumsi Protein</h3>
-                <ul>
-                    <li><strong>Konsumsi Protein per Kapita:</strong> Gram/kapita/hari</li>
-                    <li><strong>Tingkat Kecukupan Protein:</strong> Persentase terhadap AKG</li>
-                    <li><strong>Prevalensi Kurang Protein:</strong> Persentase penduduk dengan konsumsi < 80% AKG</li>
-                </ul>
+                    <!-- Metodologi Section -->
+                    <div x-show="activeSection === 'metodologi'" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 transform translate-y-4"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         class="bg-white rounded-lg border p-6 space-y-6">
+                        
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Metodologi Pengumpulan Data</h2>
 
-                <h2>Pengolahan dan Analisis Data</h2>
-                <ol>
-                    <li><strong>Cleaning Data:</strong> Pemeriksaan konsistensi dan outlier</li>
-                    <li><strong>Konversi Satuan:</strong> Penyeragaman ke gram per kapita per hari</li>
-                    <li><strong>Konversi Gizi:</strong> Menggunakan TKPI untuk mendapat nilai kalori dan protein</li>
-                    <li><strong>Agregasi:</strong> Penghitungan rata-rata nasional, provinsi, dan kelompok sosek</li>
-                    <li><strong>Validasi:</strong> Pengecekan dengan sumber data lain</li>
-                </ol>
+                        <!-- Metode Wawancara -->
+                        <div x-data="{ expanded: false }" class="border rounded-lg">
+                            <button @click="expanded = !expanded" 
+                                    class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
+                                <span class="font-medium text-gray-900">Metode Wawancara & Recall</span>
+                                <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                    <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
+                                </svg>
+                            </button>
+                            <div x-show="expanded" x-collapse class="px-4 pb-4">
+                                <p class="text-gray-600 mb-3">Wawancara dengan kepala rumah tangga menggunakan metode recall:</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-orange-50 p-3 rounded border-l-4 border-orange-400">
+                                        <h4 class="font-medium text-orange-900">Makanan</h4>
+                                        <p class="text-orange-800 text-sm">Recall seminggu yang lalu</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-3 rounded border-l-4 border-purple-400">
+                                        <h4 class="font-medium text-purple-900">Bukan Makanan</h4>
+                                        <p class="text-purple-800 text-sm">Recall sebulan yang lalu</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                <h2>Kegunaan Data Susenas Konsumsi</h2>
-                <ul>
-                    <li>Penyusunan peta ketahanan dan kerentanan pangan</li>
-                    <li>Monitoring pencapaian target konsumsi energi dan protein</li>
-                    <li>Evaluasi program fortifikasi pangan</li>
-                    <li>Perencanaan program diversifikasi konsumsi pangan</li>
-                    <li>Penelitian pola konsumsi dan gizi masyarakat</li>
-                    <li>Pelaporan indikator gizi nasional dan internasional</li>
-                </ul>
+                        <!-- Klasifikasi Data -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                <h4 class="font-semibold text-blue-900 mb-2">Pengeluaran Makanan</h4>
+                                <ul class="list-disc list-inside space-y-1 text-blue-800 text-sm">
+                                    <li>215 komoditas</li>
+                                    <li>Kuantitas + nilai rupiah</li>
+                                    <li>Recall seminggu</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                                <h4 class="font-semibold text-green-900 mb-2">Bukan Makanan</h4>
+                                <ul class="list-disc list-inside space-y-1 text-green-800 text-sm">
+                                    <li>Nilai rupiah</li>
+                                    <li>Listrik, gas, air, BBM: + kuantitas</li>
+                                    <li>Recall sebulan</li>
+                                </ul>
+                            </div>
+                        </div>
 
-                <h2>Keterbatasan Data</h2>
-                <ul>
-                    <li>Data konsumsi di luar rumah tangga belum tercakup secara detail</li>
-                    <li>Recall bias pada pengisian kuesioner</li>
-                    <li>Seasonal variation belum dapat ditangkap dengan baik</li>
-                    <li>Data mikronutrien masih terbatas</li>
-                </ul>
+                        <!-- Cakupan -->
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-900 mb-3">Cakupan Wilayah dan Waktu</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <span class="font-medium text-gray-700">Wilayah:</span>
+                                    <p class="text-gray-600">34 provinsi</p>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700">Klasifikasi:</span>
+                                    <p class="text-gray-600">Kota & Desa</p>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700">Periode:</span>
+                                    <p class="text-gray-600">Sejak 1993</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jenis Data Section -->
+                    <div x-show="activeSection === 'jenis-data'" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 transform translate-y-4"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         class="bg-white rounded-lg border p-6">
+                        
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Jenis Data yang Dikumpulkan</h2>
+                        
+                        <div class="space-y-4">
+                            <div x-data="{ expanded: false }" class="border rounded-lg">
+                                <button @click="expanded = !expanded" 
+                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
+                                    <span class="font-medium text-gray-900">Data Konsumsi Pangan</span>
+                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                        <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
+                                    </svg>
+                                </button>
+                                <div x-show="expanded" x-collapse class="px-4 pb-4">
+                                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                                        <li><strong>Konsumsi Kalori:</strong> Jumlah energi per kapita per hari</li>
+                                        <li><strong>Konsumsi Protein:</strong> Jumlah protein per kapita per hari</li>
+                                        <li><strong>Konsumsi per Komoditas:</strong> Kuantitas untuk setiap jenis pangan</li>
+                                        <li><strong>Pengeluaran Pangan:</strong> Nilai pengeluaran rumah tangga</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div x-data="{ expanded: false }" class="border rounded-lg">
+                                <button @click="expanded = !expanded" 
+                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
+                                    <span class="font-medium text-gray-900">Kelompok Pangan (14 Kelompok)</span>
+                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                        <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
+                                    </svg>
+                                </button>
+                                <div x-show="expanded" x-collapse class="px-4 pb-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                        <div class="space-y-1">
+                                            <p>• Padi-padian</p>
+                                            <p>• Umbi-umbian</p>
+                                            <p>• Ikan/udang/cumi/kerang</p>
+                                            <p>• Daging</p>
+                                            <p>• Telur dan susu</p>
+                                            <p>• Sayur-sayuran</p>
+                                            <p>• Kacang-kacangan</p>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <p>• Buah-buahan</p>
+                                            <p>• Minyak dan lemak</p>
+                                            <p>• Bahan minuman</p>
+                                            <p>• Bumbu-bumbuan</p>
+                                            <p>• Konsumsi lainnya</p>
+                                            <p>• Makanan dan minuman jadi</p>
+                                            <p>• Tembakau dan sirih</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Indikator Section -->
+                    <div x-show="activeSection === 'indikator'" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 transform translate-y-4"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         class="bg-white rounded-lg border p-6">
+                        
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Indikator Utama</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
+                                <h3 class="font-semibold text-yellow-900 mb-3">Konsumsi Energi</h3>
+                                <ul class="list-disc list-inside space-y-1 text-yellow-800 text-sm">
+                                    <li>Konsumsi Energi per Kapita (Kkal/kapita/hari)</li>
+                                    <li>Tingkat Kecukupan Energi (% terhadap AKG)</li>
+                                    <li>Prevalensi Kurang Energi (< 70% AKG)</li>
+                                </ul>
+                            </div>
+                            <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                                <h3 class="font-semibold text-red-900 mb-3">Konsumsi Protein</h3>
+                                <ul class="list-disc list-inside space-y-1 text-red-800 text-sm">
+                                    <li>Konsumsi Protein per Kapita (g/kapita/hari)</li>
+                                    <li>Tingkat Kecukupan Protein (% terhadap AKG)</li>
+                                    <li>Prevalensi Kurang Protein (< 80% AKG)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-900 mb-3">Pengolahan dan Analisis Data</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                                <div class="text-center">
+                                    <div class="bg-blue-100 p-2 rounded-full w-8 h-8 mx-auto mb-2 flex items-center justify-center">
+                                        <span class="text-blue-600 font-bold text-xs">1</span>
+                                    </div>
+                                    <p class="font-medium">Data Cleaning</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="bg-green-100 p-2 rounded-full w-8 h-8 mx-auto mb-2 flex items-center justify-center">
+                                        <span class="text-green-600 font-bold text-xs">2</span>
+                                    </div>
+                                    <p class="font-medium">Konversi Satuan</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="bg-purple-100 p-2 rounded-full w-8 h-8 mx-auto mb-2 flex items-center justify-center">
+                                        <span class="text-purple-600 font-bold text-xs">3</span>
+                                    </div>
+                                    <p class="font-medium">Konversi Gizi</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Expandable Additional Info -->
+                        <div class="mt-6 space-y-4">
+                            <div x-data="{ expanded: false }" class="border rounded-lg">
+                                <button @click="expanded = !expanded" 
+                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
+                                    <span class="font-medium text-gray-900">Kegunaan Data Susenas</span>
+                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                        <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
+                                    </svg>
+                                </button>
+                                <div x-show="expanded" x-collapse class="px-4 pb-4">
+                                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                                        <li>Penyusunan peta ketahanan dan kerentanan pangan</li>
+                                        <li>Monitoring pencapaian target konsumsi energi dan protein</li>
+                                        <li>Evaluasi program fortifikasi pangan</li>
+                                        <li>Perencanaan program diversifikasi konsumsi pangan</li>
+                                        <li>Penelitian pola konsumsi dan gizi masyarakat</li>
+                                        <li>Pelaporan indikator gizi nasional dan internasional</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div x-data="{ expanded: false }" class="border rounded-lg">
+                                <button @click="expanded = !expanded" 
+                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
+                                    <span class="font-medium text-gray-900">Keterbatasan Data</span>
+                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                        <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
+                                    </svg>
+                                </button>
+                                <div x-show="expanded" x-collapse class="px-4 pb-4">
+                                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                                        <li>Data konsumsi di luar rumah tangga belum tercakup secara detail</li>
+                                        <li>Recall bias pada pengisian kuesioner</li>
+                                        <li>Seasonal variation belum dapat ditangkap dengan baik</li>
+                                        <li>Data mikronutrien masih terbatas</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Related Links -->
-            <div class="mt-12 bg-gray-50 p-6 rounded-lg">
+            <div class="mt-8 bg-gray-50 p-6 rounded-lg">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Halaman Terkait</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <a href="{{ route('konsumsi.laporan-susenas') }}" 
