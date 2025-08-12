@@ -12,7 +12,11 @@
         @include('livewire.partials.admin-panel', [
             'totalUsers' => $totalUsers ?? 0,
             'totalRoles' => $totalRoles ?? 0,
-            'recentUsers' => $recentUsers ?? collect()
+            'totalKelompok' => $totalKelompok ?? 0,
+            'totalKomoditi' => $totalKomoditi ?? 0,
+            'recentUsers' => $recentUsers ?? collect(),
+            'recentKelompok' => $recentKelompok ?? collect(),
+            'recentKomoditi' => $recentKomoditi ?? collect()
         ])
     @else
         <!-- Regular User Content -->

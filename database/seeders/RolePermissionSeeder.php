@@ -26,6 +26,24 @@ class RolePermissionSeeder extends Seeder
             'delete users',
             'manage roles',
             'view dashboard',
+            'manage kelompok', // kelompok management
+            'view kelompok',
+            'create kelompok',
+            'edit kelompok',
+            'delete kelompok',
+            'export kelompok',
+            'manage komoditi', // komoditi management
+            'view komoditi',
+            'create komoditi',
+            'edit komoditi',
+            'delete komoditi',
+            'export komoditi',
+            'manage transaksi_nbm', // transaksi NBM management
+            'view transaksi_nbm',
+            'create transaksi_nbm',
+            'edit transaksi_nbm',
+            'delete transaksi_nbm',
+            'export transaksi_nbm',
             
             // Susenas permissions
             'manage susenas',
@@ -60,24 +78,9 @@ class RolePermissionSeeder extends Seeder
         // Assign permissions idempotently
         $superadminRole->syncPermissions(Permission::all());
 
-        // Admin now with susenas access
+        // Admin now restricted ONLY to dashboard view (remove user management permissions)
         $adminRole->syncPermissions([
             'view dashboard',
-            'manage susenas',
-            'view susenas',
-            'create susenas',
-            'edit susenas',
-            'delete susenas',
-            'manage kelompokbps',
-            'view kelompokbps',
-            'create kelompokbps',
-            'edit kelompokbps',
-            'delete kelompokbps',
-            'manage komoditibps',
-            'view komoditibps',
-            'create komoditibps',
-            'edit komoditibps',
-            'delete komoditibps',
         ]);
 
         // Create a superadmin user if it doesn't exist

@@ -18,6 +18,40 @@
     [data-current='true'] .nav-link-text { @apply font-medium; }
         /* Fallback if component uses data-state instead of data-current */
         [data-state='active'] .nav-link-text { @apply font-medium; }
+    
+    /* Print styles */
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+        
+        /* Ensure proper print layout */
+        body {
+            background: white !important;
+            color: black !important;
+        }
+        
+        table {
+            border-collapse: collapse !important;
+        }
+        
+        th, td {
+            border: 1px solid #000 !important;
+            padding: 8px !important;
+        }
+        
+        /* Hide unnecessary elements during print */
+        button, .btn, [type="button"] {
+            display: none !important;
+        }
+        
+        /* Show only table content for printing */
+        #kelompok-table-wrapper,
+        #users-table-wrapper {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
         .dark [data-state='active'] .nav-link-text { @apply text-white; }
             /* Icon coloring for active nav items */
             [data-current='true'].active-icon svg, [data-state='active'].active-icon svg { @apply text-neutral-900; }
@@ -62,7 +96,7 @@
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-neutral-200, currentColor);
     }
 }
 

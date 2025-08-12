@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\User;
+use App\Models\Kelompok;
+use App\Models\Komoditi;
 use App\Models\TbKelompokbps;
 use App\Models\TbKomoditibps;
 use App\Models\TransaksiSusenas;
@@ -16,23 +18,12 @@ class Dashboard extends Component
     {
         $data = [];
 
-        // Data untuk admin - cek dengan cara yang lebih safe
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        if ($user && $user->isAdmin()) {
+        // Data untuk admin
+        if (auth()->user()->hasRole(['superadmin', 'admin'])) {
             $data = [
                 'totalUsers' => User::count(),
                 'totalRoles' => Role::count(),
                 'recentUsers' => User::latest()->take(5)->get(),
-                
-                // Susenas data
-                'totalKelompokbps' => TbKelompokbps::count(),
-                'totalKomoditibps' => TbKomoditibps::count(),
-                'totalSusenas' => TransaksiSusenas::count(),
-                'recentSusenas' => TransaksiSusenas::with(['kelompokbps', 'komoditibps'])
-                    ->latest()
-                    ->take(5)
-                    ->get(),
             ];
         }
 
