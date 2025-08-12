@@ -264,7 +264,7 @@
                     
                     <flux:field>
                         <flux:label>Kode Kelompok</flux:label>
-                        <flux:select wire:model="kode_kelompok" placeholder="Pilih Kelompok">
+                        <flux:select wire:model.live="kode_kelompok" placeholder="Pilih Kelompok">
                             @foreach($kelompokOptions as $kelompok)
                                 <option value="{{ $kelompok['kode'] }}">{{ $kelompok['kode'] }} - {{ $kelompok['nama'] }}</option>
                             @endforeach
@@ -442,7 +442,7 @@
                     
                     <flux:field>
                         <flux:label>Kode Kelompok</flux:label>
-                        <flux:select wire:model="kode_kelompok" placeholder="Pilih Kelompok">
+                        <flux:select wire:model.live="kode_kelompok" placeholder="Pilih Kelompok">
                             @foreach($kelompokOptions as $kelompok)
                                 <option value="{{ $kelompok['kode'] }}">{{ $kelompok['kode'] }} - {{ $kelompok['nama'] }}</option>
                             @endforeach

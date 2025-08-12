@@ -77,8 +77,8 @@ class TransaksiNbmManagement extends Component
         if (empty($this->kode_kelompok)) {
             $this->komoditiOptions = [];
         } else {
-            // Filter komoditi berdasarkan kode kelompok (2 digit pertama harus sama)
-            $this->komoditiOptions = Komoditi::where('kode_komoditi', 'LIKE', $this->kode_kelompok . '%')
+            // Filter komoditi berdasarkan kode kelompok
+            $this->komoditiOptions = Komoditi::where('kode_kelompok', $this->kode_kelompok)
                 ->orderBy('kode_komoditi')
                 ->get(['kode_komoditi as kode', 'nama'])
                 ->toArray();
@@ -128,8 +128,12 @@ class TransaksiNbmManagement extends Component
             return;
         }
 
-        // Validasi bahwa kode komoditi harus dimulai dengan kode kelompok
-        if (!str_starts_with($this->kode_komoditi, $this->kode_kelompok)) {
+        // Validasi bahwa komoditi yang dipilih sesuai dengan kelompok
+        $komoditi = Komoditi::where('kode_komoditi', $this->kode_komoditi)
+            ->where('kode_kelompok', $this->kode_kelompok)
+            ->first();
+            
+        if (!$komoditi) {
             $this->addError('kode_komoditi', 'Komoditi yang dipilih tidak sesuai dengan kelompok.');
             return;
         }
