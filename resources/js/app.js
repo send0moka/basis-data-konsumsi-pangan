@@ -1,3 +1,9 @@
+import Alpine from 'alpinejs'
+
+window.Alpine = Alpine
+
+Alpine.start()
+
 // Global print handler for User Management
 document.addEventListener('livewire:init', () => {
 	if (window.__usersPrintListenerAttached) return;
