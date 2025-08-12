@@ -3,9 +3,40 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
+// Landing Page Routes
 Route::get('/', function () {
-    return view('welcome');
+    return view('homepage');
 })->name('home');
+
+// Ketersediaan Routes
+Route::prefix('ketersediaan')->name('ketersediaan.')->group(function () {
+    Route::get('konsep-metode', function () {
+        return view('ketersediaan.konsep-metode');
+    })->name('konsep-metode');
+    
+    Route::get('laporan-nbm', function () {
+        return view('ketersediaan.laporan-nbm');
+    })->name('laporan-nbm');
+});
+
+// Konsumsi Routes  
+Route::prefix('konsumsi')->name('konsumsi.')->group(function () {
+    Route::get('konsep-metode', function () {
+        return view('konsumsi.konsep-metode');
+    })->name('konsep-metode');
+    
+    Route::get('laporan-susenas', function () {
+        return view('konsumsi.laporan-susenas');
+    })->name('laporan-susenas');
+    
+    Route::get('per-kapita-seminggu', function () {
+        return view('konsumsi.per-kapita-seminggu');
+    })->name('per-kapita-seminggu');
+    
+    Route::get('per-kapita-setahun', function () {
+        return view('konsumsi.per-kapita-setahun');
+    })->name('per-kapita-setahun');
+});
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
