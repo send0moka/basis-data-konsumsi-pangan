@@ -23,6 +23,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::view('users', 'admin.users')->name('users');
     Route::view('kelompok', 'admin.kelompok')->name('kelompok');
+    Route::view('komoditi', 'admin.komoditi')->name('komoditi');
 });
 
 require __DIR__.'/auth.php';
