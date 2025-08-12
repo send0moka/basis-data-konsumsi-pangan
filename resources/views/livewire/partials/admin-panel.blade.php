@@ -1,9 +1,10 @@
 <!-- Admin Panel Content -->
 <div>
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <!-- Total Users -->
-    <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700 transition-colors">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-{{ auth()->user()->hasRole('superadmin') ? '4' : '3' }} gap-6 mb-6">
+        @if(auth()->user()->hasRole('superadmin'))
+        <!-- Total Users (Only for Superadmin) -->
+        <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700 transition-colors">
             <div class="p-5">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -19,13 +20,14 @@
                                 Total Users
                             </dt>
                             <dd class="text-lg font-medium text-neutral-900 dark:text-white">
-                                {{ $totalUsers }}
+                                {{ $totalUsers ?? 0 }}
                             </dd>
                         </dl>
                     </div>
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- Total Kelompok -->
     <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700 transition-colors">
@@ -77,7 +79,7 @@
             </div>
         </div>
 
-        <!-- Total Roles -->
+        <!-- Current User Role -->
     <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700 transition-colors">
             <div class="p-5">
                 <div class="flex items-center">
@@ -104,102 +106,106 @@
         </div>
     </div>
 
-    @if(auth()->user()->hasRole('superadmin'))
-        <!-- Data Tables Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Recent Kelompok -->
-            <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700">
-                <div class="px-4 py-5 sm:p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg leading-6 font-medium text-neutral-900 dark:text-white">
-                            Kelompok Terbaru
-                        </h3>
-                        <a href="{{ route('admin.kelompok') }}" class="text-blue-600 hover:text-blue-500 text-sm font-medium" wire:navigate>
-                            Lihat Semua
-                        </a>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
-                            <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
-                                <tr>
-                                    <th scope="col" class="px-4 py-2">Kode</th>
-                                    <th scope="col" class="px-4 py-2">Nama</th>
-                                    <th scope="col" class="px-4 py-2">Dibuat</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($recentKelompok ?? [] as $kelompok)
-                                <tr class="bg-white border-b dark:!bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:!bg-neutral-700 transition-colors">
-                                    <td class="px-4 py-2 font-medium text-neutral-900 dark:text-white">
-                                        {{ $kelompok->kode }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        {{ $kelompok->nama }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        {{ $kelompok->created_at->format('d/m/Y') }}
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="3" class="px-4 py-4 text-center text-neutral-500">
-                                        Belum ada kelompok
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+    <!-- Data Tables Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Recent Kelompok -->
+        <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700">
+            <div class="px-4 py-5 sm:p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg leading-6 font-medium text-neutral-900 dark:text-white">
+                        Kelompok Terbaru
+                    </h3>
+                    @can('view kelompok')
+                    <a href="{{ route('admin.kelompok') }}" class="text-blue-600 hover:text-blue-500 text-sm font-medium" wire:navigate>
+                        Lihat Semua
+                    </a>
+                    @endcan
                 </div>
-            </div>
-
-            <!-- Recent Komoditi -->
-            <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700">
-                <div class="px-4 py-5 sm:p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg leading-6 font-medium text-neutral-900 dark:text-white">
-                            Komoditi Terbaru
-                        </h3>
-                        <a href="{{ route('admin.komoditi') }}" class="text-blue-600 hover:text-blue-500 text-sm font-medium" wire:navigate>
-                            Lihat Semua
-                        </a>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
-                            <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
-                                <tr>
-                                    <th scope="col" class="px-4 py-2">Kelompok</th>
-                                    <th scope="col" class="px-4 py-2">Kode</th>
-                                    <th scope="col" class="px-4 py-2">Nama</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($recentKomoditi ?? [] as $komoditi)
-                                <tr class="bg-white border-b dark:!bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:!bg-neutral-700 transition-colors">
-                                    <td class="px-4 py-2 font-medium text-neutral-900 dark:text-white">
-                                        {{ $komoditi->kode_kelompok }}
-                                    </td>
-                                    <td class="px-4 py-2 font-medium text-neutral-900 dark:text-white">
-                                        {{ $komoditi->kode_komoditi }}
-                                    </td>
-                                    <td class="px-4 py-2">
-                                        {{ $komoditi->nama }}
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="3" class="px-4 py-4 text-center text-neutral-500">
-                                        Belum ada komoditi
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
+                        <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
+                            <tr>
+                                <th scope="col" class="px-4 py-2">Kode</th>
+                                <th scope="col" class="px-4 py-2">Nama</th>
+                                <th scope="col" class="px-4 py-2">Dibuat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($recentKelompok ?? [] as $kelompok)
+                            <tr class="bg-white border-b dark:!bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:!bg-neutral-700 transition-colors">
+                                <td class="px-4 py-2 font-medium text-neutral-900 dark:text-white">
+                                    {{ $kelompok->kode }}
+                                </td>
+                                <td class="px-4 py-2">
+                                    {{ $kelompok->nama }}
+                                </td>
+                                <td class="px-4 py-2">
+                                    {{ $kelompok->created_at->format('d/m/Y') }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="px-4 py-4 text-center text-neutral-500">
+                                    Belum ada kelompok
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
+        <!-- Recent Komoditi -->
+        <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700">
+            <div class="px-4 py-5 sm:p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg leading-6 font-medium text-neutral-900 dark:text-white">
+                        Komoditi Terbaru
+                    </h3>
+                    @can('view komoditi')
+                    <a href="{{ route('admin.komoditi') }}" class="text-blue-600 hover:text-blue-500 text-sm font-medium" wire:navigate>
+                        Lihat Semua
+                    </a>
+                    @endcan
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
+                        <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
+                            <tr>
+                                <th scope="col" class="px-4 py-2">Kelompok</th>
+                                <th scope="col" class="px-4 py-2">Kode</th>
+                                <th scope="col" class="px-4 py-2">Nama</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($recentKomoditi ?? [] as $komoditi)
+                            <tr class="bg-white border-b dark:!bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:!bg-neutral-700 transition-colors">
+                                <td class="px-4 py-2 font-medium text-neutral-900 dark:text-white">
+                                    {{ $komoditi->kode_kelompok }}
+                                </td>
+                                <td class="px-4 py-2 font-medium text-neutral-900 dark:text-white">
+                                    {{ $komoditi->kode_komoditi }}
+                                </td>
+                                <td class="px-4 py-2">
+                                    {{ $komoditi->nama }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="px-4 py-4 text-center text-neutral-500">
+                                    Belum ada komoditi
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if(auth()->user()->hasRole('superadmin'))
         <!-- Recent Users (Only for Superadmin) -->
         <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700">
             <div class="px-4 py-5 sm:p-6">

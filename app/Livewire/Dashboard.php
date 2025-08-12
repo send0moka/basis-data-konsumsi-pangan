@@ -14,17 +14,21 @@ class Dashboard extends Component
     {
         $data = [];
 
-        // Data untuk admin
+        // Data untuk admin dan superadmin
         if (auth()->user()->hasRole(['superadmin', 'admin'])) {
             $data = [
-                'totalUsers' => User::count(),
-                'totalRoles' => Role::count(),
                 'totalKelompok' => Kelompok::count(),
                 'totalKomoditi' => Komoditi::count(),
-                'recentUsers' => User::latest()->take(5)->get(),
                 'recentKelompok' => Kelompok::latest()->take(5)->get(),
                 'recentKomoditi' => Komoditi::latest()->take(10)->get(),
             ];
+            
+            // Data khusus superadmin (user management)
+            if (auth()->user()->hasRole('superadmin')) {
+                $data['totalUsers'] = User::count();
+                $data['totalRoles'] = Role::count();
+                $data['recentUsers'] = User::latest()->take(5)->get();
+            }
         }
 
         return view('livewire.dashboard', $data);
