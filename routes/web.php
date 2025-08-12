@@ -22,6 +22,7 @@ Route::middleware(['auth'])->group(function () {
 // Admin Routes (restrict user management strictly to superadmin)
 Route::middleware(['auth', 'role:superadmin'])->prefix('admin')->name('admin.')->group(function () {
     Route::view('users', 'admin.users')->name('users');
+    Route::view('kelompok', 'admin.kelompok')->name('kelompok');
 });
 
 require __DIR__.'/auth.php';

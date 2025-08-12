@@ -22,6 +22,12 @@
                         <span class="nav-link-text transition-colors {{ request()->routeIs('admin.users') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Kelola User') }}</span>
                     </flux:navlist.item>
                     @endcan
+                    
+                    @can('view users')
+                    <flux:navlist.item icon="tag" :href="route('admin.kelompok')" :current="request()->routeIs('admin.kelompok')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.kelompok') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Kelola Kelompok') }}</span>
+                    </flux:navlist.item>
+                    @endcan
                 </flux:navlist.group>
             </flux:navlist>
 
