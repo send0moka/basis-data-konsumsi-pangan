@@ -1,21 +1,86 @@
 <x-layouts.landing>
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-[#6a4c35] to-[#782c7c] text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <!-- Hero Section with Carousel -->
+    <section class="relative bg-gradient-to-r from-[#6a4c35] to-[#782c7c] text-white overflow-hidden">
+        <!-- Carousel Background -->
+        <div class="absolute inset-0 z-0" x-data="{ 
+            currentSlide: 0,
+            slides: [
+                'https://images.unsplash.com/photo-1592997571659-0b21ff64313b?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Padi/beras
+                'https://images.unsplash.com/photo-1662318183329-e2ee2bb53f9e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Tomat segar
+                'https://images.unsplash.com/photo-1546860255-95536c19724e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Cabai merah
+                'https://images.unsplash.com/photo-1748118869323-73769eab2f24?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Cabbage
+                'https://images.unsplash.com/photo-1573414405995-2012861b74e0?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Jahe kunyit
+                'https://images.unsplash.com/photo-1590868309235-ea34bed7bd7f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'  // Kentang
+            ],
+            nextSlide() {
+                this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+            },
+            prevSlide() {
+                this.currentSlide = this.currentSlide === 0 ? this.slides.length - 1 : this.currentSlide - 1;
+            },
+            goToSlide(index) {
+                this.currentSlide = index;
+            }
+        }" x-init="setInterval(() => { nextSlide() }, 5000)">
+            <!-- Carousel Images -->
+            <template x-for="(slide, index) in slides" :key="index">
+                <div x-show="currentSlide === index" 
+                     x-transition:enter="transition-opacity duration-1000"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition-opacity duration-1000"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="absolute inset-0">
+                    <img :src="slide" 
+                         alt="Hasil Bumi Indonesia" 
+                         class="w-full h-full object-cover opacity-60">
+                </div>
+            </template>
+            
+            <!-- Overlay Gradient -->
+            <div class="absolute inset-0 bg-gradient-to-r from-[#6a4c35]/40 to-[#782c7c]/40"></div>
+            
+            <!-- Navigation Arrows -->
+            <button @click="prevSlide()" 
+                    class="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 rounded-full p-2 transition-all duration-300">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <button @click="nextSlide()" 
+                    class="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 rounded-full p-2 transition-all duration-300">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            
+            <!-- Dots Indicator -->
+            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 flex space-x-2">
+                <template x-for="(slide, index) in slides" :key="index">
+                    <button @click="goToSlide(index)" 
+                            :class="currentSlide === index ? 'bg-[#efefa4]' : 'bg-white/50 hover:bg-white/70'"
+                            class="w-3 h-3 rounded-full transition-all duration-300"></button>
+                </template>
+            </div>
+        </div>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-36">
             <div class="text-center">
-                <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 drop-shadow-lg">
                     Basis Data Konsumsi Pangan
                 </h1>
-                <p class="text-xl md:text-2xl mb-8 text-[#efefa4]">
+                <p class="text-xl md:text-2xl mb-8 text-[#efefa4] drop-shadow-md">
                     Sistem Informasi Ketersediaan dan Konsumsi Pangan Indonesia
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="#about" 
-                       class="bg-[#efefa4] text-[#6a4c35] px-8 py-3 rounded-lg font-semibold hover:bg-white transition duration-300 shadow-md">
+                       class="bg-[#efefa4] text-[#6a4c35] px-8 py-3 rounded-lg font-semibold hover:bg-white hover:shadow-lg transition duration-300 shadow-md">
                         Pelajari Lebih Lanjut
                     </a>
                     <a href="{{ route('login') }}" 
-                       class="border-2 border-[#efefa4] text-[#efefa4] px-8 py-3 rounded-lg font-semibold hover:bg-[#efefa4] hover:text-[#6a4c35] transition duration-300">
+                       class="border-2 border-[#efefa4] text-[#efefa4] px-8 py-3 rounded-lg font-semibold hover:bg-[#efefa4] hover:text-[#6a4c35] transition duration-300 backdrop-blur-sm">
                         Akses Data
                     </a>
                 </div>
