@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             KelompokSeeder::class,
             KomoditiSeeder::class,
+            TransaksiNbmSeeder::class,
         ]);
 
         // User::factory(10)->create();

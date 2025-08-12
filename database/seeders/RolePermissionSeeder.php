@@ -38,6 +38,12 @@ class RolePermissionSeeder extends Seeder
             'edit komoditi',
             'delete komoditi',
             'export komoditi',
+            'manage transaksi_nbm', // transaksi NBM management
+            'view transaksi_nbm',
+            'create transaksi_nbm',
+            'edit transaksi_nbm',
+            'delete transaksi_nbm',
+            'export transaksi_nbm',
         ];
 
         foreach ($permissions as $permission) {
@@ -51,7 +57,7 @@ class RolePermissionSeeder extends Seeder
         // Assign permissions idempotently
         $superadminRole->syncPermissions(Permission::all());
 
-        // Admin now has access to dashboard, kelompok, and komoditi (but NOT user management)
+        // Admin now has access to dashboard, kelompok, komoditi, and transaksi_nbm (but NOT user management)
         $adminRole->syncPermissions([
             'view dashboard',
             'manage kelompok',
@@ -66,6 +72,12 @@ class RolePermissionSeeder extends Seeder
             'edit komoditi',
             'delete komoditi',
             'export komoditi',
+            'manage transaksi_nbm',
+            'view transaksi_nbm',
+            'create transaksi_nbm',
+            'edit transaksi_nbm',
+            'delete transaksi_nbm',
+            'export transaksi_nbm',
         ]);
 
         // Create a superadmin user if it doesn't exist
