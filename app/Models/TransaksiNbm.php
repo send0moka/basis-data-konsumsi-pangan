@@ -51,4 +51,16 @@ class TransaksiNbm extends Model
         'protein_hari' => 'decimal:4',
         'lemak_hari' => 'decimal:6',
     ];
+
+    // Relasi ke model Kelompok
+    public function kelompok()
+    {
+        return $this->belongsTo(Kelompok::class, 'kode_kelompok', 'kode');
+    }
+
+    // Relasi ke model Komoditi
+    public function komoditi()
+    {
+        return $this->belongsTo(Komoditi::class, 'kode_komoditi', 'kode_komoditi');
+    }
 }

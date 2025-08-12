@@ -316,12 +316,19 @@ class TransaksiNbmManagement extends Component
             $perPage = 10;
         }
 
-        $transaksiNbms = TransaksiNbm::when($this->search, function ($query) {
+        $transaksiNbms = TransaksiNbm::with(['kelompok', 'komoditi'])
+            ->when($this->search, function ($query) {
                 $query->where(function($q) {
                     $q->where('kode_kelompok', 'like', '%' . $this->search . '%')
                       ->orWhere('kode_komoditi', 'like', '%' . $this->search . '%')
                       ->orWhere('tahun', 'like', '%' . $this->search . '%')
-                      ->orWhere('status_angka', 'like', '%' . $this->search . '%');
+                      ->orWhere('status_angka', 'like', '%' . $this->search . '%')
+                      ->orWhereHas('kelompok', function($q) {
+                          $q->where('nama', 'like', '%' . $this->search . '%');
+                      })
+                      ->orWhereHas('komoditi', function($q) {
+                          $q->where('nama', 'like', '%' . $this->search . '%');
+                      });
                 });
         })->orderBy('id', 'asc')->paginate($perPage);
 

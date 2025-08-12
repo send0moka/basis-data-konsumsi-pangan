@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Kelompok;
+use App\Models\Komoditi;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,9 +21,12 @@ class TransaksiNbmFactory extends Factory
         $statusAngka = ['tetap', 'sementara', 'sangat sementara'];
         $tahun = fake()->numberBetween(1993, 2025);
         
+        // Ambil komoditi random yang ada di database
+        $komoditi = Komoditi::inRandomOrder()->first();
+        
         return [
-            'kode_kelompok' => fake()->regexify('[0-9]{2}'),
-            'kode_komoditi' => fake()->regexify('[0-9]{4}'),
+            'kode_kelompok' => $komoditi ? $komoditi->kode_kelompok : '01',
+            'kode_komoditi' => $komoditi ? $komoditi->kode_komoditi : '0101',
             'tahun' => $tahun,
             'status_angka' => fake()->randomElement($statusAngka),
             'masukan' => fake()->randomFloat(4, 0, 99999),

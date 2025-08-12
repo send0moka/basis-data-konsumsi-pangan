@@ -28,7 +28,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
             <flux:input 
                 wire:model.live="search" 
-                placeholder="Cari berdasarkan kode kelompok, komoditi, tahun..."
+                placeholder="Cari berdasarkan kelompok, komoditi, tahun..."
                 class="w-full sm:max-w-sm"
             />
             <div class="flex items-center space-x-2">
@@ -70,10 +70,10 @@
                             ID
                         </th>
                         <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Kode Kelompok
+                            Kelompok
                         </th>
                         <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Kode Komoditi
+                            Komoditi
                         </th>
                         <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                             Tahun
@@ -144,10 +144,16 @@
                                 {{ $transaksi->id }}
                             </td>
                             <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ $transaksi->kode_kelompok }}
+                                <div class="flex flex-col">
+                                    <span class="font-medium">{{ $transaksi->kelompok->nama ?? 'N/A' }}</span>
+                                    <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ $transaksi->kode_kelompok }}</span>
+                                </div>
                             </td>
                             <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ $transaksi->kode_komoditi }}
+                                <div class="flex flex-col">
+                                    <span class="font-medium">{{ $transaksi->komoditi->nama ?? 'N/A' }}</span>
+                                    <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ $transaksi->kode_komoditi }}</span>
+                                </div>
                             </td>
                             <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">
                                 {{ $transaksi->tahun }}
