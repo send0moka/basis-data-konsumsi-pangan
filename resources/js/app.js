@@ -143,5 +143,95 @@ document.addEventListener('livewire:init', () => {
 			}
 		};
 	});
+
+	// Print handler for Kelompok BPS Management
+	Livewire.on('print-kelompokbps', () => {
+		const wrap = document.getElementById('kelompokbps-table-wrapper');
+		if (!wrap) { window.print(); return; }
+
+		// Clone content & strip elements not for print
+		const clone = wrap.cloneNode(true);
+		clone.querySelectorAll('.no-print, nav').forEach(el => el.remove());
+
+		const html = `<!DOCTYPE html><html><head><title>Daftar Kelompok BPS</title><meta charset='utf-8'>
+			<style>
+				*{box-sizing:border-box;}
+				body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;margin:0;padding:24px;color:#111827;}
+				h1{font-size:20px;margin:0 0 16px;font-weight:600;}
+				table{width:100%;border-collapse:collapse;margin-top:16px;}
+				th,td{text-align:left;padding:8px;border-bottom:1px solid #e5e7eb;}
+				th{background:#f9fafb;font-weight:600;color:#374151;}
+				tr:nth-child(even){background:#f9fafb;}
+				@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+			</style>
+		</head><body><h1>Daftar Kelompok BPS</h1>${clone.outerHTML}</body></html>`;
+
+		const iframe = document.createElement('iframe');
+		iframe.style.position = 'absolute';
+		iframe.style.left = '-99999px';
+		document.body.appendChild(iframe);
+
+		const doc = iframe.contentWindow.document;
+		doc.open();
+		doc.write(html);
+		doc.close();
+
+		iframe.onload = () => {
+			try {
+				iframe.contentWindow.focus();
+				iframe.contentWindow.print();
+			} finally {
+				// Remove iframe after slight delay to allow dialog
+				setTimeout(() => iframe.remove(), 2000);
+			}
+		};
+	});
+
+	// Print handler for Komoditi BPS Management
+	Livewire.on('print-komoditibps', () => {
+		const wrap = document.getElementById('komoditibps-table-wrapper');
+		if (!wrap) { window.print(); return; }
+
+		// Clone content & strip elements not for print
+		const clone = wrap.cloneNode(true);
+		clone.querySelectorAll('.no-print, nav').forEach(el => el.remove());
+
+		const html = `<!DOCTYPE html><html><head><title>Daftar Komoditi BPS</title><meta charset='utf-8'>
+			<style>
+				*{box-sizing:border-box;}
+				body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;margin:0;padding:24px;color:#111827;}
+				h1{font-size:20px;margin:0 0 16px;font-weight:600;}
+				table{width:100%;border-collapse:collapse;margin-top:16px;}
+				th,td{text-align:left;padding:8px;border-bottom:1px solid #e5e7eb;}
+				th{background:#f9fafb;font-weight:600;color:#374151;}
+				tr:nth-child(even){background:#f9fafb;}
+				@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+			</style>
+		</head><body><h1>Daftar Komoditi BPS</h1>${clone.outerHTML}</body></html>`;
+
+		const iframe = document.createElement('iframe');
+		iframe.style.position = 'absolute';
+		iframe.style.left = '-99999px';
+		document.body.appendChild(iframe);
+
+		const doc = iframe.contentWindow.document;
+		doc.open();
+		doc.write(html);
+		doc.close();
+
+		iframe.onload = () => {
+			try {
+				iframe.contentWindow.focus();
+				iframe.contentWindow.print();
+			} finally {
+				// Remove iframe after slight delay to allow dialog
+				setTimeout(() => iframe.remove(), 2000);
+			}
+		};
+	});
 });
 
+// Print handler for Susenas
+window.addEventListener('print-susenas', function () {
+	window.print();
+});

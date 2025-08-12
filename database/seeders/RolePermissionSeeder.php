@@ -81,6 +81,12 @@ class RolePermissionSeeder extends Seeder
         // Admin now restricted ONLY to dashboard view (remove user management permissions)
         $adminRole->syncPermissions([
             'view dashboard',
+            'view kelompok',
+            'view komoditi',
+            'view transaksi_nbm',
+            'view susenas',
+            'view kelompokbps',
+            'view komoditibps',
         ]);
 
         // Create a superadmin user if it doesn't exist

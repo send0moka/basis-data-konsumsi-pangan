@@ -5,8 +5,10 @@ namespace App\Livewire\Admin;
 use App\Models\TransaksiSusenas;
 use App\Models\TbKelompokbps;
 use App\Models\TbKomoditibps;
+use App\Exports\SusenasExport;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SusenasManagement extends Component
 {
@@ -21,6 +23,9 @@ class SusenasManagement extends Component
     public $confirmingDeletion = false;
     public $deletingId = null;
     public $search = '';
+    public $perPage = 10;
+    public $perPageOptions = [10, 25, 50, 100];
+    public $exportFormat = 'xlsx';
 
     protected $rules = [
         'kd_kelompokbps' => 'required|string|exists:tb_kelompokbps,kd_kelompokbps',
@@ -68,7 +73,7 @@ class SusenasManagement extends Component
             ->orderBy('tahun', 'desc')
             ->orderBy('kd_kelompokbps')
             ->orderBy('kd_komoditibps')
-            ->paginate(10);
+            ->paginate($this->perPage);
 
         $kelompokbps = TbKelompokbps::orderBy('nm_kelompokbps')->get();
         $komoditibps = TbKomoditibps::with('kelompokbps')
@@ -182,6 +187,21 @@ class SusenasManagement extends Component
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function export()
+    {
+        return Excel::download(new SusenasExport($this->search), 'data-susenas.' . $this->exportFormat);
+    }
+
+    public function print()
+    {
+        $this->dispatch('print-susenas');
     }
 
     public function updatedKdKelompokbps()

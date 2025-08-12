@@ -4,8 +4,10 @@ namespace App\Livewire\Admin;
 
 use App\Models\TbKelompokbps;
 use App\Models\TbKomoditibps;
+use App\Exports\KomoditibpsExport;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KomoditibpsManagement extends Component
 {
@@ -19,6 +21,18 @@ class KomoditibpsManagement extends Component
     public $confirmingDeletion = false;
     public $deletingId = null;
     public $search = '';
+    public $perPage = 10;
+    public array $perPageOptions = [5, 10, 25, 100];
+    public $exportFormat = 'xlsx';
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'perPage' => ['except' => 10],
+    ];
+
+    protected $casts = [
+        'perPage' => 'integer',
+    ];
 
     protected $rules = [
         'kd_komoditibps' => 'required|string|max:255',
@@ -40,8 +54,27 @@ class KomoditibpsManagement extends Component
         abort_unless(auth()->user()->hasRole(['superadmin', 'admin']), 403);
     }
 
+    public function updatedPerPage($value)
+    {
+        if (! in_array((int)$value, $this->perPageOptions, true)) {
+            $this->perPage = 10; // fallback
+        }
+        $this->resetPage();
+    }
+
+    public function updatingPerPage($value)
+    {
+        // Reset pagination before value changes to avoid out-of-range page
+        $this->resetPage();
+    }
+
     public function render()
     {
+        $perPage = (int) $this->perPage;
+        if (! in_array($perPage, $this->perPageOptions, true)) {
+            $perPage = 10;
+        }
+
         $komoditibps = TbKomoditibps::with('kelompokbps')
             ->when($this->search, function ($query) {
                 $query->where('kd_komoditibps', 'like', '%' . $this->search . '%')
@@ -51,7 +84,7 @@ class KomoditibpsManagement extends Component
                       });
             })
             ->orderBy('kd_komoditibps')
-            ->paginate(10);
+            ->paginate($perPage);
 
         $kelompokbps = TbKelompokbps::orderBy('nm_kelompokbps')->get();
 
@@ -155,6 +188,24 @@ class KomoditibpsManagement extends Component
     {
         $this->showModal = false;
         $this->resetForm();
+    }
+
+    public function export()
+    {
+        $format = strtolower($this->exportFormat ?? 'xlsx');
+        if (! in_array($format, ['xlsx','csv'], true)) {
+            $format = 'xlsx';
+        }
+
+        $filename = 'komoditi-bps-' . now()->format('Ymd-His') . '.' . $format;
+        
+        return Excel::download(new KomoditibpsExport($this->search ?: null), $filename, $format === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
+    }
+
+    public function print()
+    {
+        // Trigger browser print via JS listener
+        $this->dispatch('print-komoditibps');
     }
 
     public function updatingSearch()
