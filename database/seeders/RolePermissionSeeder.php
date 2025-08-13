@@ -84,6 +84,7 @@ class RolePermissionSeeder extends Seeder
             'view kelompok',
             'view komoditi',
             'view transaksi_nbm',
+            'create transaksi_nbm', // Added for testing
             'view susenas',
             'view kelompokbps',
             'view komoditibps',

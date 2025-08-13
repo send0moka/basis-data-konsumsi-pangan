@@ -49,6 +49,8 @@ class SusenasExport implements FromQuery, WithHeadings, WithMapping
             'Kode Komoditi BPS',
             'Nama Komoditi BPS',
             'Konsumsi Kuantitas',
+            'Konsumsi Nilai',
+            'Konsumsi Gizi',
         ];
     }
 
@@ -60,7 +62,9 @@ class SusenasExport implements FromQuery, WithHeadings, WithMapping
             $susenas->kelompokbps->nm_kelompokbps ?? '-',
             $susenas->kd_komoditibps,
             $susenas->komoditibps->nm_komoditibps ?? '-',
-            $susenas->konsumsi_kuantity,
+            $susenas->konsumsikuantity,
+            $susenas->konsumsinilai,
+            $susenas->konsumsigizi,
         ];
     }
 }

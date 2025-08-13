@@ -69,16 +69,25 @@
                 <thead class="bg-neutral-50 dark:bg-neutral-800/50">
                     <tr>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Tahun
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                             Kelompok BPS
                         </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                             Komoditi BPS
                         </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                            Tahun
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                            Satuan
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                             Konsumsi Kuantitas
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                            Konsumsi Nilai
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                            Konsumsi Gizi
                         </th>
                         <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                             Aksi
@@ -88,9 +97,6 @@
                 <tbody class="bg-white dark:bg-neutral-900 divide-y divide-neutral-200 dark:divide-neutral-700">
                     @forelse($susenas as $item)
                         <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                                {{ $item->tahun }}
-                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
                                 <div class="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                                     {{ $item->kelompokbps->nm_kelompokbps ?? '-' }}
@@ -108,28 +114,38 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($item->konsumsi_kuantity, 2) }}
+                                {{ $item->tahun }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                {{ $item->Satuan ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                {{ number_format($item->konsumsikuantity, 2) ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                {{ $item->konsumsinilai ? number_format($item->konsumsinilai, 2) : '-' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                {{ $item->konsumsigizi ? number_format($item->konsumsigizi, 2) : '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-3">
-                                    <button wire:click="edit({{ $item->id }})"
-                                        class="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                    </button>
-                                    <button wire:click="confirmDelete({{ $item->id }})"
-                                        class="text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                    </button>
+                                <div class="flex items-center justify-end space-x-2">
+                                    @can('edit susenas')
+                                    <flux:button wire:click="edit({{ $item->id }})" variant="ghost" size="sm">
+                                        Edit
+                                    </flux:button>
+                                    @endcan
+                                    @can('delete susenas')
+                                    <flux:button wire:click="confirmDelete({{ $item->id }})" variant="danger" size="sm">
+                                        Hapus
+                                    </flux:button>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
+                            <td colspan="8" class="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
                                 <div class="flex flex-col items-center">
                                     <svg class="h-12 w-12 text-neutral-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
@@ -152,95 +168,253 @@
         @endif
     </div>
 
-    <!-- Modal for Create/Edit -->
-    <flux:modal name="formModal" wire:model="showModal">
-        <div class="p-6">
-            <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">
-                {{ $editingId ? 'Edit Data Susenas' : 'Tambah Data Susenas' }}
-            </h3>
-            
-            <form wire:submit="save">
-                <div class="space-y-4">
-                    <flux:field>
-                        <flux:label>Tahun <span class="text-red-500">*</span></flux:label>
-                        <flux:input type="number" wire:model="tahun" min="1900" max="2100" placeholder="Masukkan tahun" />
-                        <flux:error name="tahun" />
-                    </flux:field>
+    <!-- Create Modal -->
+    @if($showCreateModal)
+    <div class="fixed inset-0 bg-neutral-900/70 dark:bg-neutral-950/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border border-neutral-200 dark:border-neutral-700 max-w-4xl shadow-xl rounded-md bg-white dark:!bg-neutral-800">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-6">Tambah Data Susenas</h3>
+                <form wire:submit="save">
+                    <div class="max-h-96 overflow-y-auto pr-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            <!-- Informasi Dasar -->
+                            <div class="md:col-span-2">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b">Informasi Dasar</h4>
+                            </div>
+                            
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Tahun *</label>
+                                <input type="number" wire:model="tahun" min="1900" max="2100" placeholder="Masukkan tahun" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('tahun') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
 
-                    <flux:field>
-                        <flux:label>Kelompok BPS <span class="text-red-500">*</span></flux:label>
-                        <flux:select wire:model.live="kd_kelompokbps" placeholder="Pilih Kelompok BPS">
-                            @foreach($kelompokbps as $kelompok)
-                                <option value="{{ $kelompok->kd_kelompokbps }}">
-                                    {{ $kelompok->kd_kelompokbps }} - {{ $kelompok->nm_kelompokbps }}
-                                </option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="kd_kelompokbps" />
-                    </flux:field>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kelompok BPS *</label>
+                                <div class="relative">
+                                    <select wire:model.live="kd_kelompokbps" class="w-full px-4 py-3 pr-10 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                        <option value="">Pilih Kelompok BPS</option>
+                                        @foreach($kelompokbps as $kelompok)
+                                            <option value="{{ $kelompok->kd_kelompokbps }}">
+                                                {{ $kelompok->kd_kelompokbps }} - {{ $kelompok->nm_kelompokbps }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <svg class="h-4 w-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('kd_kelompokbps') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
 
-                    <flux:field>
-                        <flux:label>Komoditi BPS <span class="text-red-500">*</span></flux:label>
-                        <flux:select wire:model="kd_komoditibps" placeholder="{{ $kd_kelompokbps ? 'Pilih Komoditi BPS' : 'Pilih kelompok BPS terlebih dahulu' }}">
-                            @foreach($komoditibps as $komoditi)
-                                <option value="{{ $komoditi->kd_komoditibps }}">
-                                    {{ $komoditi->kd_komoditibps }} - {{ $komoditi->nm_komoditibps }}
-                                </option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="kd_komoditibps" />
-                    </flux:field>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Komoditi BPS *</label>
+                                <div class="relative">
+                                    <select wire:model="kd_komoditibps" class="w-full px-4 py-3 pr-10 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                        <option value="">{{ $kd_kelompokbps ? 'Pilih Komoditi BPS' : 'Pilih kelompok BPS terlebih dahulu' }}</option>
+                                        @foreach($komoditibps as $komoditi)
+                                            <option value="{{ $komoditi->kd_komoditibps }}">
+                                                {{ $komoditi->kd_komoditibps }} - {{ $komoditi->nm_komoditibps }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <svg class="h-4 w-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('kd_komoditibps') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
 
-                    <flux:field>
-                        <flux:label>Konsumsi Kuantitas <span class="text-red-500">*</span></flux:label>
-                        <flux:input type="number" step="0.01" min="0" wire:model="konsumsi_kuantity" placeholder="Masukkan nilai konsumsi" />
-                        <flux:error name="konsumsi_kuantity" />
-                    </flux:field>
-                </div>
-                
-                <div class="flex justify-end space-x-3 mt-6 pt-4 border-t">
-                    <flux:button type="button" variant="ghost" wire:click="closeModal">
-                        Batal
-                    </flux:button>
-                    <flux:button type="submit" variant="primary">
-                        {{ $editingId ? 'Update' : 'Simpan' }}
-                    </flux:button>
-                </div>
-            </form>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Satuan</label>
+                                <input type="text" wire:model="Satuan" placeholder="Masukkan satuan (kg, liter, dll.)" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('Satuan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            
+                            <!-- Data Konsumsi -->
+                            <div class="md:col-span-2">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mt-4">Data Konsumsi</h4>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Konsumsi Kuantitas *</label>
+                                <input type="number" step="0.01" min="0" wire:model="konsumsikuantity" placeholder="Masukkan nilai konsumsi kuantitas" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('konsumsikuantity') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Konsumsi Nilai</label>
+                                <input type="number" step="0.01" min="0" wire:model="konsumsinilai" placeholder="Masukkan nilai konsumsi dalam rupiah" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('konsumsinilai') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Konsumsi Gizi</label>
+                                <input type="number" step="0.01" min="0" wire:model="konsumsigizi" placeholder="Masukkan nilai konsumsi gizi" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('konsumsigizi') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 mt-8 pt-6">
+                        <flux:button type="button" wire:click="closeCreateModal" variant="ghost">
+                            Batal
+                        </flux:button>
+                        <flux:button type="submit" variant="primary">
+                            Simpan
+                        </flux:button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </flux:modal>
+    </div>
+    @endif
+
+    <!-- Edit Modal -->
+    @if($showEditModal)
+    <div class="fixed inset-0 bg-neutral-900/70 dark:bg-neutral-950/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border border-neutral-200 dark:border-neutral-700 max-w-4xl shadow-xl rounded-md bg-white dark:!bg-neutral-800">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-6">Edit Data Susenas</h3>
+                <form wire:submit="save">
+                    <div class="max-h-96 overflow-y-auto pr-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            <!-- Informasi Dasar -->
+                            <div class="md:col-span-2">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b">Informasi Dasar</h4>
+                            </div>
+                            
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Tahun *</label>
+                                <input type="number" wire:model="tahun" min="1900" max="2100" placeholder="Masukkan tahun" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('tahun') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kelompok BPS *</label>
+                                <div class="relative">
+                                    <select wire:model.live="kd_kelompokbps" class="w-full px-4 py-3 pr-10 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                        <option value="">Pilih Kelompok BPS</option>
+                                        @foreach($kelompokbps as $kelompok)
+                                            <option value="{{ $kelompok->kd_kelompokbps }}">
+                                                {{ $kelompok->kd_kelompokbps }} - {{ $kelompok->nm_kelompokbps }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <svg class="h-4 w-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('kd_kelompokbps') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Komoditi BPS *</label>
+                                <div class="relative">
+                                    <select wire:model="kd_komoditibps" class="w-full px-4 py-3 pr-10 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                        <option value="">{{ $kd_kelompokbps ? 'Pilih Komoditi BPS' : 'Pilih kelompok BPS terlebih dahulu' }}</option>
+                                        @foreach($komoditibps as $komoditi)
+                                            <option value="{{ $komoditi->kd_komoditibps }}">
+                                                {{ $komoditi->kd_komoditibps }} - {{ $komoditi->nm_komoditibps }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <svg class="h-4 w-4 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('kd_komoditibps') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Satuan</label>
+                                <input type="text" wire:model="Satuan" placeholder="Masukkan satuan (kg, liter, dll.)" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('Satuan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            
+                            <!-- Data Konsumsi -->
+                            <div class="md:col-span-2">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mt-4">Data Konsumsi</h4>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Konsumsi Kuantitas *</label>
+                                <input type="number" step="0.01" min="0" wire:model="konsumsikuantity" placeholder="Masukkan nilai konsumsi kuantitas" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('konsumsikuantity') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Konsumsi Nilai</label>
+                                <input type="number" step="0.01" min="0" wire:model="konsumsinilai" placeholder="Masukkan nilai konsumsi dalam rupiah" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('konsumsinilai') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Konsumsi Gizi</label>
+                                <input type="number" step="0.01" min="0" wire:model="konsumsigizi" placeholder="Masukkan nilai konsumsi gizi" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('konsumsigizi') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 mt-8 pt-6">
+                        <flux:button type="button" wire:click="closeEditModal" variant="ghost">
+                            Batal
+                        </flux:button>
+                        <flux:button type="submit" variant="primary">
+                            Perbarui
+                        </flux:button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
 
     <!-- Delete Confirmation Modal -->
-    <flux:modal name="deleteModal" wire:model="confirmingDeletion">
-        <div class="p-6">
-            <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Konfirmasi Hapus</h3>
-            <div class="py-4">
-                <div class="text-center">
-                    <p class="text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+    @if($showDeleteModal)
+    <div class="fixed inset-0 bg-neutral-900/70 dark:bg-neutral-950/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border border-neutral-200 dark:border-neutral-700 w-96 shadow-xl rounded-md bg-white dark:!bg-neutral-800">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30">
+                    <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white mt-2">Hapus Data Susenas</h3>
+                <div class="mt-2">
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400">
                         Apakah Anda yakin ingin menghapus data Susenas ini?
-                    </p>
-                    <p class="text-xs text-neutral-500 dark:text-neutral-500">
-                        Tindakan ini tidak dapat dibatalkan.
+                        <br>Tindakan ini tidak dapat dibatalkan.
                     </p>
                 </div>
-            </div>
-            
-            <div class="flex justify-end space-x-3">
-                <flux:button type="button" variant="ghost" wire:click="cancelDelete">
-                    Batal
-                </flux:button>
-                <flux:button type="button" variant="danger" wire:click="delete">
-                    Hapus
-                </flux:button>
+                <div class="flex justify-center space-x-3 mt-6">
+                    <flux:button type="button" wire:click="closeDeleteModal" variant="ghost">
+                        Batal
+                    </flux:button>
+                    <flux:button wire:click="delete" variant="danger">
+                        Hapus
+                    </flux:button>
+                </div>
             </div>
         </div>
-    </flux:modal>
-
-    @script
-    <script>
-        window.addEventListener('print-susenas', function () {
-            window.print();
-        });
-    </script>
-    @endscript
+    </div>
+    @endif
 </div>
+
+@push('scripts')
+<script>
+    window.addEventListener('print-susenas', function () {
+        window.print();
+    });
+</script>
+@endpush

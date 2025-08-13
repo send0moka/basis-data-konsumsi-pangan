@@ -13,11 +13,16 @@ class TransaksiSusenas extends Model
         'kd_kelompokbps',
         'kd_komoditibps',
         'tahun',
-        'konsumsi_kuantity',
+        'Satuan',
+        'konsumsikuantity',
+        'konsumsinilai',
+        'konsumsigizi',
     ];
 
     protected $casts = [
-        'konsumsi_kuantity' => 'decimal:2',
+        'konsumsikuantity' => 'decimal:2',
+        'konsumsinilai' => 'decimal:2',
+        'konsumsigizi' => 'decimal:2',
         'tahun' => 'integer',
     ];
 

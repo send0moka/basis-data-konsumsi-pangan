@@ -1,55 +1,86 @@
 <!-- Admin Panel Content -->
 <div>
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        @if(auth()->user()->hasRole('superadmin'))
-        <!-- Total Users (Only for Superadmin) -->
-        <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700 transition-colors">
-            <div class="p-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 @if(auth()->user()->hasRole('superadmin')) lg:grid-cols-4 @else lg:grid-cols-3 @endif gap-6 mb-8">
+        <!-- Current User Info -->
+        <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-700">
+            <div class="p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                        <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
                     </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-neutral-500 dark:text-neutral-400 truncate">
-                                Total Pengguna
-                            </dt>
-                            <dd class="text-lg font-medium text-neutral-900 dark:text-white">
-                                {{ $totalUsers ?? 0 }}
-                            </dd>
-                        </dl>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Status akun</h3>
+                        <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ auth()->user()->name }}</p>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                            {{ ucfirst(auth()->user()->roles->first()?->name ?? 'No Role') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if(auth()->user()->hasRole('superadmin'))
+        <!-- Total Users (Only for Superadmin) -->
+        <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-700">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Total User</h3>
+                        <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ $totalUsers ?? 0 }}</p>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400">Pengguna terdaftar</p>
                     </div>
                 </div>
             </div>
         </div>
         @endif
 
-        <!-- Current User Role -->
-        <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow rounded-lg border border-neutral-200 dark:border-neutral-700 transition-colors">
-            <div class="p-5">
+        <!-- Total Transaksi NBM -->
+        <div class="bg-white dark:bg-neutral-800 overflow-hidden shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-700">
+            <div class="p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                                <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"></path>
+                        <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                             </svg>
                         </div>
                     </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-neutral-500 dark:text-neutral-400 truncate">
-                                Role Anda
-                            </dt>
-                            <dd class="text-lg font-medium text-neutral-900 dark:text-white">
-                                {{ ucfirst(auth()->user()->roles->first()?->name ?? 'No Role') }}
-                            </dd>
-                        </dl>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Transaksi NBM</h3>
+                        <p class="text-3xl font-bold text-orange-600 dark:text-orange-400">{{ $totalTransaksiNbm ?? 0 }}</p>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400">Data transaksi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Data Susenas -->
+        <div class="bg-white dark:bg-neutral-800 overflow-hidden shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-700">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Data Susenas</h3>
+                        <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">{{ $totalSusenas ?? 0 }}</p>
+                        <p class="text-sm text-neutral-500 dark:text-neutral-400">Transaksi konsumsi</p>
                     </div>
                 </div>
             </div>
@@ -488,7 +519,7 @@
                                             {{ Str::limit($susenas->komoditibps->nm_komoditibps ?? 'N/A', 15) }}
                                         </td>
                                         <td class="px-3 py-2 font-medium text-neutral-900 dark:text-white text-xs">
-                                            {{ number_format($susenas->konsumsi_kuantity, 2) }}
+                                            {{ number_format($susenas->konsumsikuantity, 2) }}
                                         </td>
                                     </tr>
                                     @empty

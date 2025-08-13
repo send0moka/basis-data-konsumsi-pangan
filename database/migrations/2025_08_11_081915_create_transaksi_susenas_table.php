@@ -16,7 +16,10 @@ return new class extends Migration
             $table->string('kd_kelompokbps'); // Foreign key ke tb_kelompokbps
             $table->string('kd_komoditibps'); // Foreign key ke tb_komoditibps
             $table->year('tahun'); // Tahun data
-            $table->decimal('konsumsi_kuantity', 15, 2); // Konsumsi dalam kuantitas
+            $table->decimal('konsumsikuantity', 10, 2); // Konsumsi dalam kuantitas
+            $table->string('Satuan', 50)->nullable(); // Satuan konsumsi
+            $table->decimal('konsumsinilai', 10, 2)->nullable(); // Nilai konsumsi
+            $table->decimal('konsumsigizi', 10, 2)->nullable(); // Gizi konsumsi
             $table->timestamps();
 
             // Foreign key constraints

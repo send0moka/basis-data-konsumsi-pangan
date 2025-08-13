@@ -68,30 +68,30 @@ class SusenasDataSeeder extends Seeder
         // Data Transaksi Susenas Sample
         $susenasData = [
             // Data tahun 2023
-            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM001', 'tahun' => 2023, 'konsumsi_kuantity' => 125.50],
-            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM002', 'tahun' => 2023, 'konsumsi_kuantity' => 98.75],
-            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM003', 'tahun' => 2023, 'konsumsi_kuantity' => 15.25],
+            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM001', 'tahun' => 2023, 'konsumsikuantity' => 125.50],
+            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM002', 'tahun' => 2023, 'konsumsikuantity' => 98.75],
+            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM003', 'tahun' => 2023, 'konsumsikuantity' => 15.25],
             
-            ['kd_kelompokbps' => 'KEL002', 'kd_komoditibps' => 'KOM004', 'tahun' => 2023, 'konsumsi_kuantity' => 45.80],
-            ['kd_kelompokbps' => 'KEL002', 'kd_komoditibps' => 'KOM005', 'tahun' => 2023, 'konsumsi_kuantity' => 32.50],
-            ['kd_kelompokbps' => 'KEL002', 'kd_komoditibps' => 'KOM006', 'tahun' => 2023, 'konsumsi_kuantity' => 28.75],
+            ['kd_kelompokbps' => 'KEL002', 'kd_komoditibps' => 'KOM004', 'tahun' => 2023, 'konsumsikuantity' => 45.80],
+            ['kd_kelompokbps' => 'KEL002', 'kd_komoditibps' => 'KOM005', 'tahun' => 2023, 'konsumsikuantity' => 32.50],
+            ['kd_kelompokbps' => 'KEL002', 'kd_komoditibps' => 'KOM006', 'tahun' => 2023, 'konsumsikuantity' => 28.75],
             
-            ['kd_kelompokbps' => 'KEL003', 'kd_komoditibps' => 'KOM007', 'tahun' => 2023, 'konsumsi_kuantity' => 12.30],
-            ['kd_kelompokbps' => 'KEL003', 'kd_komoditibps' => 'KOM008', 'tahun' => 2023, 'konsumsi_kuantity' => 25.90],
-            ['kd_kelompokbps' => 'KEL003', 'kd_komoditibps' => 'KOM009', 'tahun' => 2023, 'konsumsi_kuantity' => 18.60],
+            ['kd_kelompokbps' => 'KEL003', 'kd_komoditibps' => 'KOM007', 'tahun' => 2023, 'konsumsikuantity' => 12.30],
+            ['kd_kelompokbps' => 'KEL003', 'kd_komoditibps' => 'KOM008', 'tahun' => 2023, 'konsumsikuantity' => 25.90],
+            ['kd_kelompokbps' => 'KEL003', 'kd_komoditibps' => 'KOM009', 'tahun' => 2023, 'konsumsikuantity' => 18.60],
             
             // Data tahun 2024
-            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM001', 'tahun' => 2024, 'konsumsi_kuantity' => 130.25],
-            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM002', 'tahun' => 2024, 'konsumsi_kuantity' => 102.50],
-            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM003', 'tahun' => 2024, 'konsumsi_kuantity' => 17.75],
+            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM001', 'tahun' => 2024, 'konsumsikuantity' => 130.25],
+            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM002', 'tahun' => 2024, 'konsumsikuantity' => 102.50],
+            ['kd_kelompokbps' => 'KEL001', 'kd_komoditibps' => 'KOM003', 'tahun' => 2024, 'konsumsikuantity' => 17.75],
             
-            ['kd_kelompokbps' => 'KEL004', 'kd_komoditibps' => 'KOM010', 'tahun' => 2024, 'konsumsi_kuantity' => 22.50],
-            ['kd_kelompokbps' => 'KEL004', 'kd_komoditibps' => 'KOM011', 'tahun' => 2024, 'konsumsi_kuantity' => 8.25],
-            ['kd_kelompokbps' => 'KEL004', 'kd_komoditibps' => 'KOM012', 'tahun' => 2024, 'konsumsi_kuantity' => 5.80],
+            ['kd_kelompokbps' => 'KEL004', 'kd_komoditibps' => 'KOM010', 'tahun' => 2024, 'konsumsikuantity' => 22.50],
+            ['kd_kelompokbps' => 'KEL004', 'kd_komoditibps' => 'KOM011', 'tahun' => 2024, 'konsumsikuantity' => 8.25],
+            ['kd_kelompokbps' => 'KEL004', 'kd_komoditibps' => 'KOM012', 'tahun' => 2024, 'konsumsikuantity' => 5.80],
             
-            ['kd_kelompokbps' => 'KEL005', 'kd_komoditibps' => 'KOM013', 'tahun' => 2024, 'konsumsi_kuantity' => 15.40],
-            ['kd_kelompokbps' => 'KEL005', 'kd_komoditibps' => 'KOM014', 'tahun' => 2024, 'konsumsi_kuantity' => 12.75],
-            ['kd_kelompokbps' => 'KEL005', 'kd_komoditibps' => 'KOM015', 'tahun' => 2024, 'konsumsi_kuantity' => 20.90],
+            ['kd_kelompokbps' => 'KEL005', 'kd_komoditibps' => 'KOM013', 'tahun' => 2024, 'konsumsikuantity' => 15.40],
+            ['kd_kelompokbps' => 'KEL005', 'kd_komoditibps' => 'KOM014', 'tahun' => 2024, 'konsumsikuantity' => 12.75],
+            ['kd_kelompokbps' => 'KEL005', 'kd_komoditibps' => 'KOM015', 'tahun' => 2024, 'konsumsikuantity' => 20.90],
         ];
 
         foreach ($susenasData as $susenas) {
