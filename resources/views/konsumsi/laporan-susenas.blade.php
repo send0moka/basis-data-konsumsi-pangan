@@ -94,6 +94,7 @@
                                     Tahun Awal
                                 </label>
                                 <select x-model="filters.tahun_awal" 
+                                        @change="validateYearRange()"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                     <option value="">Pilih Tahun</option>
                                     <template x-for="year in years" :key="year">
@@ -108,9 +109,10 @@
                                     Tahun Akhir
                                 </label>
                                 <select x-model="filters.tahun_akhir" 
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        :disabled="!filters.tahun_awal"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100">
                                     <option value="">Pilih Tahun</option>
-                                    <template x-for="year in years" :key="year">
+                                    <template x-for="year in availableEndYears" :key="year">
                                         <option :value="year" x-text="year"></option>
                                     </template>
                                 </select>
@@ -392,6 +394,13 @@
                 // Generate years from 1993 to 2023
                 years: Array.from({length: 31}, (_, i) => 2023 - i),
                 
+                get availableEndYears() {
+                    if (!this.filters.tahun_awal) {
+                        return [];
+                    }
+                    return this.years.filter(year => year >= parseInt(this.filters.tahun_awal));
+                },
+                
                 get hasData() {
                     return this.results.length > 0;
                 },
@@ -498,6 +507,15 @@
                 loadKomoditi() {
                     this.availableKomoditi = this.komoditiData[this.filters.kelompok] || [];
                     this.filters.komoditi = '';
+                },
+
+                validateYearRange() {
+                    // Reset tahun akhir jika kurang dari tahun awal
+                    if (this.filters.tahun_akhir && this.filters.tahun_awal) {
+                        if (parseInt(this.filters.tahun_akhir) < parseInt(this.filters.tahun_awal)) {
+                            this.filters.tahun_akhir = '';
+                        }
+                    }
                 },
 
                 async searchData() {
