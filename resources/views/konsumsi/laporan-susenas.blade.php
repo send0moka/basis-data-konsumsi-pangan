@@ -219,17 +219,23 @@
                             
                             <!-- Custom Table with specific styling -->
                             <style>
+                                .table-container {
+                                    overflow-x: auto;
+                                    max-width: 100%;
+                                }
                                 .tg {
                                     border-collapse: collapse;
                                     border-spacing: 0;
                                     width: 100%;
                                     margin: 0 auto;
+                                    min-width: 600px;
                                 }
                                 .tg td, .tg th {
                                     border: 1px solid #d1d5db;
                                     padding: 8px 12px;
                                     text-align: left;
                                     vertical-align: top;
+                                    white-space: nowrap;
                                 }
                                 .tg .tg-header {
                                     background-color: #f3f4f6;
@@ -239,78 +245,72 @@
                                     background-color: #f9fafb;
                                     font-weight: 500;
                                 }
+                                .tg td:first-child {
+                                    position: sticky;
+                                    left: 0;
+                                    background-color: white;
+                                    z-index: 10;
+                                    min-width: 200px;
+                                }
+                                .tg th:first-child {
+                                    position: sticky;
+                                    left: 0;
+                                    background-color: #f3f4f6;
+                                    z-index: 11;
+                                    min-width: 200px;
+                                }
+                                .tg .tg-subheader:first-child {
+                                    background-color: #f9fafb;
+                                }
                             </style>
                             
-                            <table class="tg">
+                            <div class="table-container">
+                                <table class="tg">
                                 <thead>
                                     <tr>
                                         <th class="tg-header" rowspan="2">Uraian</th>
-                                        <th class="tg-header" colspan="3">Tahun</th>
+                                        <th class="tg-header" :colspan="results.length">Tahun</th>
                                     </tr>
                                     <tr>
-                                        <template x-for="(result, index) in results.slice(0, 3)" :key="index">
+                                        <template x-for="(result, index) in results" :key="index">
                                             <th class="tg-header" x-text="result.tahun"></th>
-                                        </template>
-                                        <template x-if="results.length < 3">
-                                            <template x-for="i in (3 - results.length)" :key="`empty-${i}`">
-                                                <th class="tg-header">-</th>
-                                            </template>
                                         </template>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="tg-subheader" colspan="4">Konsumsi seminggu (kapita/minggu)</td>
+                                        <td class="tg-subheader" :colspan="results.length + 1">Konsumsi seminggu (kapita/minggu)</td>
                                     </tr>
                                     <tr>
                                         <td>- Kuantitas (Kg)</td>
-                                        <template x-for="(result, index) in results.slice(0, 3)" :key="index">
+                                        <template x-for="(result, index) in results" :key="index">
                                             <td x-text="(parseFloat(result.konsumsi) * 7 / 1000).toFixed(4)"></td>
                                         </template>
-                                        <template x-if="results.length < 3">
-                                            <template x-for="i in (3 - results.length)" :key="`empty-kg-${i}`">
-                                                <td>0,0000</td>
-                                            </template>
-                                        </template>
                                     </tr>
                                     <tr>
                                         <td>- Nilai (Rp)</td>
-                                        <template x-for="(result, index) in results.slice(0, 3)" :key="index">
+                                        <template x-for="(result, index) in results" :key="index">
                                             <td x-text="formatRupiah(Math.floor(Math.random() * 50000 + 15000))"></td>
-                                        </template>
-                                        <template x-if="results.length < 3">
-                                            <template x-for="i in (3 - results.length)" :key="`empty-rp1-${i}`">
-                                                <td>0,00</td>
-                                            </template>
                                         </template>
                                     </tr>
                                     <tr>
-                                        <td class="tg-subheader" colspan="4">Konsumsi setahun (kapita/tahun)</td>
+                                        <td class="tg-subheader" :colspan="results.length + 1">Konsumsi setahun (kapita/tahun)</td>
                                     </tr>
                                     <tr>
                                         <td>- Kuantitas (Kg)</td>
-                                        <template x-for="(result, index) in results.slice(0, 3)" :key="index">
+                                        <template x-for="(result, index) in results" :key="index">
                                             <td x-text="(parseFloat(result.konsumsi) * 365 / 1000).toFixed(4)"></td>
-                                        </template>
-                                        <template x-if="results.length < 3">
-                                            <template x-for="i in (3 - results.length)" :key="`empty-kg2-${i}`">
-                                                <td>0,0000</td>
-                                            </template>
                                         </template>
                                     </tr>
                                     <tr>
                                         <td>- Nilai (Rp)</td>
-                                        <template x-for="(result, index) in results.slice(0, 3)" :key="index">
+                                        <template x-for="(result, index) in results" :key="index">
                                             <td x-text="formatRupiah(Math.floor(Math.random() * 2000000 + 800000))"></td>
-                                        </template>
-                                        <template x-if="results.length < 3">
-                                            <template x-for="i in (3 - results.length)" :key="`empty-rp2-${i}`">
-                                                <td>0,00</td>
-                                            </template>
                                         </template>
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
 
                             <!-- Additional Data Summary -->
                             <div class="mt-6 bg-gray-50 p-4 rounded-lg">
@@ -597,87 +597,89 @@
                     exportData.push(['Catatan:']);
                     exportData.push(['']);
                     
-                    // Add table header with merged cells structure
-                    exportData.push(['Uraian', 'Tahun', '', '']);
+                    // Add table header with dynamic columns based on results length
+                    const headerRow = ['Uraian'];
+                    // Add "Tahun" headers for each column
+                    for (let i = 0; i < this.results.length; i++) {
+                        headerRow.push('Tahun');
+                    }
+                    exportData.push(headerRow);
+                    
+                    // Add year row
                     const yearRow = [''];
-                    this.results.slice(0, 3).forEach(result => {
+                    this.results.forEach(result => {
                         yearRow.push(result.tahun);
                     });
-                    // Fill empty year columns if less than 3 results
-                    while (yearRow.length < 4) {
-                        yearRow.push('-');
-                    }
                     exportData.push(yearRow);
                     
-                    // Add consumption data rows
-                    exportData.push(['Konsumsi seminggu (kapita/minggu)', '', '', '']);
+                    // Add consumption data rows with dynamic columns
+                    const weeklyHeaderRow = ['Konsumsi seminggu (kapita/minggu)'];
+                    for (let i = 0; i < this.results.length; i++) {
+                        weeklyHeaderRow.push('');
+                    }
+                    exportData.push(weeklyHeaderRow);
                     
                     // Kuantitas (Kg) - seminggu
                     const kgWeekRow = ['- Kuantitas (Kg)'];
-                    this.results.slice(0, 3).forEach(result => {
+                    this.results.forEach(result => {
                         kgWeekRow.push((parseFloat(result.konsumsi) * 7 / 1000).toFixed(4));
                     });
-                    while (kgWeekRow.length < 4) {
-                        kgWeekRow.push('0,0000');
-                    }
                     exportData.push(kgWeekRow);
                     
                     // Nilai (Rp) - seminggu
                     const rpWeekRow = ['- Nilai (Rp)'];
-                    this.results.slice(0, 3).forEach(result => {
+                    this.results.forEach(result => {
                         rpWeekRow.push(this.formatRupiah(Math.floor(Math.random() * 50000 + 15000)));
                     });
-                    while (rpWeekRow.length < 4) {
-                        rpWeekRow.push('0,00');
-                    }
                     exportData.push(rpWeekRow);
                     
-                    // Add yearly consumption
-                    exportData.push(['Konsumsi setahun (kapita/tahun)', '', '', '']);
+                    // Add yearly consumption with dynamic columns
+                    const yearlyHeaderRow = ['Konsumsi setahun (kapita/tahun)'];
+                    for (let i = 0; i < this.results.length; i++) {
+                        yearlyHeaderRow.push('');
+                    }
+                    exportData.push(yearlyHeaderRow);
                     
                     // Kuantitas (Kg) - setahun
                     const kgYearRow = ['- Kuantitas (Kg)'];
-                    this.results.slice(0, 3).forEach(result => {
+                    this.results.forEach(result => {
                         kgYearRow.push((parseFloat(result.konsumsi) * 365 / 1000).toFixed(4));
                     });
-                    while (kgYearRow.length < 4) {
-                        kgYearRow.push('0,0000');
-                    }
                     exportData.push(kgYearRow);
                     
                     // Nilai (Rp) - setahun
                     const rpYearRow = ['- Nilai (Rp)'];
-                    this.results.slice(0, 3).forEach(result => {
+                    this.results.forEach(result => {
                         rpYearRow.push(this.formatRupiah(Math.floor(Math.random() * 2000000 + 800000)));
                     });
-                    while (rpYearRow.length < 4) {
-                        rpYearRow.push('0,00');
-                    }
                     exportData.push(rpYearRow);
                     
                     // Create worksheet
                     const ws = XLSX.utils.aoa_to_sheet(exportData);
                     
-                    // Define merge ranges for proper table layout
+                    // Define merge ranges for proper table layout with dynamic columns
                     if (!ws['!merges']) ws['!merges'] = [];
+                    
+                    const numCols = this.results.length;
                     
                     // Merge cells for "Uraian" header (row 7, spans 2 rows)
                     ws['!merges'].push({s: {r: 6, c: 0}, e: {r: 7, c: 0}});
                     
-                    // Merge cells for "Tahun" header (row 7, spans 3 columns)
-                    ws['!merges'].push({s: {r: 6, c: 1}, e: {r: 6, c: 3}});
+                    // Merge cells for "Tahun" header (row 7, spans all year columns)
+                    if (numCols > 1) {
+                        ws['!merges'].push({s: {r: 6, c: 1}, e: {r: 6, c: numCols}});
+                    }
                     
                     // Merge cells for category headers
-                    ws['!merges'].push({s: {r: 8, c: 0}, e: {r: 8, c: 3}}); // Konsumsi seminggu
-                    ws['!merges'].push({s: {r: 11, c: 0}, e: {r: 11, c: 3}}); // Konsumsi setahun
+                    ws['!merges'].push({s: {r: 8, c: 0}, e: {r: 8, c: numCols}}); // Konsumsi seminggu
+                    ws['!merges'].push({s: {r: 11, c: 0}, e: {r: 11, c: numCols}}); // Konsumsi setahun
                     
-                    // Set column widths
-                    ws['!cols'] = [
-                        {width: 25}, // Uraian column
-                        {width: 15}, // Year 1
-                        {width: 15}, // Year 2
-                        {width: 15}  // Year 3
-                    ];
+                    // Set column widths dynamically
+                    const colWidths = [{width: 25}]; // Uraian column
+                    for (let i = 0; i < numCols; i++) {
+                        colWidths.push({width: 15}); // Year columns
+                    }
+                    ws['!cols'] = colWidths;
                     
                     // Add worksheet to workbook
                     XLSX.utils.book_append_sheet(wb, ws, 'Data Susenas');
