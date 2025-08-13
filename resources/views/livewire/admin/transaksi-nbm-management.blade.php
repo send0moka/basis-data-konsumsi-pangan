@@ -257,383 +257,450 @@
     </div>
 
     <!-- Create Modal -->
-    <flux:modal name="createModal" wire:model="showCreateModal" style="full">
-        <div class="p-6">
-            <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Tambah Transaksi NBM</h3>
-            
-            <form wire:submit.prevent="createTransaksi">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Basic Info -->
-                    <div class="space-y-4 md:col-span-3">
-                        <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2">Informasi Dasar</h4>
+    @if($showCreateModal)
+    <div class="fixed inset-0 bg-neutral-900/70 dark:bg-neutral-950/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border border-neutral-200 dark:border-neutral-700 max-w-5xl shadow-xl rounded-md bg-white dark:!bg-neutral-800">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-6">Tambah Transaksi NBM</h3>
+                <form wire:submit.prevent="createTransaksi">
+                    <div class="max-h-96 overflow-y-auto pr-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            
+                            <!-- Informasi Dasar -->
+                            <div class="lg:col-span-3">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b mb-1">Informasi Dasar</h4>
+                            </div>
+                            
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kode Kelompok</label>
+                                <div class="relative">
+                                    <select wire:model.live="kode_kelompok" class="w-full pl-4 pr-10 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                        <option value="">Pilih Kelompok</option>
+                                        @foreach($kelompokOptions as $kelompok)
+                                            <option value="{{ $kelompok['kode'] }}">{{ $kelompok['kode'] }} - {{ $kelompok['nama'] }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-400">
+                                        <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('kode_kelompok') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kode Komoditi</label>
+                                <div class="relative">
+                                    <select wire:model="kode_komoditi" class="w-full pl-4 pr-10 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                        <option value="">Pilih Komoditi</option>
+                                        @foreach($komoditiOptions as $komoditi)
+                                            <option value="{{ $komoditi['kode'] }}">{{ $komoditi['kode'] }} - {{ $komoditi['nama'] }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-400">
+                                        <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('kode_komoditi') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Tahun</label>
+                                <input type="number" wire:model="tahun" min="1900" max="2100" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('tahun') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Status Angka</label>
+                                <div class="relative">
+                                    <select wire:model="status_angka" class="w-full pl-4 pr-10 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                        <option value="">Pilih Status</option>
+                                        <option value="tetap">Tetap</option>
+                                        <option value="sementara">Sementara</option>
+                                        <option value="sangat sementara">Sangat Sementara</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-400">
+                                        <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('status_angka') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            
+                            <!-- Data Produksi & Perdagangan -->
+                            <div class="lg:col-span-3">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-4">Data Produksi & Perdagangan</h4>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Masukan</label>
+                                <input type="number" step="0.0001" wire:model="masukan" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('masukan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Keluaran</label>
+                                <input type="number" step="0.0001" wire:model="keluaran" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('keluaran') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Impor</label>
+                                <input type="number" step="0.0001" wire:model="impor" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('impor') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Ekspor</label>
+                                <input type="number" step="0.0001" wire:model="ekspor" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('ekspor') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Perubahan Stok</label>
+                                <input type="number" step="0.0001" wire:model="perubahan_stok" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('perubahan_stok') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Data Penggunaan -->
+                            <div class="lg:col-span-3">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-6">Data Penggunaan</h4>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Pakan</label>
+                                <input type="number" step="0.0001" wire:model="pakan" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('pakan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Bibit</label>
+                                <input type="number" step="0.0001" wire:model="bibit" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('bibit') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Makanan</label>
+                                <input type="number" step="0.0001" wire:model="makanan" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('makanan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Bukan Makanan</label>
+                                <input type="number" step="0.0001" wire:model="bukan_makanan" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('bukan_makanan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Tercecer</label>
+                                <input type="number" step="0.0001" wire:model="tercecer" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('tercecer') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Penggunaan Lain</label>
+                                <input type="number" step="0.0001" wire:model="penggunaan_lain" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('penggunaan_lain') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Data Konsumsi & Gizi -->
+                            <div class="lg:col-span-3">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-6">Data Konsumsi & Gizi</h4>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Bahan Makanan</label>
+                                <input type="number" step="0.0001" wire:model="bahan_makanan" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('bahan_makanan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kg/Tahun</label>
+                                <input type="number" step="0.0001" wire:model="kg_tahun" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('kg_tahun') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Gram/Hari</label>
+                                <input type="number" step="0.0001" wire:model="gram_hari" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('gram_hari') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kalori/Hari</label>
+                                <input type="number" step="0.0001" wire:model="kalori_hari" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('kalori_hari') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Protein/Hari</label>
+                                <input type="number" step="0.0001" wire:model="protein_hari" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('protein_hari') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Lemak/Hari</label>
+                                <input type="number" step="0.000001" wire:model="lemak_hari" placeholder="0.000000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('lemak_hari') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
                     </div>
                     
-                    <flux:field>
-                        <flux:label>Kode Kelompok</flux:label>
-                        <flux:select wire:model.live="kode_kelompok" placeholder="Pilih Kelompok">
-                            @foreach($kelompokOptions as $kelompok)
-                                <option value="{{ $kelompok['kode'] }}">{{ $kelompok['kode'] }} - {{ $kelompok['nama'] }}</option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="kode_kelompok" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Kode Komoditi</flux:label>
-                        <flux:select wire:model="kode_komoditi" placeholder="Pilih Komoditi">
-                            @foreach($komoditiOptions as $komoditi)
-                                <option value="{{ $komoditi['kode'] }}">{{ $komoditi['kode'] }} - {{ $komoditi['nama'] }}</option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="kode_komoditi" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Tahun</flux:label>
-                        <flux:input type="number" wire:model="tahun" min="1900" max="2100" />
-                        <flux:error name="tahun" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Status Angka</flux:label>
-                        <flux:select wire:model="status_angka">
-                            <option value="tetap">Tetap</option>
-                            <option value="sementara">Sementara</option>
-                            <option value="sangat sementara">Sangat Sementara</option>
-                        </flux:select>
-                        <flux:error name="status_angka" />
-                    </flux:field>
-
-                    <!-- Production Data -->
-                    <div class="space-y-4 md:col-span-3">
-                        <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2">Data Produksi</h4>
+                    <div class="flex justify-end space-x-3 mt-8 pt-6">
+                        <flux:button type="button" wire:click="closeCreateModal" variant="ghost">
+                            Batal
+                        </flux:button>
+                        <flux:button type="submit" variant="primary">
+                            Simpan
+                        </flux:button>
                     </div>
-
-                    <flux:field>
-                        <flux:label>Masukan</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="masukan" />
-                        <flux:error name="masukan" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Keluaran</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="keluaran" />
-                        <flux:error name="keluaran" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Impor</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="impor" />
-                        <flux:error name="impor" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Ekspor</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="ekspor" />
-                        <flux:error name="ekspor" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Perubahan Stok</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="perubahan_stok" />
-                        <flux:error name="perubahan_stok" />
-                    </flux:field>
-
-                    <!-- Usage Data -->
-                    <div class="space-y-4 md:col-span-3">
-                        <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2">Data Penggunaan</h4>
-                    </div>
-
-                    <flux:field>
-                        <flux:label>Pakan</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="pakan" />
-                        <flux:error name="pakan" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Bibit</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="bibit" />
-                        <flux:error name="bibit" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Makanan</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="makanan" />
-                        <flux:error name="makanan" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Bukan Makanan</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="bukan_makanan" />
-                        <flux:error name="bukan_makanan" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Tercecer</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="tercecer" />
-                        <flux:error name="tercecer" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Penggunaan Lain</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="penggunaan_lain" />
-                        <flux:error name="penggunaan_lain" />
-                    </flux:field>
-
-                    <!-- Nutrition Data -->
-                    <div class="space-y-4 md:col-span-3">
-                        <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2">Data Gizi</h4>
-                    </div>
-
-                    <flux:field>
-                        <flux:label>Bahan Makanan</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="bahan_makanan" />
-                        <flux:error name="bahan_makanan" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Kg/Tahun</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="kg_tahun" />
-                        <flux:error name="kg_tahun" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Gram/Hari</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="gram_hari" />
-                        <flux:error name="gram_hari" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Kalori/Hari</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="kalori_hari" />
-                        <flux:error name="kalori_hari" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Protein/Hari</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="protein_hari" />
-                        <flux:error name="protein_hari" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Lemak/Hari</flux:label>
-                        <flux:input type="number" step="0.000001" wire:model="lemak_hari" />
-                        <flux:error name="lemak_hari" />
-                    </flux:field>
-                </div>
-
-                <div class="flex justify-end space-x-3 mt-6 pt-4 border-t">
-                    <flux:button type="button" variant="ghost" wire:click="closeCreateModal">
-                        Batal
-                    </flux:button>
-                    <flux:button type="submit" variant="primary">
-                        Simpan
-                    </flux:button>
-                </div>
-            </form>
-        </div>
-    </flux:modal>
-
-    <!-- Edit Modal -->
-    <flux:modal name="editModal" wire:model="showEditModal" style="full">
-        <div class="p-6">
-            <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Edit Transaksi NBM</h3>
-            
-            <form wire:submit.prevent="updateTransaksi">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Basic Info -->
-                    <div class="space-y-4 md:col-span-3">
-                        <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2">Informasi Dasar</h4>
-                    </div>
-                    
-                    <flux:field>
-                        <flux:label>Kode Kelompok</flux:label>
-                        <flux:select wire:model.live="kode_kelompok" placeholder="Pilih Kelompok">
-                            @foreach($kelompokOptions as $kelompok)
-                                <option value="{{ $kelompok['kode'] }}">{{ $kelompok['kode'] }} - {{ $kelompok['nama'] }}</option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="kode_kelompok" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Kode Komoditi</flux:label>
-                        <flux:select wire:model="kode_komoditi" placeholder="Pilih Komoditi">
-                            @foreach($komoditiOptions as $komoditi)
-                                <option value="{{ $komoditi['kode'] }}">{{ $komoditi['kode'] }} - {{ $komoditi['nama'] }}</option>
-                            @endforeach
-                        </flux:select>
-                        <flux:error name="kode_komoditi" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Tahun</flux:label>
-                        <flux:input type="number" wire:model="tahun" min="1900" max="2100" />
-                        <flux:error name="tahun" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Status Angka</flux:label>
-                        <flux:select wire:model="status_angka">
-                            <option value="tetap">Tetap</option>
-                            <option value="sementara">Sementara</option>
-                            <option value="sangat sementara">Sangat Sementara</option>
-                        </flux:select>
-                        <flux:error name="status_angka" />
-                    </flux:field>
-
-                    <!-- Production Data -->
-                    <div class="space-y-4 md:col-span-3">
-                        <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2">Data Produksi</h4>
-                    </div>
-
-                    <flux:field>
-                        <flux:label>Masukan</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="masukan" />
-                        <flux:error name="masukan" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Keluaran</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="keluaran" />
-                        <flux:error name="keluaran" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Impor</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="impor" />
-                        <flux:error name="impor" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Ekspor</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="ekspor" />
-                        <flux:error name="ekspor" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Perubahan Stok</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="perubahan_stok" />
-                        <flux:error name="perubahan_stok" />
-                    </flux:field>
-
-                    <!-- Usage Data -->
-                    <div class="space-y-4 md:col-span-3">
-                        <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2">Data Penggunaan</h4>
-                    </div>
-
-                    <flux:field>
-                        <flux:label>Pakan</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="pakan" />
-                        <flux:error name="pakan" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Bibit</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="bibit" />
-                        <flux:error name="bibit" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Makanan</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="makanan" />
-                        <flux:error name="makanan" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Bukan Makanan</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="bukan_makanan" />
-                        <flux:error name="bukan_makanan" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Tercecer</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="tercecer" />
-                        <flux:error name="tercecer" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Penggunaan Lain</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="penggunaan_lain" />
-                        <flux:error name="penggunaan_lain" />
-                    </flux:field>
-
-                    <!-- Nutrition Data -->
-                    <div class="space-y-4 md:col-span-3">
-                        <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2">Data Gizi</h4>
-                    </div>
-
-                    <flux:field>
-                        <flux:label>Bahan Makanan</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="bahan_makanan" />
-                        <flux:error name="bahan_makanan" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Kg/Tahun</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="kg_tahun" />
-                        <flux:error name="kg_tahun" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Gram/Hari</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="gram_hari" />
-                        <flux:error name="gram_hari" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Kalori/Hari</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="kalori_hari" />
-                        <flux:error name="kalori_hari" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Protein/Hari</flux:label>
-                        <flux:input type="number" step="0.0001" wire:model="protein_hari" />
-                        <flux:error name="protein_hari" />
-                    </flux:field>
-
-                    <flux:field>
-                        <flux:label>Lemak/Hari</flux:label>
-                        <flux:input type="number" step="0.000001" wire:model="lemak_hari" />
-                        <flux:error name="lemak_hari" />
-                    </flux:field>
-                </div>
-
-                <div class="flex justify-end space-x-3 mt-6 pt-4 border-t">
-                    <flux:button type="button" variant="ghost" wire:click="closeEditModal">
-                        Batal
-                    </flux:button>
-                    <flux:button type="submit" variant="primary">
-                        Update
-                    </flux:button>
-                </div>
-            </form>
-        </div>
-    </flux:modal>
-
-    <!-- Delete Modal -->
-    <flux:modal name="deleteModal" wire:model="showDeleteModal">
-        <div class="p-6">
-            <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Konfirmasi Hapus</h3>
-            @if($deletingTransaksi)
-                <p class="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-                    Apakah Anda yakin ingin menghapus transaksi NBM untuk kelompok 
-                    <strong>{{ $deletingTransaksi->kode_kelompok }}</strong>, 
-                    komoditi <strong>{{ $deletingTransaksi->kode_komoditi }}</strong>, 
-                    tahun <strong>{{ $deletingTransaksi->tahun }}</strong>?
-                </p>
-            @endif
-            <div class="flex justify-end space-x-3">
-                <flux:button type="button" variant="ghost" wire:click="closeDeleteModal">
-                    Batal
-                </flux:button>
-                <flux:button type="button" variant="danger" wire:click="deleteTransaksi">
-                    Hapus
-                </flux:button>
+                </form>
             </div>
         </div>
-    </flux:modal>
+    </div>
+    @endif
+
+    <!-- Edit Modal -->
+    @if($showEditModal)
+    <div class="fixed inset-0 bg-neutral-900/70 dark:bg-neutral-950/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border border-neutral-200 dark:border-neutral-700 max-w-5xl shadow-xl rounded-md bg-white dark:!bg-neutral-800">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-6">Edit Transaksi NBM</h3>
+                <form wire:submit.prevent="updateTransaksi">
+                    <div class="max-h-96 overflow-y-auto pr-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            
+                            <!-- Informasi Dasar -->
+                            <div class="lg:col-span-3">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2">Informasi Dasar</h4>
+                            </div>
+                            
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kode Kelompok</label>
+                                <div class="relative">
+                                    <select wire:model.live="kode_kelompok" class="w-full pl-4 pr-10 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                        <option value="">Pilih Kelompok</option>
+                                        @foreach($kelompokOptions as $kelompok)
+                                            <option value="{{ $kelompok['kode'] }}">{{ $kelompok['kode'] }} - {{ $kelompok['nama'] }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-400">
+                                        <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('kode_kelompok') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kode Komoditi</label>
+                                <div class="relative">
+                                    <select wire:model="kode_komoditi" class="w-full pl-4 pr-10 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                        <option value="">Pilih Komoditi</option>
+                                        @foreach($komoditiOptions as $komoditi)
+                                            <option value="{{ $komoditi['kode'] }}">{{ $komoditi['kode'] }} - {{ $komoditi['nama'] }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-400">
+                                        <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('kode_komoditi') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Tahun</label>
+                                <input type="number" wire:model="tahun" min="1900" max="2100" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('tahun') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Status Angka</label>
+                                <div class="relative">
+                                    <select wire:model="status_angka" class="w-full pl-4 pr-10 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                        <option value="">Pilih Status</option>
+                                        <option value="tetap">Tetap</option>
+                                        <option value="sementara">Sementara</option>
+                                        <option value="sangat sementara">Sangat Sementara</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-400">
+                                        <svg class="h-5 w-5 fill-current" viewBox="0 0 20 20">
+                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                @error('status_angka') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            
+                            <!-- Data Produksi & Perdagangan -->
+                            <div class="lg:col-span-3">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-6">Data Produksi & Perdagangan</h4>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Masukan</label>
+                                <input type="number" step="0.0001" wire:model="masukan" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('masukan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Keluaran</label>
+                                <input type="number" step="0.0001" wire:model="keluaran" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('keluaran') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Impor</label>
+                                <input type="number" step="0.0001" wire:model="impor" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('impor') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Ekspor</label>
+                                <input type="number" step="0.0001" wire:model="ekspor" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('ekspor') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Perubahan Stok</label>
+                                <input type="number" step="0.0001" wire:model="perubahan_stok" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('perubahan_stok') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Data Penggunaan -->
+                            <div class="lg:col-span-3">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-6">Data Penggunaan</h4>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Pakan</label>
+                                <input type="number" step="0.0001" wire:model="pakan" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('pakan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Bibit</label>
+                                <input type="number" step="0.0001" wire:model="bibit" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('bibit') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Makanan</label>
+                                <input type="number" step="0.0001" wire:model="makanan" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('makanan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Bukan Makanan</label>
+                                <input type="number" step="0.0001" wire:model="bukan_makanan" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('bukan_makanan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Tercecer</label>
+                                <input type="number" step="0.0001" wire:model="tercecer" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('tercecer') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Penggunaan Lain</label>
+                                <input type="number" step="0.0001" wire:model="penggunaan_lain" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('penggunaan_lain') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Data Konsumsi & Gizi -->
+                            <div class="lg:col-span-3">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-6">Data Konsumsi & Gizi</h4>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Bahan Makanan</label>
+                                <input type="number" step="0.0001" wire:model="bahan_makanan" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('bahan_makanan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kg/Tahun</label>
+                                <input type="number" step="0.0001" wire:model="kg_tahun" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('kg_tahun') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Gram/Hari</label>
+                                <input type="number" step="0.0001" wire:model="gram_hari" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('gram_hari') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kalori/Hari</label>
+                                <input type="number" step="0.0001" wire:model="kalori_hari" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('kalori_hari') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Protein/Hari</label>
+                                <input type="number" step="0.0001" wire:model="protein_hari" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('protein_hari') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Lemak/Hari</label>
+                                <input type="number" step="0.000001" wire:model="lemak_hari" placeholder="0.000000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('lemak_hari') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 mt-8 pt-6">
+                        <flux:button type="button" wire:click="closeEditModal" variant="ghost">
+                            Batal
+                        </flux:button>
+                        <flux:button type="submit" variant="primary">
+                            Update
+                        </flux:button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Delete Modal -->
+    @if($showDeleteModal)
+    <div class="fixed inset-0 bg-neutral-900/70 dark:bg-neutral-950/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border border-neutral-200 dark:border-neutral-700 w-96 shadow-xl rounded-md bg-white dark:!bg-neutral-800">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30">
+                    <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white mt-2">Hapus Transaksi NBM</h3>
+                <div class="mt-2">
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                        Apakah Anda yakin ingin menghapus transaksi NBM ini?
+                        <br>Tindakan ini tidak dapat dibatalkan.
+                    </p>
+                </div>
+                <div class="flex justify-center space-x-3 mt-6">
+                    <flux:button type="button" variant="ghost" wire:click="closeDeleteModal">
+                        Batal
+                    </flux:button>
+                    <flux:button type="button" variant="danger" wire:click="deleteTransaksi">
+                        Hapus
+                    </flux:button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
     @script
     <script>

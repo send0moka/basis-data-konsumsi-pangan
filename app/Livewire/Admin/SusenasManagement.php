@@ -5,8 +5,10 @@ namespace App\Livewire\Admin;
 use App\Models\TransaksiSusenas;
 use App\Models\TbKelompokbps;
 use App\Models\TbKomoditibps;
+use App\Exports\SusenasExport;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SusenasManagement extends Component
 {
@@ -15,18 +17,27 @@ class SusenasManagement extends Component
     public $kd_kelompokbps = '';
     public $kd_komoditibps = '';
     public $tahun = '';
-    public $konsumsi_kuantity = '';
+    public $Satuan = '';
+    public $konsumsikuantity = '';
+    public $konsumsinilai = '';
+    public $konsumsigizi = '';
     public $editingId = null;
-    public $showModal = false;
-    public $confirmingDeletion = false;
-    public $deletingId = null;
+    public $showCreateModal = false;
+    public $showEditModal = false;
+    public $showDeleteModal = false;
     public $search = '';
+    public $perPage = 10;
+    public $perPageOptions = [10, 25, 50, 100];
+    public $exportFormat = 'xlsx';
 
     protected $rules = [
         'kd_kelompokbps' => 'required|string|exists:tb_kelompokbps,kd_kelompokbps',
         'kd_komoditibps' => 'required|string|exists:tb_komoditibps,kd_komoditibps',
         'tahun' => 'required|integer|min:1900|max:2100',
-        'konsumsi_kuantity' => 'required|numeric|min:0',
+        'Satuan' => 'nullable|string|max:50',
+        'konsumsikuantity' => 'required|numeric|min:0',
+        'konsumsinilai' => 'nullable|numeric|min:0',
+        'konsumsigizi' => 'nullable|numeric|min:0',
     ];
 
     protected $messages = [
@@ -38,9 +49,9 @@ class SusenasManagement extends Component
         'tahun.integer' => 'Tahun harus berupa angka.',
         'tahun.min' => 'Tahun minimal 1900.',
         'tahun.max' => 'Tahun maksimal 2100.',
-        'konsumsi_kuantity.required' => 'Konsumsi kuantitas harus diisi.',
-        'konsumsi_kuantity.numeric' => 'Konsumsi kuantitas harus berupa angka.',
-        'konsumsi_kuantity.min' => 'Konsumsi kuantitas tidak boleh negatif.',
+        'konsumsikuantity.required' => 'Konsumsi kuantitas harus diisi.',
+        'konsumsikuantity.numeric' => 'Konsumsi kuantitas harus berupa angka.',
+        'konsumsikuantity.min' => 'Konsumsi kuantitas tidak boleh negatif.',
     ];
 
     public function mount()
@@ -57,7 +68,7 @@ class SusenasManagement extends Component
         $susenas = TransaksiSusenas::with(['kelompokbps', 'komoditibps'])
             ->when($this->search, function ($query) {
                 $query->where('tahun', 'like', '%' . $this->search . '%')
-                      ->orWhere('konsumsi_kuantity', 'like', '%' . $this->search . '%')
+                      ->orWhere('konsumsikuantity', 'like', '%' . $this->search . '%')
                       ->orWhereHas('kelompokbps', function($q) {
                           $q->where('nm_kelompokbps', 'like', '%' . $this->search . '%');
                       })
@@ -68,7 +79,7 @@ class SusenasManagement extends Component
             ->orderBy('tahun', 'desc')
             ->orderBy('kd_kelompokbps')
             ->orderBy('kd_komoditibps')
-            ->paginate(10);
+            ->paginate($this->perPage);
 
         $kelompokbps = TbKelompokbps::orderBy('nm_kelompokbps')->get();
         $komoditibps = TbKomoditibps::with('kelompokbps')
@@ -87,7 +98,7 @@ class SusenasManagement extends Component
         
         $this->resetForm();
         $this->tahun = date('Y'); // Reset ke tahun sekarang
-        $this->showModal = true;
+        $this->showCreateModal = true;
     }
 
     public function edit($id)
@@ -99,8 +110,36 @@ class SusenasManagement extends Component
         $this->kd_kelompokbps = $susenas->kd_kelompokbps;
         $this->kd_komoditibps = $susenas->kd_komoditibps;
         $this->tahun = $susenas->tahun;
-        $this->konsumsi_kuantity = $susenas->konsumsi_kuantity;
-        $this->showModal = true;
+        $this->Satuan = $susenas->Satuan;
+        $this->konsumsikuantity = $susenas->konsumsikuantity;
+        $this->konsumsinilai = $susenas->konsumsinilai;
+        $this->konsumsigizi = $susenas->konsumsigizi;
+        $this->showEditModal = true;
+    }
+
+    public function cancel()
+    {
+        $this->showCreateModal = false;
+        $this->showEditModal = false;
+        $this->resetForm();
+    }
+
+    public function closeCreateModal()
+    {
+        $this->showCreateModal = false;
+        $this->resetForm();
+    }
+
+    public function closeEditModal()
+    {
+        $this->showEditModal = false;
+        $this->resetForm();
+    }
+
+    public function closeDeleteModal()
+    {
+        $this->showDeleteModal = false;
+        $this->editingId = null;
     }
 
     public function save()
@@ -115,7 +154,10 @@ class SusenasManagement extends Component
                 'kd_kelompokbps' => $this->kd_kelompokbps,
                 'kd_komoditibps' => $this->kd_komoditibps,
                 'tahun' => $this->tahun,
-                'konsumsi_kuantity' => $this->konsumsi_kuantity,
+                'Satuan' => $this->Satuan,
+                'konsumsikuantity' => $this->konsumsikuantity,
+                'konsumsinilai' => $this->konsumsinilai,
+                'konsumsigizi' => $this->konsumsigizi,
             ]);
 
             session()->flash('message', 'Data susenas berhasil diperbarui.');
@@ -126,14 +168,18 @@ class SusenasManagement extends Component
                 'kd_kelompokbps' => $this->kd_kelompokbps,
                 'kd_komoditibps' => $this->kd_komoditibps,
                 'tahun' => $this->tahun,
-                'konsumsi_kuantity' => $this->konsumsi_kuantity,
+                'Satuan' => $this->Satuan,
+                'konsumsikuantity' => $this->konsumsikuantity,
+                'konsumsinilai' => $this->konsumsinilai,
+                'konsumsigizi' => $this->konsumsigizi,
             ]);
 
             session()->flash('message', 'Data susenas berhasil ditambahkan.');
         }
 
         $this->resetForm();
-        $this->showModal = false;
+        $this->showCreateModal = false;
+        $this->showEditModal = false;
         $this->dispatch('close-modal');
     }
 
@@ -141,25 +187,25 @@ class SusenasManagement extends Component
     {
         abort_unless(auth()->user()->hasRole(['superadmin', 'admin']), 403);
         
-        $this->deletingId = $id;
-        $this->confirmingDeletion = true;
+        $this->editingId = $id;
+        $this->showDeleteModal = true;
     }
 
     public function delete()
     {
         abort_unless(auth()->user()->hasRole(['superadmin', 'admin']), 403);
         
-        TransaksiSusenas::findOrFail($this->deletingId)->delete();
+        TransaksiSusenas::findOrFail($this->editingId)->delete();
         
         session()->flash('message', 'Data susenas berhasil dihapus.');
-        $this->confirmingDeletion = false;
-        $this->deletingId = null;
+        $this->showDeleteModal = false;
+        $this->editingId = null;
     }
 
     public function cancelDelete()
     {
-        $this->confirmingDeletion = false;
-        $this->deletingId = null;
+        $this->showDeleteModal = false;
+        $this->editingId = null;
     }
 
     public function resetForm()
@@ -168,13 +214,17 @@ class SusenasManagement extends Component
         $this->kd_kelompokbps = '';
         $this->kd_komoditibps = '';
         $this->tahun = date('Y');
-        $this->konsumsi_kuantity = '';
+        $this->Satuan = '';
+        $this->konsumsikuantity = '';
+        $this->konsumsinilai = '';
+        $this->konsumsigizi = '';
         $this->resetErrorBag();
     }
 
     public function closeModal()
     {
-        $this->showModal = false;
+        $this->showCreateModal = false;
+        $this->showEditModal = false;
         $this->resetForm();
         $this->dispatch('close-modal');
     }
@@ -182,6 +232,21 @@ class SusenasManagement extends Component
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function export()
+    {
+        return Excel::download(new SusenasExport($this->search), 'data-susenas.' . $this->exportFormat);
+    }
+
+    public function print()
+    {
+        $this->dispatch('print-susenas');
     }
 
     public function updatedKdKelompokbps()

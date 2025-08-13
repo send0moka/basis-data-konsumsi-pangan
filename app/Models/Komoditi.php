@@ -24,4 +24,12 @@ class Komoditi extends Model
             'updated_at' => 'datetime:Y-m-d H:i:s',
         ];
     }
+
+    /**
+     * Get the kelompok that owns the komoditi.
+     */
+    public function kelompok()
+    {
+        return $this->belongsTo(Kelompok::class, 'kode_kelompok', 'kode');
+    }
 }

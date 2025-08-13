@@ -14,6 +14,7 @@
             'totalRoles' => $totalRoles ?? 0,
             'totalKelompok' => $totalKelompok ?? 0,
             'totalKomoditi' => $totalKomoditi ?? 0,
+            'totalTransaksiNbm' => $totalTransaksiNbm ?? 0,
             'recentUsers' => $recentUsers ?? collect(),
             'recentKelompok' => $recentKelompok ?? collect(),
             'recentKomoditi' => $recentKomoditi ?? collect()

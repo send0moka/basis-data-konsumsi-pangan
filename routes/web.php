@@ -74,7 +74,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 });
 
 // Susenas Routes (accessible by both superadmin and admin)
-Route::middleware(['auth', 'role:superadmin|admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'permission:view kelompokbps|view komoditibps|view susenas'])->prefix('admin')->name('admin.')->group(function () {
     Route::view('kelompok-bps', 'admin.kelompok-bps')->name('kelompok-bps');
     Route::view('komoditi-bps', 'admin.komoditi-bps')->name('komoditi-bps');
     Route::view('susenas', 'admin.susenas')->name('susenas');
