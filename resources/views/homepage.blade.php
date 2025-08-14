@@ -12,6 +12,7 @@
                 'https://images.unsplash.com/photo-1573414405995-2012861b74e0?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', // Jahe kunyit
                 'https://images.unsplash.com/photo-1590868309235-ea34bed7bd7f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'  // Kentang
             ],
+            intervalId: null,
             nextSlide() {
                 this.currentSlide = (this.currentSlide + 1) % this.slides.length;
             },
@@ -20,8 +21,16 @@
             },
             goToSlide(index) {
                 this.currentSlide = index;
+            },
+            startAutoSlide() {
+                this.intervalId = setInterval(() => {
+                    this.nextSlide();
+                }, 5000);
+            },
+            init() {
+                this.startAutoSlide();
             }
-        }" x-init="setInterval(() => { nextSlide() }, 5000)">
+        }" x-init="init()">
             <!-- Carousel Images -->
             <template x-for="(slide, index) in slides" :key="index">
                 <div x-show="currentSlide === index" 

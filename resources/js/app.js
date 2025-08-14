@@ -1,14 +1,43 @@
-import Alpine from 'alpinejs'
+// Alpine.js is provided by Flux UI for admin pages
+// For landing pages, we'll dynamically load it if needed
 
-window.Alpine = Alpine
+// Simple approach: Load Alpine.js for non-admin pages
+document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const isAdminPage = currentPath.startsWith('/admin') || 
+                       currentPath.startsWith('/dashboard') ||
+                       currentPath.startsWith('/login') ||
+                       currentPath.startsWith('/settings') ||
+                       document.querySelector('flux\\:main, flux\\:sidebar, [data-flux]');
+    
+    if (!isAdminPage && !window.Alpine) {
+        // Load Alpine.js for landing pages
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js';
+        script.defer = true;
+        document.head.appendChild(script);
+    }
+});
 
-Alpine.start()
+// Initialize global flags to prevent duplicate listeners
+if (!window.printHandlersInitialized) {
+    window.printHandlersInitialized = {
+        users: false,
+        kelompok: false,
+        komoditi: false,
+        kelompokbps: false,
+        komoditibps: false
+    };
+}
 
 // Global print handler for User Management
 document.addEventListener('livewire:init', () => {
-	if (window.__usersPrintListenerAttached) return;
-	window.__usersPrintListenerAttached = true;
-	if (typeof Livewire === 'undefined') return;
+	// Remove previous listeners to prevent duplicates
+	if (window.printHandlersInitialized.users) return;
+	
+	// Use Livewire.on instead of document event for better scoping
+	if (typeof Livewire !== 'undefined') {
+		window.printHandlersInitialized.users = true;
 
 	Livewire.on('print-users', () => {
 		const wrap = document.getElementById('users-table-wrapper');
@@ -235,6 +264,7 @@ document.addEventListener('livewire:init', () => {
 			}
 		};
 	});
+	} // Close Livewire scope
 });
 
 // Print handler for Susenas
