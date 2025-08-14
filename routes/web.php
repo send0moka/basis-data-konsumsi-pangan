@@ -17,6 +17,10 @@ Route::prefix('ketersediaan')->name('ketersediaan.')->group(function () {
     Route::get('laporan-nbm', function () {
         return view('ketersediaan.laporan-nbm');
     })->name('laporan-nbm');
+    
+    Route::get('konsep-transaksi-nbm', function () {
+        return view('ketersediaan.konsep-transaksi-nbm');
+    })->name('konsep-transaksi-nbm');
 });
 
 // Konsumsi Routes  
@@ -24,6 +28,10 @@ Route::prefix('konsumsi')->name('konsumsi.')->group(function () {
     Route::get('konsep-metode', function () {
         return view('konsumsi.konsep-metode');
     })->name('konsep-metode');
+    
+    Route::get('konsep-transaksi-susenas', function () {
+        return view('konsumsi.konsep-transaksi-susenas');
+    })->name('konsep-transaksi-susenas');
     
     Route::get('laporan-susenas', function () {
         return view('konsumsi.laporan-susenas');

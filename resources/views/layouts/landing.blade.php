@@ -13,9 +13,6 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
-    <!-- Alpine.js for interactivity -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
     <!-- Navigation -->
@@ -65,6 +62,10 @@
                                     <a href="{{ route('ketersediaan.laporan-nbm') }}" 
                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                         Laporan Data NBM
+                                    </a>
+                                    <a href="{{ route('ketersediaan.konsep-transaksi-nbm') }}" 
+                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Konsep Transaksi NBM
                                     </a>
                                 </div>
                             </div>
@@ -162,6 +163,10 @@
                         <a href="{{ route('ketersediaan.laporan-nbm') }}" 
                            class="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50">
                             Laporan Data NBM
+                        </a>
+                        <a href="{{ route('ketersediaan.konsep-transaksi-nbm') }}" 
+                           class="block px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                            Konsep Transaksi NBM
                         </a>
                     </div>
                 </div>
