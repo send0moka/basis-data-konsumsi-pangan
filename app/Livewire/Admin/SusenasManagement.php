@@ -25,6 +25,8 @@ class SusenasManagement extends Component
     public $showCreateModal = false;
     public $showEditModal = false;
     public $showDeleteModal = false;
+    public $showViewModal = false;
+    public $viewingSusenas = [];
     public $search = '';
     public $perPage = 10;
     public $perPageOptions = [10, 25, 50, 100];
@@ -345,6 +347,19 @@ class SusenasManagement extends Component
     public function updatingPerPage()
     {
         $this->resetPage();
+    }
+
+    public function view($id)
+    {
+        $susenas = TransaksiSusenas::with(['kelompokbps', 'komoditibps'])->findOrFail($id);
+        $this->viewingSusenas = $susenas->toArray();
+        $this->showViewModal = true;
+    }
+
+    public function closeViewModal()
+    {
+        $this->showViewModal = false;
+        $this->viewingSusenas = [];
     }
 
     public function export()

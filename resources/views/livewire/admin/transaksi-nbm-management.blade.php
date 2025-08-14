@@ -167,7 +167,7 @@
                         <x-sortable-header field="kalori_hari" :sort-field="$sortField" :sort-direction="$sortDirection" title="Kalori/Hari" class="px-3 py-3" />
                         <x-sortable-header field="protein_hari" :sort-field="$sortField" :sort-direction="$sortDirection" title="Protein/Hari" class="px-3 py-3" />
                         <x-sortable-header field="lemak_hari" :sort-field="$sortField" :sort-direction="$sortDirection" title="Lemak/Hari" class="px-3 py-3" />
-                        <th class="px-3 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider no-print">
+                        <th class="px-3 py-3 text-center text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider no-print">
                             Aksi
                         </th>
                     </tr>
@@ -258,6 +258,9 @@
                             </td>
                             <td class="px-3 py-4 whitespace-nowrap text-right text-sm font-medium no-print">
                                 <div class="flex items-center justify-end space-x-2">
+                                    <flux:button wire:key="view-{{ $transaksi->id }}" wire:click="view({{ $transaksi->id }})" variant="ghost" size="sm">
+                                        Lihat
+                                    </flux:button>
                                     @can('edit transaksi_nbm')
                                     <flux:button wire:key="edit-{{ $transaksi->id }}" wire:click="openEditModal({{ $transaksi->id }})" variant="ghost" size="sm">
                                         Edit
@@ -733,6 +736,310 @@
                     </flux:button>
                     <flux:button type="button" variant="danger" wire:click="deleteTransaksi">
                         Hapus
+                    </flux:button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- View Details Modal -->
+    @if($showViewModal)
+    <div class="fixed inset-0 bg-neutral-900/70 dark:bg-neutral-950/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border border-neutral-200 dark:border-neutral-700 max-w-6xl shadow-xl rounded-md bg-white dark:!bg-neutral-800">
+            <div class="mt-3">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-medium text-neutral-900 dark:text-white">Detail Transaksi NBM</h3>
+                    <flux:button wire:click="closeViewModal" variant="ghost" size="sm" class="!px-2 !py-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </flux:button>
+                </div>
+                
+                <div class="max-h-96 overflow-y-auto pr-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        
+                        <!-- Informasi Identitas -->
+                        <div class="lg:col-span-3">
+                            <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4">
+                                <svg class="inline w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                Informasi Identitas
+                            </h4>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">ID Transaksi</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingTransaksi['id'] ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Tahun</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingTransaksi['tahun'] ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Status Angka</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingTransaksi['status_angka']) ? ucfirst($viewingTransaksi['status_angka']) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Informasi Kelompok & Komoditi -->
+                        <div class="lg:col-span-3">
+                            <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4 mt-6">
+                                <svg class="inline w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                                Informasi Kelompok & Komoditi
+                            </h4>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Kode Kelompok</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-mono text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingTransaksi['kode_kelompok'] ?? '-' }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Nama Kelompok</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingTransaksi['kelompok']['nama'] ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Kode Komoditi</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-mono text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingTransaksi['kode_komoditi'] ?? '-' }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Nama Komoditi</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingTransaksi['komoditi']['nama'] ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Tanggal Dibuat</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingTransaksi['created_at']) ? \Carbon\Carbon::parse($viewingTransaksi['created_at'])->format('d F Y H:i') : '-' }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Terakhir Diperbarui</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingTransaksi['updated_at']) ? \Carbon\Carbon::parse($viewingTransaksi['updated_at'])->format('d F Y H:i') : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Data Produksi & Perdagangan -->
+                        <div class="lg:col-span-3">
+                            <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4 mt-6">
+                                <svg class="inline w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                Data Produksi & Perdagangan
+                            </h4>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Masukan</label>
+                                <div class="px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md text-sm font-bold text-blue-900 dark:text-blue-100">
+                                    {{ isset($viewingTransaksi['masukan']) ? number_format($viewingTransaksi['masukan'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Keluaran</label>
+                                <div class="px-3 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md text-sm font-bold text-green-900 dark:text-green-100">
+                                    {{ isset($viewingTransaksi['keluaran']) ? number_format($viewingTransaksi['keluaran'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Impor</label>
+                                <div class="px-3 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-md text-sm font-bold text-orange-900 dark:text-orange-100">
+                                    {{ isset($viewingTransaksi['impor']) ? number_format($viewingTransaksi['impor'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Ekspor</label>
+                                <div class="px-3 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md text-sm font-bold text-red-900 dark:text-red-100">
+                                    {{ isset($viewingTransaksi['ekspor']) ? number_format($viewingTransaksi['ekspor'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Perubahan Stok</label>
+                                <div class="px-3 py-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md text-sm font-bold text-yellow-900 dark:text-yellow-100">
+                                    {{ isset($viewingTransaksi['perubahan_stok']) ? number_format($viewingTransaksi['perubahan_stok'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Data Penggunaan -->
+                        <div class="lg:col-span-3">
+                            <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4 mt-6">
+                                <svg class="inline w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                                Data Penggunaan
+                            </h4>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Pakan</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingTransaksi['pakan']) ? number_format($viewingTransaksi['pakan'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Bibit</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingTransaksi['bibit']) ? number_format($viewingTransaksi['bibit'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Makanan</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingTransaksi['makanan']) ? number_format($viewingTransaksi['makanan'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Bukan Makanan</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingTransaksi['bukan_makanan']) ? number_format($viewingTransaksi['bukan_makanan'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Tercecer</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingTransaksi['tercecer']) ? number_format($viewingTransaksi['tercecer'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Penggunaan Lain</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingTransaksi['penggunaan_lain']) ? number_format($viewingTransaksi['penggunaan_lain'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Data Konsumsi & Gizi -->
+                        <div class="lg:col-span-3">
+                            <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4 mt-6">
+                                <svg class="inline w-5 h-5 mr-2 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                                Data Konsumsi & Gizi
+                            </h4>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Bahan Makanan</label>
+                                <div class="px-3 py-2 bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-md text-sm font-bold text-cyan-900 dark:text-cyan-100">
+                                    {{ isset($viewingTransaksi['bahan_makanan']) ? number_format($viewingTransaksi['bahan_makanan'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Kg/Tahun</label>
+                                <div class="px-3 py-2 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-md text-sm font-bold text-teal-900 dark:text-teal-100">
+                                    {{ isset($viewingTransaksi['kg_tahun']) ? number_format($viewingTransaksi['kg_tahun'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Gram/Hari</label>
+                                <div class="px-3 py-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-md text-sm font-bold text-emerald-900 dark:text-emerald-100">
+                                    {{ isset($viewingTransaksi['gram_hari']) ? number_format($viewingTransaksi['gram_hari'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Kalori/Hari</label>
+                                <div class="px-3 py-2 bg-lime-50 dark:bg-lime-900/20 border border-lime-200 dark:border-lime-800 rounded-md text-sm font-bold text-lime-900 dark:text-lime-100">
+                                    {{ isset($viewingTransaksi['kalori_hari']) ? number_format($viewingTransaksi['kalori_hari'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Protein/Hari</label>
+                                <div class="px-3 py-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md text-sm font-bold text-amber-900 dark:text-amber-100">
+                                    {{ isset($viewingTransaksi['protein_hari']) ? number_format($viewingTransaksi['protein_hari'], 4) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Lemak/Hari</label>
+                                <div class="px-3 py-2 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-md text-sm font-bold text-rose-900 dark:text-rose-100">
+                                    {{ isset($viewingTransaksi['lemak_hari']) ? number_format($viewingTransaksi['lemak_hari'], 6) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-700">
+                    <flux:button type="button" wire:click="closeViewModal" variant="ghost">
+                        Tutup
                     </flux:button>
                 </div>
             </div>

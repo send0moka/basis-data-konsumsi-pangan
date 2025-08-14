@@ -20,6 +20,8 @@ class TransaksiNbmManagement extends Component
     public $showCreateModal = false;
     public $showEditModal = false;
     public $showDeleteModal = false;
+    public $showViewModal = false;
+    public $viewingTransaksi = [];
     
     // Sorting
     public $sortField = '';
@@ -458,6 +460,19 @@ class TransaksiNbmManagement extends Component
             'tahunOptions' => $tahunOptions,
             'statusAngkaOptions' => $statusAngkaOptions,
         ]);
+    }
+
+    public function view($id)
+    {
+        $transaksi = TransaksiNbm::with(['kelompok', 'komoditi'])->findOrFail($id);
+        $this->viewingTransaksi = $transaksi->toArray();
+        $this->showViewModal = true;
+    }
+
+    public function closeViewModal()
+    {
+        $this->showViewModal = false;
+        $this->viewingTransaksi = [];
     }
 
     public function export()

@@ -141,7 +141,7 @@
                         <x-sortable-header field="konsumsikuantity" :sort-field="$sortField" :sort-direction="$sortDirection" title="Konsumsi Kuantitas" class="px-6 py-3" />
                         <x-sortable-header field="konsumsinilai" :sort-field="$sortField" :sort-direction="$sortDirection" title="Konsumsi Nilai" class="px-6 py-3" />
                         <x-sortable-header field="konsumsigizi" :sort-field="$sortField" :sort-direction="$sortDirection" title="Konsumsi Gizi" class="px-6 py-3" />
-                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider no-print">
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider no-print">
                             Aksi
                         </th>
                     </tr>
@@ -185,6 +185,9 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium no-print">
                                 <div class="flex items-center justify-end space-x-2">
+                                    <flux:button wire:key="view-{{ $item->id }}" wire:click="view({{ $item->id }})" variant="ghost" size="sm">
+                                        Lihat
+                                    </flux:button>
                                     @can('edit susenas')
                                     <flux:button wire:key="edit-{{ $item->id }}" wire:click="edit({{ $item->id }})" variant="ghost" size="sm">
                                         Edit
@@ -458,6 +461,195 @@
                     </flux:button>
                     <flux:button wire:click="delete" variant="danger">
                         Hapus
+                    </flux:button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- View Details Modal -->
+    @if($showViewModal)
+    <div class="fixed inset-0 bg-neutral-900/70 dark:bg-neutral-950/80 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border border-neutral-200 dark:border-neutral-700 max-w-4xl shadow-xl rounded-md bg-white dark:!bg-neutral-800">
+            <div class="mt-3">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-medium text-neutral-900 dark:text-white">Detail Data Susenas</h3>
+                    <flux:button wire:click="closeViewModal" variant="ghost" size="sm" class="!px-2 !py-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </flux:button>
+                </div>
+                
+                <div class="max-h-96 overflow-y-auto pr-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Informasi Identitas -->
+                        <div class="md:col-span-2">
+                            <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4">
+                                <svg class="inline w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                Informasi Identitas
+                            </h4>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">ID Susenas</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingSusenas['id'] ?? '-' }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Tahun</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingSusenas['tahun'] ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Tanggal Dibuat</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingSusenas['created_at']) ? \Carbon\Carbon::parse($viewingSusenas['created_at'])->format('d F Y H:i') : '-' }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Terakhir Diperbarui</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ isset($viewingSusenas['updated_at']) ? \Carbon\Carbon::parse($viewingSusenas['updated_at'])->format('d F Y H:i') : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Informasi Kelompok & Komoditi -->
+                        <div class="md:col-span-2">
+                            <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4 mt-6">
+                                <svg class="inline w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                                Informasi Kelompok & Komoditi
+                            </h4>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Kode Kelompok BPS</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-mono text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingSusenas['kd_kelompokbps'] ?? '-' }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Nama Kelompok BPS</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingSusenas['kelompokbps']['nm_kelompokbps'] ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Kode Komoditi BPS</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm font-mono text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingSusenas['kd_komoditibps'] ?? '-' }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Nama Komoditi BPS</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingSusenas['komoditibps']['nm_komoditibps'] ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Satuan</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingSusenas['Satuan'] ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Data Konsumsi -->
+                        <div class="md:col-span-2">
+                            <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4 mt-6">
+                                <svg class="inline w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                                Data Konsumsi
+                            </h4>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Konsumsi Kuantitas</label>
+                                <div class="px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md text-sm font-bold text-blue-900 dark:text-blue-100">
+                                    {{ isset($viewingSusenas['konsumsikuantity']) ? number_format($viewingSusenas['konsumsikuantity'], 2) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Konsumsi Nilai (Rupiah)</label>
+                                <div class="px-3 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md text-sm font-bold text-green-900 dark:text-green-100">
+                                    {{ isset($viewingSusenas['konsumsinilai']) && $viewingSusenas['konsumsinilai'] ? 'Rp ' . number_format($viewingSusenas['konsumsinilai'], 2) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Konsumsi Gizi</label>
+                                <div class="px-3 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-md text-sm font-bold text-orange-900 dark:text-orange-100">
+                                    {{ isset($viewingSusenas['konsumsigizi']) && $viewingSusenas['konsumsigizi'] ? number_format($viewingSusenas['konsumsigizi'], 2) : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Information -->
+                        @if(isset($viewingSusenas['status']) || isset($viewingSusenas['keterangan']))
+                        <div class="md:col-span-2">
+                            <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4 mt-6">
+                                <svg class="inline w-5 h-5 mr-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Informasi Tambahan
+                            </h4>
+                        </div>
+                        
+                        @if(isset($viewingSusenas['status']))
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Status</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100">
+                                    {{ $viewingSusenas['status'] ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        
+                        @if(isset($viewingSusenas['keterangan']))
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Keterangan</label>
+                                <div class="px-3 py-2 bg-neutral-50 dark:bg-neutral-700/50 border border-neutral-200 dark:border-neutral-600 rounded-md text-sm text-neutral-900 dark:text-neutral-100 min-h-[60px] whitespace-pre-wrap">
+                                    {{ $viewingSusenas['keterangan'] ?? '-' }}
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        @endif
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-700">
+                    <flux:button type="button" wire:click="closeViewModal" variant="ghost">
+                        Tutup
                     </flux:button>
                 </div>
             </div>

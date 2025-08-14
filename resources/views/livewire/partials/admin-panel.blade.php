@@ -1,22 +1,22 @@
 <!-- Admin Panel Content -->
 <div>
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 @if(auth()->user()->hasRole('superadmin')) lg:grid-cols-4 @else lg:grid-cols-3 @endif gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 @if(auth()->user()->hasRole('superadmin')) xl:grid-cols-4 lg:grid-cols-2 @else xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-3 @endif gap-4 lg:gap-6 mb-8">
         <!-- Current User Info -->
         <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-700">
-            <div class="p-6">
+            <div class="p-4 lg:p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 lg:w-12 lg:h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 lg:w-6 lg:h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Status akun</h3>
-                        <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ auth()->user()->name }}</p>
-                        <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                    <div class="ml-3 lg:ml-4 min-w-0 flex-1">
+                        <h3 class="text-base lg:text-lg font-semibold text-neutral-900 dark:text-white truncate">Status akun</h3>
+                        <p class="text-2xl lg:text-3xl font-bold text-indigo-600 dark:text-indigo-400 truncate">{{ auth()->user()->name }}</p>
+                        <p class="text-xs lg:text-sm text-neutral-500 dark:text-neutral-400 truncate">
                             {{ ucfirst(auth()->user()->roles->first()?->name ?? 'No Role') }}
                         </p>
                     </div>
@@ -27,19 +27,19 @@
         @if(auth()->user()->hasRole('superadmin'))
         <!-- Total Users (Only for Superadmin) -->
         <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-700">
-            <div class="p-6">
+            <div class="p-4 lg:p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                        <div class="w-10 h-10 lg:w-12 lg:h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 lg:w-6 lg:h-6 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
                             </svg>
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Total User</h3>
-                        <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ $totalUsers ?? 0 }}</p>
-                        <p class="text-sm text-neutral-500 dark:text-neutral-400">Pengguna terdaftar</p>
+                    <div class="ml-3 lg:ml-4 min-w-0 flex-1">
+                        <h3 class="text-base lg:text-lg font-semibold text-neutral-900 dark:text-white truncate">Total User</h3>
+                        <p class="text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400">{{ $totalUsers ?? 0 }}</p>
+                        <p class="text-xs lg:text-sm text-neutral-500 dark:text-neutral-400 truncate">Pengguna terdaftar</p>
                     </div>
                 </div>
             </div>
@@ -48,19 +48,19 @@
 
         <!-- Total Transaksi NBM -->
         <div class="bg-white dark:bg-neutral-800 overflow-hidden shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-700">
-            <div class="p-6">
+            <div class="p-4 lg:p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        <div class="w-10 h-10 lg:w-12 lg:h-12 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 lg:w-6 lg:h-6 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
                             </svg>
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Transaksi NBM</h3>
-                        <p class="text-3xl font-bold text-orange-600 dark:text-orange-400">{{ $totalTransaksiNbm ?? 0 }}</p>
-                        <p class="text-sm text-neutral-500 dark:text-neutral-400">Data transaksi</p>
+                    <div class="ml-3 lg:ml-4 min-w-0 flex-1">
+                        <h3 class="text-base lg:text-lg font-semibold text-neutral-900 dark:text-white truncate">Transaksi NBM</h3>
+                        <p class="text-2xl lg:text-3xl font-bold text-orange-600 dark:text-orange-400">{{ $totalTransaksiNbm ?? 0 }}</p>
+                        <p class="text-xs lg:text-sm text-neutral-500 dark:text-neutral-400 truncate">Data transaksi</p>
                     </div>
                 </div>
             </div>
@@ -68,19 +68,19 @@
 
         <!-- Total Data Susenas -->
         <div class="bg-white dark:bg-neutral-800 overflow-hidden shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-700">
-            <div class="p-6">
+            <div class="p-4 lg:p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        <div class="w-10 h-10 lg:w-12 lg:h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 lg:w-6 lg:h-6 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
                             </svg>
                         </div>
                     </div>
-                    <div class="ml-4">
-                        <h3 class="text-lg font-semibold text-neutral-900 dark:text-white">Data Susenas</h3>
-                        <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">{{ $totalSusenas ?? 0 }}</p>
-                        <p class="text-sm text-neutral-500 dark:text-neutral-400">Transaksi konsumsi</p>
+                    <div class="ml-3 lg:ml-4 min-w-0 flex-1">
+                        <h3 class="text-base lg:text-lg font-semibold text-neutral-900 dark:text-white truncate">Data Susenas</h3>
+                        <p class="text-2xl lg:text-3xl font-bold text-purple-600 dark:text-purple-400">{{ $totalSusenas ?? 0 }}</p>
+                        <p class="text-xs lg:text-sm text-neutral-500 dark:text-neutral-400 truncate">Transaksi konsumsi</p>
                     </div>
                 </div>
             </div>
