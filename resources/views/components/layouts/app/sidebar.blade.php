@@ -59,12 +59,6 @@
                     </flux:navlist.item>
                 </flux:navlist.group>
                 @endif
-
-                <flux:navlist.group :heading="__('Home')" class="grid">
-                    <flux:navlist.item icon="globe-alt" :href="route('home')" :current="request()->routeIs('home')" wire:navigate class="group active-icon">
-                        <span class="nav-link-text transition-colors {{ request()->routeIs('home') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Halaman Home') }}</span>
-                    </flux:navlist.item>
-                </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />

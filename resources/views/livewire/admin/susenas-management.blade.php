@@ -27,14 +27,33 @@
         </div>
     @endif
 
-    <!-- Search & Per Page -->
-    <div class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <!-- Search & Filter & Per Page -->
+    <div class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 no-print">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
             <flux:input 
                 wire:model.live="search" 
                 placeholder="Cari data susenas..."
                 class="w-full sm:max-w-sm"
             />
+            
+            <!-- Filter Toggle Button -->
+            <flux:button wire:click="toggleFilters" variant="ghost" class="!px-3 !py-2">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 2v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                </svg>
+                Filter
+            </flux:button>
+            
+            <!-- Reset Sort Button -->
+            @if(!empty($sortField))
+                <flux:button wire:click="resetSort" variant="ghost" class="!px-3 !py-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Reset Sort
+                </flux:button>
+            @endif
+            
             <div class="flex items-center space-x-2">
                 <label class="text-sm text-neutral-600 dark:text-neutral-400">Tampil</label>
                 <select wire:model.live="perPage" class="text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200 focus:ring-accent focus:border-accent">
@@ -59,44 +78,80 @@
             <flux:button wire:click="print" variant="ghost" class="!px-4">
                 Print
             </flux:button>
+            <flux:button wire:click="printAll" variant="ghost" class="!px-4">
+                Print All
+            </flux:button>
         </div>
     </div>
 
+    <!-- Filter Panel -->
+    @if($showFilters)
+    <div class="mb-4 p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700 no-print">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-medium text-neutral-900 dark:text-neutral-100">Filter Data</h3>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm">
+                Clear All
+            </flux:button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tahun</label>
+                <select wire:model.live="filterTahun" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Tahun</option>
+                    @foreach($tahunOptions as $tahun)
+                        <option value="{{ $tahun }}">{{ $tahun }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kelompok BPS</label>
+                <select wire:model.live="filterKelompokbps" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Kelompok BPS</option>
+                    @foreach($kelompokbps as $kelompok)
+                        <option value="{{ $kelompok->kd_kelompokbps }}">{{ $kelompok->nm_kelompokbps }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div wire:key="komoditi-filter-susenas-{{ $filterKelompokbps }}">
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Komoditi BPS</label>
+                <select wire:model.live="filterKomoditibps" wire:key="select-komoditi-{{ $filterKelompokbps }}" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Komoditi BPS</option>
+                    @foreach($komoditibps as $komoditi)
+                        <option value="{{ $komoditi->kd_komoditibps }}">{{ $komoditi->nm_komoditibps }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Table -->
-    <div class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+    <div id="susenas-table-wrapper" class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
                 <thead class="bg-neutral-50 dark:bg-neutral-800/50">
                     <tr>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Kelompok BPS
+                            No
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Komoditi BPS
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Tahun
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Satuan
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Konsumsi Kuantitas
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Konsumsi Nilai
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Konsumsi Gizi
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                        <x-sortable-header field="kd_kelompokbps" :sort-field="$sortField" :sort-direction="$sortDirection" title="Kelompok BPS" class="px-6 py-3" />
+                        <x-sortable-header field="kd_komoditibps" :sort-field="$sortField" :sort-direction="$sortDirection" title="Komoditi BPS" class="px-6 py-3" />
+                        <x-sortable-header field="tahun" :sort-field="$sortField" :sort-direction="$sortDirection" title="Tahun" class="px-6 py-3" />
+                        <x-sortable-header field="Satuan" :sort-field="$sortField" :sort-direction="$sortDirection" title="Satuan" class="px-6 py-3" />
+                        <x-sortable-header field="konsumsikuantity" :sort-field="$sortField" :sort-direction="$sortDirection" title="Konsumsi Kuantitas" class="px-6 py-3" />
+                        <x-sortable-header field="konsumsinilai" :sort-field="$sortField" :sort-direction="$sortDirection" title="Konsumsi Nilai" class="px-6 py-3" />
+                        <x-sortable-header field="konsumsigizi" :sort-field="$sortField" :sort-direction="$sortDirection" title="Konsumsi Gizi" class="px-6 py-3" />
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider no-print">
                             Aksi
                         </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-neutral-900 divide-y divide-neutral-200 dark:divide-neutral-700">
-                    @forelse($susenas as $item)
-                        <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+                    @forelse($susenas as $index => $item)
+                        <tr wire:key="susenas-row-{{ $item->id }}" class="hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100 text-center">
+                                {{ ($susenas->currentPage() - 1) * $susenas->perPage() + $index + 1 }}
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
                                 <div class="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                                     {{ $item->kelompokbps->nm_kelompokbps ?? '-' }}
@@ -128,15 +183,15 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-100">
                                 {{ $item->konsumsigizi ? number_format($item->konsumsigizi, 2) : '-' }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium no-print">
                                 <div class="flex items-center justify-end space-x-2">
                                     @can('edit susenas')
-                                    <flux:button wire:click="edit({{ $item->id }})" variant="ghost" size="sm">
+                                    <flux:button wire:key="edit-{{ $item->id }}" wire:click="edit({{ $item->id }})" variant="ghost" size="sm">
                                         Edit
                                     </flux:button>
                                     @endcan
                                     @can('delete susenas')
-                                    <flux:button wire:click="confirmDelete({{ $item->id }})" variant="danger" size="sm">
+                                    <flux:button wire:key="delete-{{ $item->id }}" wire:click="confirmDelete({{ $item->id }})" variant="danger" size="sm">
                                         Hapus
                                     </flux:button>
                                     @endcan
@@ -145,7 +200,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
+                            <td colspan="9" class="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
                                 <div class="flex flex-col items-center">
                                     <svg class="h-12 w-12 text-neutral-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
@@ -162,7 +217,7 @@
 
         <!-- Pagination -->
         @if($susenas->hasPages())
-            <div class="bg-white dark:bg-neutral-800 px-4 py-3 border-t border-neutral-200 dark:border-neutral-700 sm:px-6">
+            <div class="bg-white dark:bg-neutral-800 px-4 py-3 border-t border-neutral-200 dark:border-neutral-700 sm:px-6 no-print">
                 {{ $susenas->links() }}
             </div>
         @endif
@@ -214,7 +269,7 @@
                                 <div class="relative">
                                     <select wire:model="kd_komoditibps" class="w-full px-4 py-3 pr-10 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
                                         <option value="">{{ $kd_kelompokbps ? 'Pilih Komoditi BPS' : 'Pilih kelompok BPS terlebih dahulu' }}</option>
-                                        @foreach($komoditibps as $komoditi)
+                                        @foreach($this->modalKomoditiOptions as $komoditi)
                                             <option value="{{ $komoditi->kd_komoditibps }}">
                                                 {{ $komoditi->kd_komoditibps }} - {{ $komoditi->nm_komoditibps }}
                                             </option>
@@ -320,7 +375,7 @@
                                 <div class="relative">
                                     <select wire:model="kd_komoditibps" class="w-full px-4 py-3 pr-10 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
                                         <option value="">{{ $kd_kelompokbps ? 'Pilih Komoditi BPS' : 'Pilih kelompok BPS terlebih dahulu' }}</option>
-                                        @foreach($komoditibps as $komoditi)
+                                        @foreach($this->modalKomoditiOptions as $komoditi)
                                             <option value="{{ $komoditi->kd_komoditibps }}">
                                                 {{ $komoditi->kd_komoditibps }} - {{ $komoditi->nm_komoditibps }}
                                             </option>
@@ -411,10 +466,215 @@
     @endif
 </div>
 
-@push('scripts')
+@script
 <script>
     window.addEventListener('print-susenas', function () {
-        window.print();
+        const wrap = document.getElementById('susenas-table-wrapper');
+        if (!wrap) { 
+            window.print(); 
+            return; 
+        }
+
+        // Clone content & strip elements not for print
+        const clone = wrap.cloneNode(true);
+        clone.querySelectorAll('.no-print, nav').forEach(el => el.remove());
+
+        const html = `<!DOCTYPE html><html><head><title>Data Susenas</title><meta charset='utf-8'>
+            <style>
+                *{box-sizing:border-box;}
+                body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;margin:0;padding:24px;color:#111827;}
+                .header{text-align:center;margin-bottom:30px;border-bottom:2px solid #059669;padding-bottom:20px;}
+                .logo{width:60px;height:60px;margin:0 auto 15px;}
+                .dept-name{font-size:16px;font-weight:600;color:#059669;margin-bottom:5px;}
+                .dept-info{font-size:12px;color:#374151;margin-bottom:3px;}
+                .report-title{font-size:18px;font-weight:700;color:#111827;margin-top:15px;}
+                table{width:100%;border-collapse:collapse;font-size:12px;margin-top:20px;}
+                th,td{border:1px solid #e5e7eb;padding:6px 8px;text-align:left;vertical-align:top;}
+                th{background:#f3f4f6;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;}
+                .no-col{width:40px;text-align:center;}
+                .numeric{text-align:right;}
+                @media print { 
+                    body{padding:8px;} 
+                    .header{margin-bottom:20px;padding-bottom:15px;}
+                    .logo{width:50px;height:50px;}
+                    .dept-name{font-size:14px;}
+                    .dept-info{font-size:10px;}
+                    .report-title{font-size:16px;}
+                    table{font-size:10px;}
+                    th,td{padding:4px 6px;}
+                }
+            </style>
+        </head><body>
+            <div class="header">
+                <div class="logo">
+                    <img src="${window.location.origin}/LogoKementan.png" alt="Logo Kementerian Pertanian" style="width:60px;height:60px;object-fit:contain;" />
+                </div>
+                <div class="dept-name">KEMENTERIAN PERTANIAN</div>
+                <div class="dept-info">REPUBLIK INDONESIA</div>
+                <div class="dept-info">Pusat Data dan Sistem Informasi</div>
+                <div class="dept-info">Jl. Harsono RM No.3, Ragunan, Pasar Minggu, Jakarta Selatan 12550</div>
+                <div class="dept-info">Telp: (021) 7804030 | www.pertanian.go.id</div>
+                <div class="report-title">LAPORAN DATA SUSENAS<br>(Survei Sosial Ekonomi Nasional)</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="no-col">No</th>
+                        <th>Kelompok BPS</th>
+                        <th>Komoditi BPS</th>
+                        <th>Tahun</th>
+                        <th>Satuan</th>
+                        <th>Konsumsi Kuantitas</th>
+                        <th>Konsumsi Nilai</th>
+                        <th>Konsumsi Gizi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${Array.from(clone.querySelectorAll('tbody tr')).map((row, index) => {
+                        const cells = Array.from(row.children);
+                        // Skip first cell (nomor) and find cells without no-print class
+                        const dataCells = cells.slice(1).filter(cell => !cell.classList.contains('no-print'));
+                        const cellsHtml = dataCells.map(cell => cell.outerHTML).join('');
+                        return `<tr><td class="no-col">${index + 1}</td>${cellsHtml}</tr>`;
+                    }).join('')}
+                </tbody>
+            </table>
+        </body></html>`;
+
+        // Create hidden iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = '0';
+        document.body.appendChild(iframe);
+
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+
+        iframe.onload = () => {
+            try {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            } finally {
+                // Remove iframe after slight delay to allow dialog
+                setTimeout(() => iframe.remove(), 2000);
+            }
+        };
     });
+
+    window.addEventListener('print-all-susenas', function (event) {
+        const allData = event.detail.data;
+        printAllSusenasData(allData);
+    });
+
+    function printAllSusenasData(allData) {
+        let html = `<!DOCTYPE html>
+        <html>
+        <head>
+            <title>Semua Data Susenas</title>
+            <meta charset='utf-8'>
+            <style>
+                *{box-sizing:border-box;}
+                body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;margin:0;padding:16px;color:#111827;font-size:12px;}
+                .header{text-align:center;margin-bottom:25px;border-bottom:2px solid #059669;padding-bottom:15px;}
+                .logo{width:50px;height:50px;margin:0 auto 12px;}
+                .dept-name{font-size:14px;font-weight:600;color:#059669;margin-bottom:4px;}
+                .dept-info{font-size:10px;color:#374151;margin-bottom:2px;}
+                .report-title{font-size:16px;font-weight:700;color:#111827;margin-top:12px;}
+                table{width:100%;border-collapse:collapse;font-size:11px;margin-top:15px;}
+                th,td{border:1px solid #e5e7eb;padding:4px 6px;text-align:left;vertical-align:top;}
+                th{background:#f3f4f6;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.02em;}
+                .no-col{width:35px;text-align:center;}
+                .numeric{text-align:right;}
+                @media print { 
+                    body{padding:8px;font-size:10px;} 
+                    .header{margin-bottom:15px;padding-bottom:10px;}
+                    .logo{width:40px;height:40px;}
+                    .dept-name{font-size:12px;}
+                    .dept-info{font-size:8px;}
+                    .report-title{font-size:14px;}
+                    table{font-size:9px;}
+                    th,td{padding:3px 4px;}
+                    .no-col{width:30px;}
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div class="logo">
+                    <img src="${window.location.origin}/LogoKementan.png" alt="Logo Kementerian Pertanian" style="width:50px;height:50px;object-fit:contain;" />
+                </div>
+                <div class="dept-name">KEMENTERIAN PERTANIAN</div>
+                <div class="dept-info">REPUBLIK INDONESIA</div>
+                <div class="dept-info">Pusat Data dan Sistem Informasi</div>
+                <div class="dept-info">Jl. Harsono RM No.3, Ragunan, Pasar Minggu, Jakarta Selatan 12550</div>
+                <div class="dept-info">Telp: (021) 7804030 | www.pertanian.go.id</div>
+                <div class="report-title">LAPORAN SEMUA DATA SUSENAS<br>(Survei Sosial Ekonomi Nasional)</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="no-col">No</th>
+                        <th>Kelompok BPS</th>
+                        <th>Komoditi BPS</th>
+                        <th>Tahun</th>
+                        <th>Satuan</th>
+                        <th>Konsumsi Kuantitas</th>
+                        <th>Konsumsi Nilai</th>
+                        <th>Konsumsi Gizi</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+        if (allData && Array.isArray(allData)) {
+            allData.forEach((item, index) => {
+                html += `<tr>
+                    <td class="no-col">${index + 1}</td>
+                    <td>${item.kelompokbps?.nm_kelompokbps || '-'}</td>
+                    <td>${item.komoditibps?.nm_komoditibps || '-'}</td>
+                    <td>${item.tahun}</td>
+                    <td>${item.Satuan || '-'}</td>
+                    <td class="numeric">${Number(item.konsumsikuantity || 0).toFixed(2)}</td>
+                    <td class="numeric">${item.konsumsinilai ? Number(item.konsumsinilai).toFixed(2) : '-'}</td>
+                    <td class="numeric">${item.konsumsigizi ? Number(item.konsumsigizi).toFixed(2) : '-'}</td>
+                </tr>`;
+            });
+        }
+
+        html += `
+                </tbody>
+            </table>
+        </body>
+        </html>`;
+
+        // Create hidden iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = '0';
+        document.body.appendChild(iframe);
+
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+
+        iframe.onload = () => {
+            try {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            } finally {
+                setTimeout(() => iframe.remove(), 2000);
+            }
+        };
+    }
 </script>
-@endpush
+@endscript

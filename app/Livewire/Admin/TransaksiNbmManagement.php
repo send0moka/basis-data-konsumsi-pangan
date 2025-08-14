@@ -21,6 +21,17 @@ class TransaksiNbmManagement extends Component
     public $showEditModal = false;
     public $showDeleteModal = false;
     
+    // Sorting
+    public $sortField = '';
+    public $sortDirection = 'asc';
+    
+    // Filters
+    public $filterTahun = '';
+    public $filterKelompok = '';
+    public $filterKomoditi = '';
+    public $filterStatusAngka = '';
+    public $showFilters = false;
+    
     // Form fields
     public $kode_kelompok = '';
     public $kode_komoditi = '';
@@ -50,11 +61,14 @@ class TransaksiNbmManagement extends Component
 
     // Data untuk select options
     public $kelompokOptions = [];
-    public $komoditiOptions = [];
 
     protected $queryString = [
         'search' => ['except' => ''],
         'perPage' => ['except' => 10],
+        'filterTahun' => ['except' => ''],
+        'filterKelompok' => ['except' => ''],
+        'filterKomoditi' => ['except' => ''],
+        'filterStatusAngka' => ['except' => ''],
     ];
 
     protected $casts = [
@@ -69,27 +83,101 @@ class TransaksiNbmManagement extends Component
     public function loadSelectOptions()
     {
         $this->kelompokOptions = Kelompok::orderBy('kode')->get(['kode', 'nama'])->toArray();
-        $this->loadKomoditiOptions();
     }
 
-    public function loadKomoditiOptions()
+    public function updatedSearch()
     {
-        if (empty($this->kode_kelompok)) {
-            $this->komoditiOptions = [];
-        } else {
-            // Filter komoditi berdasarkan kode kelompok
-            $this->komoditiOptions = Komoditi::where('kode_kelompok', $this->kode_kelompok)
-                ->orderBy('kode_komoditi')
-                ->get(['kode_komoditi as kode', 'nama'])
-                ->toArray();
-        }
+        $this->resetPage();
     }
 
     public function updatedKodeKelompok()
     {
         // Reset komoditi saat kelompok berubah
         $this->kode_komoditi = '';
-        $this->loadKomoditiOptions();
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            if ($this->sortDirection === 'asc') {
+                $this->sortDirection = 'desc';
+            } else {
+                // Reset to unsorted state when clicking desc again
+                $this->sortField = '';
+                $this->sortDirection = 'asc';
+            }
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+        
+        $this->resetPage();
+    }
+
+    public function resetSort()
+    {
+        $this->sortField = '';
+        $this->sortDirection = 'asc';
+        $this->resetPage();
+    }
+
+    public function toggleFilters()
+    {
+        $this->showFilters = !$this->showFilters;
+    }
+
+    public function clearFilters()
+    {
+        $this->filterTahun = '';
+        $this->filterKelompok = '';
+        $this->filterKomoditi = '';
+        $this->filterStatusAngka = '';
+        $this->resetPage();
+    }
+
+    public function updatedFilterTahun()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterKelompok()
+    {
+        // Reset filter komoditi ketika kelompok berubah
+        $this->filterKomoditi = '';
+        $this->resetPage();
+    }
+
+    public function getKomoditiOptionsProperty()
+    {
+        return Komoditi::with('kelompok')
+            ->when($this->filterKelompok, function($query) {
+                $query->where('kode_kelompok', $this->filterKelompok);
+            })
+            ->orderBy('nama')
+            ->get(['kode_komoditi as kode', 'nama'])
+            ->toArray();
+    }
+
+    public function getModalKomoditiOptionsProperty()
+    {
+        if (empty($this->kode_kelompok)) {
+            return [];
+        }
+        
+        return Komoditi::where('kode_kelompok', $this->kode_kelompok)
+            ->orderBy('nama')
+            ->get(['kode_komoditi as kode', 'nama'])
+            ->toArray();
+    }
+
+    public function updatedFilterKomoditi()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterStatusAngka()
+    {
+        $this->resetPage();
     }
 
     protected $rules = [
@@ -277,9 +365,6 @@ class TransaksiNbmManagement extends Component
         $this->kalori_hari = $transaksi->kalori_hari;
         $this->protein_hari = $transaksi->protein_hari;
         $this->lemak_hari = $transaksi->lemak_hari;
-        
-        // Load komoditi options setelah kode_kelompok di-set
-        $this->loadKomoditiOptions();
     }
 
     private function resetForm()
@@ -316,7 +401,7 @@ class TransaksiNbmManagement extends Component
             $perPage = 10;
         }
 
-        $transaksiNbms = TransaksiNbm::with(['kelompok', 'komoditi'])
+        $query = TransaksiNbm::with(['kelompok', 'komoditi'])
             ->when($this->search, function ($query) {
                 $query->where(function($q) {
                     $q->where('kode_kelompok', 'like', '%' . $this->search . '%')
@@ -330,10 +415,48 @@ class TransaksiNbmManagement extends Component
                           $q->where('nama', 'like', '%' . $this->search . '%');
                       });
                 });
-        })->orderBy('id', 'asc')->paginate($perPage);
+            })
+            ->when($this->filterTahun, function ($query) {
+                $query->where('tahun', $this->filterTahun);
+            })
+            ->when($this->filterKelompok, function ($query) {
+                $query->where('kode_kelompok', $this->filterKelompok);
+            })
+            ->when($this->filterKomoditi, function ($query) {
+                $query->where('kode_komoditi', $this->filterKomoditi);
+            })
+            ->when($this->filterStatusAngka, function ($query) {
+                $query->where('status_angka', $this->filterStatusAngka);
+            });
+
+        // Apply sorting only if sortField is set
+        if (!empty($this->sortField)) {
+            $query->orderBy($this->sortField, $this->sortDirection);
+        } else {
+            // Default ordering when no sort is applied (by ID for consistency)
+            $query->orderBy('id', 'asc');
+        }
+
+        $transaksiNbms = $query->paginate($perPage);
+
+        // Load filter options
+        $kelompokOptions = Kelompok::orderBy('nama')
+            ->get(['kode', 'nama'])
+            ->toArray();
+        
+        $tahunOptions = TransaksiNbm::distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
+            
+        $statusAngkaOptions = TransaksiNbm::distinct()
+            ->orderBy('status_angka')
+            ->pluck('status_angka');
 
         return view('livewire.admin.transaksi-nbm-management', [
             'transaksiNbms' => $transaksiNbms,
+            'kelompokOptions' => $kelompokOptions,
+            'tahunOptions' => $tahunOptions,
+            'statusAngkaOptions' => $statusAngkaOptions,
         ]);
     }
 
@@ -352,5 +475,52 @@ class TransaksiNbmManagement extends Component
     public function print()
     {
         $this->dispatch('print-transaksi-nbm');
+    }
+
+    public function printAll()
+    {
+        $allData = $this->getAllDataForPrint();
+        $this->dispatch('print-all-transaksi-nbm', data: $allData->toArray());
+    }
+
+    public function getAllDataForPrint()
+    {
+        $query = TransaksiNbm::with(['kelompok', 'komoditi'])
+            ->when($this->search, function ($query) {
+                $query->where(function($q) {
+                    $q->where('kode_kelompok', 'like', '%' . $this->search . '%')
+                      ->orWhere('kode_komoditi', 'like', '%' . $this->search . '%')
+                      ->orWhere('tahun', 'like', '%' . $this->search . '%')
+                      ->orWhere('status_angka', 'like', '%' . $this->search . '%')
+                      ->orWhereHas('kelompok', function($q) {
+                          $q->where('nama', 'like', '%' . $this->search . '%');
+                      })
+                      ->orWhereHas('komoditi', function($q) {
+                          $q->where('nama', 'like', '%' . $this->search . '%');
+                      });
+                });
+            })
+            ->when($this->filterTahun, function ($query) {
+                $query->where('tahun', $this->filterTahun);
+            })
+            ->when($this->filterKelompok, function ($query) {
+                $query->where('kode_kelompok', $this->filterKelompok);
+            })
+            ->when($this->filterKomoditi, function ($query) {
+                $query->where('kode_komoditi', $this->filterKomoditi);
+            })
+            ->when($this->filterStatusAngka, function ($query) {
+                $query->where('status_angka', $this->filterStatusAngka);
+            });
+
+        // Apply sorting only if sortField is set
+        if (!empty($this->sortField)) {
+            $query->orderBy($this->sortField, $this->sortDirection);
+        } else {
+            // Default ordering when no sort is applied (by ID for consistency)
+            $query->orderBy('id', 'asc');
+        }
+
+        return $query->get();
     }
 }

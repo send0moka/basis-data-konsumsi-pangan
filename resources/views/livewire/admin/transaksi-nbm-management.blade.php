@@ -23,14 +23,33 @@
         </div>
     @endif
 
-    <!-- Search & Per Page -->
-    <div class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <!-- Search & Filter & Per Page -->
+    <div class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 no-print">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
             <flux:input 
                 wire:model.live="search" 
                 placeholder="Cari berdasarkan kelompok, komoditi, tahun..."
                 class="w-full sm:max-w-sm"
             />
+            
+            <!-- Filter Toggle Button -->
+            <flux:button wire:click="toggleFilters" variant="ghost" class="!px-3 !py-2">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 2v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                </svg>
+                Filter
+            </flux:button>
+            
+            <!-- Reset Sort Button -->
+            @if(!empty($sortField))
+                <flux:button wire:click="resetSort" variant="ghost" class="!px-3 !py-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Reset Sort
+                </flux:button>
+            @endif
+            
             <div class="flex items-center space-x-2">
                 <label class="text-sm text-neutral-600 dark:text-neutral-400">Tampil</label>
                 <select wire:model.live="perPage" class="text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200 focus:ring-accent focus:border-accent">
@@ -56,90 +75,109 @@
             <flux:button wire:click="print" variant="ghost" class="!px-4">
                 Print
             </flux:button>
+            <flux:button wire:click="printAll" variant="ghost" class="!px-4">
+                Print All
+            </flux:button>
             @endcan
         </div>
     </div>
 
+    <!-- Filter Panel -->
+    @if($showFilters)
+    <div class="mb-4 p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700 no-print">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-medium text-neutral-900 dark:text-neutral-100">Filter Data</h3>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm">
+                Clear All
+            </flux:button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tahun</label>
+                <select wire:model.live="filterTahun" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Tahun</option>
+                    @foreach($tahunOptions as $tahun)
+                        <option value="{{ $tahun }}">{{ $tahun }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kelompok</label>
+                <select wire:model.live="filterKelompok" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Kelompok</option>
+                    @if(isset($kelompokOptions) && is_array($kelompokOptions))
+                        @foreach($kelompokOptions as $kelompok)
+                            <option value="{{ $kelompok['kode'] }}">{{ $kelompok['nama'] }}</option>
+                        @endforeach
+                    @else
+                        <option disabled>No kelompok data</option>
+                    @endif
+                </select>
+            </div>
+            <div wire:key="komoditi-filter-{{ $filterKelompok }}">
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Komoditi</label>
+                <select wire:model.live="filterKomoditi" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Komoditi</option>
+                    @foreach($this->komoditiOptions as $komoditi)
+                        <option value="{{ $komoditi['kode'] }}">{{ $komoditi['nama'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Status Angka</label>
+                <select wire:model.live="filterStatusAngka" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Status</option>
+                    @foreach($statusAngkaOptions as $status)
+                        <option value="{{ $status }}">{{ ucfirst($status) }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Table -->
-    <div class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+    <div id="transaksi-nbm-table-wrapper" class="bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
                 <thead class="bg-neutral-50 dark:bg-neutral-800/50">
                     <tr>
                         <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            ID
+                            No
                         </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Kelompok
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Komoditi
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Tahun
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Status Angka
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Masukan
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Keluaran
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Impor
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Ekspor
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Perubahan Stok
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Pakan
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Bibit
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Makanan
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Bukan Makanan
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Tercecer
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Penggunaan Lain
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Bahan Makanan
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Kg/Tahun
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Gram/Hari
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Kalori/Hari
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Protein/Hari
-                        </th>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            Lemak/Hari
-                        </th>
-                        <th class="px-3 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                        <x-sortable-header field="id" :sort-field="$sortField" :sort-direction="$sortDirection" title="ID" class="px-3 py-3" />
+                        <x-sortable-header field="kode_kelompok" :sort-field="$sortField" :sort-direction="$sortDirection" title="Kelompok" class="px-3 py-3" />
+                        <x-sortable-header field="kode_komoditi" :sort-field="$sortField" :sort-direction="$sortDirection" title="Komoditi" class="px-3 py-3" />
+                        <x-sortable-header field="tahun" :sort-field="$sortField" :sort-direction="$sortDirection" title="Tahun" class="px-3 py-3" />
+                        <x-sortable-header field="status_angka" :sort-field="$sortField" :sort-direction="$sortDirection" title="Status Angka" class="px-3 py-3" />
+                        <x-sortable-header field="masukan" :sort-field="$sortField" :sort-direction="$sortDirection" title="Masukan" class="px-3 py-3" />
+                        <x-sortable-header field="keluaran" :sort-field="$sortField" :sort-direction="$sortDirection" title="Keluaran" class="px-3 py-3" />
+                        <x-sortable-header field="impor" :sort-field="$sortField" :sort-direction="$sortDirection" title="Impor" class="px-3 py-3" />
+                        <x-sortable-header field="ekspor" :sort-field="$sortField" :sort-direction="$sortDirection" title="Ekspor" class="px-3 py-3" />
+                        <x-sortable-header field="perubahan_stok" :sort-field="$sortField" :sort-direction="$sortDirection" title="Perubahan Stok" class="px-3 py-3" />
+                        <x-sortable-header field="pakan" :sort-field="$sortField" :sort-direction="$sortDirection" title="Pakan" class="px-3 py-3" />
+                        <x-sortable-header field="bibit" :sort-field="$sortField" :sort-direction="$sortDirection" title="Bibit" class="px-3 py-3" />
+                        <x-sortable-header field="makanan" :sort-field="$sortField" :sort-direction="$sortDirection" title="Makanan" class="px-3 py-3" />
+                        <x-sortable-header field="bukan_makanan" :sort-field="$sortField" :sort-direction="$sortDirection" title="Bukan Makanan" class="px-3 py-3" />
+                        <x-sortable-header field="tercecer" :sort-field="$sortField" :sort-direction="$sortDirection" title="Tercecer" class="px-3 py-3" />
+                        <x-sortable-header field="penggunaan_lain" :sort-field="$sortField" :sort-direction="$sortDirection" title="Penggunaan Lain" class="px-3 py-3" />
+                        <x-sortable-header field="bahan_makanan" :sort-field="$sortField" :sort-direction="$sortDirection" title="Bahan Makanan" class="px-3 py-3" />
+                        <x-sortable-header field="kg_tahun" :sort-field="$sortField" :sort-direction="$sortDirection" title="Kg/Tahun" class="px-3 py-3" />
+                        <x-sortable-header field="gram_hari" :sort-field="$sortField" :sort-direction="$sortDirection" title="Gram/Hari" class="px-3 py-3" />
+                        <x-sortable-header field="kalori_hari" :sort-field="$sortField" :sort-direction="$sortDirection" title="Kalori/Hari" class="px-3 py-3" />
+                        <x-sortable-header field="protein_hari" :sort-field="$sortField" :sort-direction="$sortDirection" title="Protein/Hari" class="px-3 py-3" />
+                        <x-sortable-header field="lemak_hari" :sort-field="$sortField" :sort-direction="$sortDirection" title="Lemak/Hari" class="px-3 py-3" />
+                        <th class="px-3 py-3 text-right text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider no-print">
                             Aksi
                         </th>
                     </tr>
                 </thead>
                                 <tbody class="bg-white dark:bg-neutral-900 divide-y divide-neutral-200 dark:divide-neutral-700">
-                    @forelse($transaksiNbms as $transaksi)
-                        <tr class="hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+                    @forelse($transaksiNbms as $index => $transaksi)
+                        <tr wire:key="nbm-row-{{ $transaksi->id }}" class="hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100 text-center">
+                                {{ ($transaksiNbms->currentPage() - 1) * $transaksiNbms->perPage() + $index + 1 }}
+                            </td>
                             <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">
                                 {{ $transaksi->id }}
                             </td>
@@ -218,15 +256,15 @@
                             <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
                                 {{ number_format($transaksi->lemak_hari ?? 0, 6) }}
                             </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <td class="px-3 py-4 whitespace-nowrap text-right text-sm font-medium no-print">
                                 <div class="flex items-center justify-end space-x-2">
                                     @can('edit transaksi_nbm')
-                                    <flux:button wire:click="openEditModal({{ $transaksi->id }})" variant="ghost" size="sm">
+                                    <flux:button wire:key="edit-{{ $transaksi->id }}" wire:click="openEditModal({{ $transaksi->id }})" variant="ghost" size="sm">
                                         Edit
                                     </flux:button>
                                     @endcan
                                     @can('delete transaksi_nbm')
-                                    <flux:button wire:click="openDeleteModal({{ $transaksi->id }})" variant="danger" size="sm">
+                                    <flux:button wire:key="delete-{{ $transaksi->id }}" wire:click="openDeleteModal({{ $transaksi->id }})" variant="danger" size="sm">
                                         Hapus
                                     </flux:button>
                                     @endcan
@@ -235,7 +273,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="23" class="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
+                            <td colspan="24" class="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
                                 @if($search)
                                     Tidak ada transaksi NBM yang ditemukan untuk pencarian "{{ $search }}".
                                 @else
@@ -250,7 +288,7 @@
 
         <!-- Pagination -->
         @if($transaksiNbms->hasPages())
-            <div class="bg-white dark:bg-neutral-800 px-4 py-3 border-t border-neutral-200 dark:border-neutral-700 sm:px-6">
+            <div class="bg-white dark:bg-neutral-800 px-4 py-3 border-t border-neutral-200 dark:border-neutral-700 sm:px-6 no-print">
                 {{ $transaksiNbms->links() }}
             </div>
         @endif
@@ -294,7 +332,7 @@
                                 <div class="relative">
                                     <select wire:model="kode_komoditi" class="w-full pl-4 pr-10 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
                                         <option value="">Pilih Komoditi</option>
-                                        @foreach($komoditiOptions as $komoditi)
+                                        @foreach($this->modalKomoditiOptions as $komoditi)
                                             <option value="{{ $komoditi['kode'] }}">{{ $komoditi['kode'] }} - {{ $komoditi['nama'] }}</option>
                                         @endforeach
                                     </select>
@@ -502,7 +540,7 @@
                                 <div class="relative">
                                     <select wire:model="kode_komoditi" class="w-full pl-4 pr-10 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
                                         <option value="">Pilih Komoditi</option>
-                                        @foreach($komoditiOptions as $komoditi)
+                                        @foreach($this->modalKomoditiOptions as $komoditi)
                                             <option value="{{ $komoditi['kode'] }}">{{ $komoditi['kode'] }} - {{ $komoditi['nama'] }}</option>
                                         @endforeach
                                     </select>
@@ -705,8 +743,258 @@
     @script
     <script>
         window.addEventListener('print-transaksi-nbm', function () {
-            window.print();
+            const wrap = document.getElementById('transaksi-nbm-table-wrapper');
+            if (!wrap) { 
+                window.print(); 
+                return; 
+            }
+
+            // Clone content & strip elements not for print
+            const clone = wrap.cloneNode(true);
+            clone.querySelectorAll('.no-print, nav').forEach(el => el.remove());
+
+            const html = `<!DOCTYPE html><html><head><title>Kelola Transaksi NBM</title><meta charset='utf-8'>
+                <style>
+                    *{box-sizing:border-box;}
+                    body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;margin:0;padding:24px;color:#111827;}
+                    .header{text-align:center;margin-bottom:30px;border-bottom:2px solid #059669;padding-bottom:20px;}
+                    .logo{width:60px;height:60px;margin:0 auto 15px;}
+                    .dept-name{font-size:16px;font-weight:600;color:#059669;margin-bottom:5px;}
+                    .dept-info{font-size:12px;color:#374151;margin-bottom:3px;}
+                    .report-title{font-size:18px;font-weight:700;color:#111827;margin-top:15px;}
+                    table{width:100%;border-collapse:collapse;font-size:11px;margin-top:20px;}
+                    th,td{border:1px solid #e5e7eb;padding:4px 6px;text-align:left;vertical-align:top;}
+                    th{background:#f3f4f6;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em;}
+                    .no-col{width:30px;text-align:center;}
+                    .numeric{text-align:right;}
+                    @media print { 
+                        body{padding:8px;} 
+                        .header{margin-bottom:20px;padding-bottom:15px;}
+                        .logo{width:50px;height:50px;}
+                        .dept-name{font-size:14px;}
+                        .dept-info{font-size:10px;}
+                        .report-title{font-size:16px;}
+                        table{font-size:9px;}
+                        th,td{padding:3px 4px;}
+                    }
+                </style>
+            </head><body>
+                <div class="header">
+                    <div class="logo">
+                        <img src="${window.location.origin}/LogoKementan.png" alt="Logo Kementerian Pertanian" style="width:60px;height:60px;object-fit:contain;" />
+                    </div>
+                    <div class="dept-name">KEMENTERIAN PERTANIAN</div>
+                    <div class="dept-info">REPUBLIK INDONESIA</div>
+                    <div class="dept-info">Pusat Data dan Sistem Informasi</div>
+                    <div class="dept-info">Jl. Harsono RM No.3, Ragunan, Pasar Minggu, Jakarta Selatan 12550</div>
+                    <div class="dept-info">Telp: (021) 7804030 | www.pertanian.go.id</div>
+                    <div class="report-title">LAPORAN DATA TRANSAKSI NBM<br>(Neraca Bahan Makanan)</div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="no-col">No</th>
+                            <th>ID</th>
+                            <th>Kelompok</th>
+                            <th>Komoditi</th>
+                            <th>Tahun</th>
+                            <th>Status</th>
+                            <th>Masukan</th>
+                            <th>Keluaran</th>
+                            <th>Impor</th>
+                            <th>Ekspor</th>
+                            <th>Stok</th>
+                            <th>Pakan</th>
+                            <th>Bibit</th>
+                            <th>Makanan</th>
+                            <th>Bukan Makanan</th>
+                            <th>Tercecer</th>
+                            <th>Penggunaan Lain</th>
+                            <th>Bahan Makanan</th>
+                            <th>Kg/Tahun</th>
+                            <th>Gram/Hari</th>
+                            <th>Kalori/Hari</th>
+                            <th>Protein/Hari</th>
+                            <th>Lemak/Hari</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Array.from(clone.querySelectorAll('tbody tr')).map((row, index) => {
+                            const cells = Array.from(row.children);
+                            // Skip first cell (nomor) and find cells without no-print class
+                            const dataCells = cells.slice(1).filter(cell => !cell.classList.contains('no-print'));
+                            const cellsHtml = dataCells.map(cell => cell.outerHTML).join('');
+                            return `<tr><td class="no-col">${index + 1}</td>${cellsHtml}</tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </body></html>`;
+
+            // Create hidden iframe
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = '0';
+            document.body.appendChild(iframe);
+
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            doc.open();
+            doc.write(html);
+            doc.close();
+
+            iframe.onload = () => {
+                try {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.print();
+                } finally {
+                    // Remove iframe after slight delay to allow dialog
+                    setTimeout(() => iframe.remove(), 2000);
+                }
+            };
         });
+
+        window.addEventListener('print-all-transaksi-nbm', function (event) {
+            const allData = event.detail.data;
+            printAllTransaksiNbmData(allData);
+        });
+
+        function printAllTransaksiNbmData(allData) {
+            let html = `<!DOCTYPE html>
+            <html>
+            <head>
+                <title>Semua Data Transaksi NBM</title>
+                <meta charset='utf-8'>
+                <style>
+                    *{box-sizing:border-box;}
+                    body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;margin:0;padding:16px;color:#111827;font-size:10px;}
+                    .header{text-align:center;margin-bottom:25px;border-bottom:2px solid #059669;padding-bottom:15px;}
+                    .logo{width:50px;height:50px;margin:0 auto 12px;}
+                    .dept-name{font-size:14px;font-weight:600;color:#059669;margin-bottom:4px;}
+                    .dept-info{font-size:10px;color:#374151;margin-bottom:2px;}
+                    .report-title{font-size:16px;font-weight:700;color:#111827;margin-top:12px;}
+                    table{width:100%;border-collapse:collapse;font-size:9px;margin-top:15px;}
+                    th,td{border:1px solid #e5e7eb;padding:3px 4px;text-align:left;vertical-align:top;}
+                    th{background:#f3f4f6;font-weight:600;font-size:8px;text-transform:uppercase;letter-spacing:.02em;}
+                    .no-col{width:25px;text-align:center;}
+                    .numeric{text-align:right;}
+                    @media print { 
+                        body{padding:8px;font-size:8px;} 
+                        .header{margin-bottom:15px;padding-bottom:10px;}
+                        .logo{width:40px;height:40px;}
+                        .dept-name{font-size:12px;}
+                        .dept-info{font-size:8px;}
+                        .report-title{font-size:14px;}
+                        table{font-size:7px;}
+                        th,td{padding:2px 3px;}
+                        .no-col{width:20px;}
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div class="logo">
+                        <img src="${window.location.origin}/LogoKementan.png" alt="Logo Kementerian Pertanian" style="width:50px;height:50px;object-fit:contain;" />
+                    </div>
+                    <div class="dept-name">KEMENTERIAN PERTANIAN</div>
+                    <div class="dept-info">REPUBLIK INDONESIA</div>
+                    <div class="dept-info">Pusat Data dan Sistem Informasi</div>
+                    <div class="dept-info">Jl. Harsono RM No.3, Ragunan, Pasar Minggu, Jakarta Selatan 12550</div>
+                    <div class="dept-info">Telp: (021) 7804030 | www.pertanian.go.id</div>
+                    <div class="report-title">LAPORAN SEMUA DATA TRANSAKSI NBM<br>(Neraca Bahan Makanan)</div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="no-col">No</th>
+                            <th>ID</th>
+                            <th>Kelompok</th>
+                            <th>Komoditi</th>
+                            <th>Tahun</th>
+                            <th>Status</th>
+                            <th>Masukan</th>
+                            <th>Keluaran</th>
+                            <th>Impor</th>
+                            <th>Ekspor</th>
+                            <th>Stok</th>
+                            <th>Pakan</th>
+                            <th>Bibit</th>
+                            <th>Makanan</th>
+                            <th>Bukan Makanan</th>
+                            <th>Tercecer</th>
+                            <th>Penggunaan Lain</th>
+                            <th>Bahan Makanan</th>
+                            <th>Kg/Tahun</th>
+                            <th>Gram/Hari</th>
+                            <th>Kalori/Hari</th>
+                            <th>Protein/Hari</th>
+                            <th>Lemak/Hari</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            if (allData && Array.isArray(allData)) {
+                allData.forEach((transaksi, index) => {
+                    html += `<tr>
+                        <td class="no-col">${index + 1}</td>
+                        <td>${transaksi.id}</td>
+                        <td>${transaksi.kelompok?.nama || 'N/A'}</td>
+                        <td>${transaksi.komoditi?.nama || 'N/A'}</td>
+                        <td>${transaksi.tahun}</td>
+                        <td>${transaksi.status_angka || 'N/A'}</td>
+                        <td class="numeric">${Number(transaksi.masukan || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.keluaran || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.impor || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.ekspor || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.perubahan_stok || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.pakan || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.bibit || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.makanan || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.bukan_makanan || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.tercecer || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.penggunaan_lain || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.bahan_makanan || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.kg_tahun || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.gram_hari || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.kalori_hari || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.protein_hari || 0).toFixed(4)}</td>
+                        <td class="numeric">${Number(transaksi.lemak_hari || 0).toFixed(6)}</td>
+                    </tr>`;
+                });
+            }
+
+            html += `
+                    </tbody>
+                </table>
+            </body>
+            </html>`;
+
+            // Create hidden iframe
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = '0';
+            document.body.appendChild(iframe);
+
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            doc.open();
+            doc.write(html);
+            doc.close();
+
+            iframe.onload = () => {
+                try {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.print();
+                } finally {
+                    setTimeout(() => iframe.remove(), 2000);
+                }
+            };
+        }
     </script>
     @endscript
 </div>

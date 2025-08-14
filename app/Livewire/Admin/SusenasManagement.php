@@ -29,6 +29,16 @@ class SusenasManagement extends Component
     public $perPage = 10;
     public $perPageOptions = [10, 25, 50, 100];
     public $exportFormat = 'xlsx';
+    
+    // Sorting
+    public $sortField = '';
+    public $sortDirection = 'asc';
+    
+    // Filters
+    public $filterTahun = '';
+    public $filterKelompokbps = '';
+    public $filterKomoditibps = '';
+    public $showFilters = false;
 
     protected $rules = [
         'kd_kelompokbps' => 'required|string|exists:tb_kelompokbps,kd_kelompokbps',
@@ -38,6 +48,14 @@ class SusenasManagement extends Component
         'konsumsikuantity' => 'required|numeric|min:0',
         'konsumsinilai' => 'nullable|numeric|min:0',
         'konsumsigizi' => 'nullable|numeric|min:0',
+    ];
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'perPage' => ['except' => 10],
+        'filterTahun' => ['except' => ''],
+        'filterKelompokbps' => ['except' => ''],
+        'filterKomoditibps' => ['except' => ''],
     ];
 
     protected $messages = [
@@ -63,9 +81,14 @@ class SusenasManagement extends Component
         $this->tahun = date('Y');
     }
 
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $susenas = TransaksiSusenas::with(['kelompokbps', 'komoditibps'])
+        $query = TransaksiSusenas::with(['kelompokbps', 'komoditibps'])
             ->when($this->search, function ($query) {
                 $query->where('tahun', 'like', '%' . $this->search . '%')
                       ->orWhere('konsumsikuantity', 'like', '%' . $this->search . '%')
@@ -76,20 +99,105 @@ class SusenasManagement extends Component
                           $q->where('nm_komoditibps', 'like', '%' . $this->search . '%');
                       });
             })
-            ->orderBy('tahun', 'desc')
-            ->orderBy('kd_kelompokbps')
-            ->orderBy('kd_komoditibps')
-            ->paginate($this->perPage);
+            ->when($this->filterTahun, function ($query) {
+                $query->where('tahun', $this->filterTahun);
+            })
+            ->when($this->filterKelompokbps, function ($query) {
+                $query->where('kd_kelompokbps', $this->filterKelompokbps);
+            })
+            ->when($this->filterKomoditibps, function ($query) {
+                $query->where('kd_komoditibps', $this->filterKomoditibps);
+            });
+
+        // Apply sorting only if sortField is set
+        if (!empty($this->sortField)) {
+            $query->orderBy($this->sortField, $this->sortDirection);
+        } else {
+            // Default ordering when no sort is applied (by ID for consistency)
+            $query->orderBy('id', 'asc');
+        }
+
+        $susenas = $query->paginate($this->perPage);
 
         $kelompokbps = TbKelompokbps::orderBy('nm_kelompokbps')->get();
         $komoditibps = TbKomoditibps::with('kelompokbps')
-            ->when($this->kd_kelompokbps, function($query) {
-                $query->where('kd_kelompokbps', $this->kd_kelompokbps);
+            ->when($this->filterKelompokbps, function($query) {
+                $query->where('kd_kelompokbps', $this->filterKelompokbps);
             })
             ->orderBy('nm_komoditibps')
             ->get();
+            
+        $tahunOptions = TransaksiSusenas::distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
 
-        return view('livewire.admin.susenas-management', compact('susenas', 'kelompokbps', 'komoditibps'));
+        return view('livewire.admin.susenas-management', compact('susenas', 'kelompokbps', 'komoditibps', 'tahunOptions'));
+    }
+
+    public function getModalKomoditiOptionsProperty()
+    {
+        if (empty($this->kd_kelompokbps)) {
+            return collect();
+        }
+        
+        return TbKomoditibps::where('kd_kelompokbps', $this->kd_kelompokbps)
+            ->orderBy('nm_komoditibps')
+            ->get();
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            if ($this->sortDirection === 'asc') {
+                $this->sortDirection = 'desc';
+            } else {
+                // Reset to unsorted state when clicking desc again
+                $this->sortField = '';
+                $this->sortDirection = 'asc';
+            }
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+        
+        $this->resetPage();
+    }
+
+    public function resetSort()
+    {
+        $this->sortField = '';
+        $this->sortDirection = 'asc';
+        $this->resetPage();
+    }
+
+    public function toggleFilters()
+    {
+        $this->showFilters = !$this->showFilters;
+    }
+
+    public function clearFilters()
+    {
+        $this->filterTahun = '';
+        $this->filterKelompokbps = '';
+        $this->filterKomoditibps = '';
+        $this->resetPage();
+    }
+
+    public function updatedFilterTahun()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterKelompokbps()
+    {
+        // Reset komoditi filter when kelompok filter changes
+        $this->filterKomoditibps = '';
+        $this->resetPage();
+    }
+
+    public function updatedFilterKomoditibps()
+    {
+        $this->resetPage();
     }
 
     public function create()
@@ -247,6 +355,46 @@ class SusenasManagement extends Component
     public function print()
     {
         $this->dispatch('print-susenas');
+    }
+
+    public function printAll()
+    {
+        $allData = $this->getAllDataForPrint();
+        $this->dispatch('print-all-susenas', data: $allData->toArray());
+    }
+
+    public function getAllDataForPrint()
+    {
+        $query = TransaksiSusenas::with(['kelompokbps', 'komoditibps'])
+            ->when($this->search, function ($query) {
+                $query->where('tahun', 'like', '%' . $this->search . '%')
+                      ->orWhere('konsumsikuantity', 'like', '%' . $this->search . '%')
+                      ->orWhereHas('kelompokbps', function($q) {
+                          $q->where('nm_kelompokbps', 'like', '%' . $this->search . '%');
+                      })
+                      ->orWhereHas('komoditibps', function($q) {
+                          $q->where('nm_komoditibps', 'like', '%' . $this->search . '%');
+                      });
+            })
+            ->when($this->filterTahun, function ($query) {
+                $query->where('tahun', $this->filterTahun);
+            })
+            ->when($this->filterKelompokbps, function ($query) {
+                $query->where('kd_kelompokbps', $this->filterKelompokbps);
+            })
+            ->when($this->filterKomoditibps, function ($query) {
+                $query->where('kd_komoditibps', $this->filterKomoditibps);
+            });
+
+        // Apply sorting only if sortField is set
+        if (!empty($this->sortField)) {
+            $query->orderBy($this->sortField, $this->sortDirection);
+        } else {
+            // Default ordering when no sort is applied (by ID for consistency)
+            $query->orderBy('id', 'asc');
+        }
+
+        return $query->get();
     }
 
     public function updatedKdKelompokbps()

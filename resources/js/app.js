@@ -236,8 +236,3 @@ document.addEventListener('livewire:init', () => {
 		};
 	});
 });
-
-// Print handler for Susenas
-window.addEventListener('print-susenas', function () {
-	window.print();
-});
