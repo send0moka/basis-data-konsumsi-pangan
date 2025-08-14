@@ -33,3 +33,36 @@ praproposal*
 #penelitian files
 PROPOSAL_PENELITIAN.md
 
+# Python ML Environment
+lstm_env/
+venv/
+env/
+.env_ml
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ML Models and Data
+*.h5
+*.pkl
+*.joblib
+trained_models/
+model_checkpoints/
+*.model
+
+# Data files
+*.csv
+*.json
+*.sql
+TransaksiNbmSeeder_*.php
+parse_nbm_data.py
+create_efficient_seeder.py
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
