@@ -23,15 +23,12 @@ yarn-error.log
 /.zed
 
 # IDE Helper files
-_ide_helper.php
-_ide_helper_models.php
 .phpstorm.meta.php
 
 docs*
 praproposal*
 
-#penelitian files
-PROPOSAL_PENELITIAN.md
+personalfiles.md
 
 # Python ML Environment
 lstm_env/
