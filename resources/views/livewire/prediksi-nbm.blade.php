@@ -26,10 +26,11 @@
                             API Error
                         </div>
                     @endif
-                    <flux:button wire:click="checkApiHealth" variant="ghost" size="sm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <flux:button wire:click="checkApiHealth" variant="outline" size="sm" class="border-gray-300 hover:border-blue-500 hover:text-blue-600">
+                        <svg class="w-4 h-4 inline mr-2 -translate-y-[1.5px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
+                        Refresh
                     </flux:button>
                 </div>
             </div>
@@ -183,11 +184,11 @@
                             type="submit" 
                             variant="primary" 
                             size="base" 
-                            class="w-full" 
+                            class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]" 
                             :disabled="$isLoading"
                             loading="{{ $isLoading ? 'true' : 'false' }}"
                         >
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 inline mr-2 -translate-y-[1.5px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
                             </svg>
                             Prediksi Konsumsi Bulan Depan
@@ -273,26 +274,26 @@
                 </div>
                 
                 <div class="p-6 space-y-2">
-                    <flux:button wire:click="loadSampleData" variant="ghost" size="sm" class="w-full justify-start">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <flux:button wire:click="loadSampleData" variant="outline" size="sm" class="w-full justify-start border-blue-200 hover:border-blue-400 hover:bg-blue-50 dark:border-blue-700 dark:hover:bg-blue-900/20 text-blue-700 dark:text-blue-300">
+                        <svg class="w-4 h-4 inline mr-2 -translate-y-[1.5px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                         Load Sample Data
                     </flux:button>
                     
-                    <flux:button wire:click="clearData" variant="ghost" size="sm" class="w-full justify-start">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <flux:button wire:click="clearData" variant="outline" size="sm" class="w-full justify-start border-red-200 hover:border-red-400 hover:bg-red-50 dark:border-red-700 dark:hover:bg-red-900/20 text-red-700 dark:text-red-300">
+                        <svg class="w-4 h-4 inline mr-2 -translate-y-[1.5px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                         </svg>
-                        Clear All Data
+                        🗑️ Clear All Data
                     </flux:button>
                     
                     @if($predictionResult)
-                    <flux:button wire:click="exportResult" variant="ghost" size="sm" class="w-full justify-start">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <flux:button wire:click="exportResult" variant="outline" size="sm" class="w-full justify-start border-green-200 hover:border-green-400 hover:bg-green-50 dark:border-green-700 dark:hover:bg-green-900/20 text-green-700 dark:text-green-300">
+                        <svg class="w-4 h-4 inline mr-2 -translate-y-[1.5px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
                         </svg>
-                        Export Result
+                        💾 Export Result
                     </flux:button>
                     @endif
                 </div>
