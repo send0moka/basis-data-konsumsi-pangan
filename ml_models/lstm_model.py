@@ -34,7 +34,7 @@ class LSTMCaloriePredictor:
         np.random.seed(42)
         
     def build_model(self, learning_rate=0.001, lstm_units=[50, 50], dropout_rate=0.2, 
-                   l2_reg=0.01, use_batch_norm=True):
+                   l2_reg=0.01, use_batch_norm=True, n_features=1):
         """
         Build LSTM model architecture
         
@@ -44,6 +44,7 @@ class LSTMCaloriePredictor:
             dropout_rate (float): Dropout rate for regularization
             l2_reg (float): L2 regularization strength
             use_batch_norm (bool): Whether to use batch normalization
+            n_features (int): Number of features per timestep
         """
         self.model = Sequential()
         
@@ -51,7 +52,7 @@ class LSTMCaloriePredictor:
         self.model.add(LSTM(
             units=lstm_units[0],
             return_sequences=len(lstm_units) > 1,
-            input_shape=(self.sequence_length, 1),
+            input_shape=(self.sequence_length, n_features),
             kernel_regularizer=l2(l2_reg),
             recurrent_regularizer=l2(l2_reg)
         ))
