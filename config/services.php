@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'nbm_api' => [
+        'url' => env('NBM_API_URL', 'http://localhost:8081'),
+        'timeout' => env('NBM_API_TIMEOUT', 30),
+    ],
+
 ];

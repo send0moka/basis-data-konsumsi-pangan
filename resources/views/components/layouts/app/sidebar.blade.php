@@ -43,6 +43,12 @@
                     @endcan
                 </flux:navlist.group>
 
+                <flux:navlist.group :heading="__('Machine Learning')" class="grid">
+                    <flux:navlist.item icon="cpu-chip" :href="route('prediksi.index')" :current="request()->routeIs('prediksi.*')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('prediksi.*') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Prediksi Konsumsi NBM') }}</span>
+                    </flux:navlist.item>
+                </flux:navlist.group>
+
                 <!-- Admin menu for data management -->
                 @if(auth()->user() && auth()->user()->isAdmin())
                 <flux:navlist.group :heading="__('Data Susenas')" class="grid">

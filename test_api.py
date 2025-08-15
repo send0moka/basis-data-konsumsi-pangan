@@ -11,7 +11,7 @@ from typing import List, Dict, Any
 class NBMAPIClient:
     """Client untuk testing NBM API"""
     
-    def __init__(self, base_url: str = "http://localhost:8080"):
+    def __init__(self, base_url: str = "http://localhost:8081"):
         self.base_url = base_url.rstrip('/')
         
     def health_check(self) -> Dict[str, Any]:

@@ -88,4 +88,15 @@ Route::middleware(['auth', 'permission:view kelompokbps|view komoditibps|view su
     Route::view('susenas', 'admin.susenas')->name('susenas');
 });
 
+// NBM Prediction Routes
+Route::middleware(['auth'])->prefix('prediksi')->name('prediksi.')->group(function () {
+    Route::get('/', function () {
+        return view('prediksi.index');
+    })->name('index');
+    
+    Route::get('/api/health', [App\Http\Controllers\NBMPredictionController::class, 'health'])->name('api.health');
+    Route::post('/api/predict', [App\Http\Controllers\NBMPredictionController::class, 'predict'])->name('api.predict');
+    Route::get('/api/stats', [App\Http\Controllers\NBMPredictionController::class, 'modelStats'])->name('api.stats');
+});
+
 require __DIR__.'/auth.php';

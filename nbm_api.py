@@ -156,7 +156,7 @@ def create_sequence_from_data(data: List[NBMDataPoint]) -> np.ndarray:
     df = pd.DataFrame(df_data)
     
     # Sort by date to ensure chronological order
-    df['date'] = pd.to_datetime(df[['tahun', 'bulan']].assign(day=1))
+    df['date'] = pd.to_datetime(df[['tahun', 'bulan']].rename(columns={'tahun': 'year', 'bulan': 'month'}).assign(day=1))
     df = df.sort_values('date')
     
     # Aggregate by month (sum all food groups/commodities)
@@ -414,4 +414,4 @@ async def general_exception_handler(request, exc):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=8081, log_level="info")

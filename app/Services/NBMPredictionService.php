@@ -13,7 +13,7 @@ class NBMPredictionService
     
     public function __construct()
     {
-        $this->apiUrl = config('services.nbm_api.url', 'http://localhost:8080');
+        $this->apiUrl = config('services.nbm_api.url', 'http://localhost:8081');
         $this->timeout = config('services.nbm_api.timeout', 30);
     }
     
@@ -73,6 +73,35 @@ class NBMPredictionService
                 'error' => $e->getMessage()
             ];
         }
+    }
+    
+    /**
+     * Make prediction based on NBM data (alias for predictBatch)
+     * 
+     * @param array $data Array of NBM data for prediction
+     * @return array Prediction result
+     */
+    public function predict(array $data): array
+    {
+        // Format data for batch prediction API
+        // The data should be wrapped in a prediction request format
+        $formattedData = [
+            [
+                'data' => $data
+            ]
+        ];
+        
+        $result = $this->predictBatch($formattedData);
+        
+        // Extract the first prediction result from the batch response
+        if ($result['success'] && isset($result['data'][0])) {
+            return [
+                'success' => true,
+                'data' => $result['data'][0]
+            ];
+        }
+        
+        return $result;
     }
     
     /**
