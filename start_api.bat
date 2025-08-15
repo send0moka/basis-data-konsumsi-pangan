@@ -1,24 +1,23 @@
 @echo off
-echo Starting NBM Prediction API Server...
-echo.
+echo 🚀 Starting NBM Prediction API...
+echo ================================
 
 cd /d "%~dp0"
 
-echo Activating virtual environment...
-call ml_models\lstm_env\Scripts\activate.bat
+REM Check if production model exists
+if not exist "ml_models\models\nbm_production" (
+    echo ❌ Production model not found!
+    echo Please run setup.bat first to create the model.
+    pause
+    exit /b 1
+)
 
+echo ✅ Production model found
+echo 🔥 Starting FastAPI server on port 8081...
+echo 📖 API Documentation: http://localhost:8081/docs
+echo 🛑 Press Ctrl+C to stop the server
 echo.
-echo Installing/updating dependencies...
-pip install fastapi uvicorn pydantic python-multipart pandas numpy scikit-learn joblib mysql-connector-python sqlalchemy python-dotenv
 
-echo.
-echo Starting FastAPI server...
-echo API will be available at:
-echo   - Swagger UI: http://localhost:8081/docs
-echo   - ReDoc: http://localhost:8081/redoc
-echo   - Health Check: http://localhost:8081/health
-echo.
-echo Press Ctrl+C to stop the server
-echo.
+python nbm_api.py
 
 python nbm_api.py

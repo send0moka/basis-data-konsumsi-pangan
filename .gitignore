@@ -54,6 +54,10 @@ trained_models/
 model_checkpoints/
 *.model
 
+# Exception: Include production model files
+!ml_models/models/nbm_production/
+!ml_models/models/nbm_production/*.pkl
+
 # Data files
 *.csv
 *.json
