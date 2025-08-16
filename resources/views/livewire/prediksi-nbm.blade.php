@@ -126,54 +126,159 @@
                         </div>
                     </div>
 
-                    <form wire:submit="predict" class="space-y-4">
-                        @foreach($data as $index => $item)
-                        <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-blue-500">
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        {{ $item['month_name'] }}
-                                    </label>
+                    <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Rentang Waktu</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dari Bulan</label>
+                                <input 
+                                    type="month" 
+                                    wire:model.live="startDate"
+                                    wire:change="$set('startDate', $event.target.value)"
+                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                >
+                                @error('startDate')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sampai Bulan</label>
+                                <input 
+                                    type="month" 
+                                    wire:model.live="endDate"
+                                    wire:change="$set('endDate', $event.target.value)"
+                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                >
+                                @error('endDate')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div class="flex items-end">
+                                <button 
+                                    type="button"
+                                    wire:click="updateData"
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                                >
+                                    Terapkan
+                                </button>
+                            </div>
+                        </div>
+                        @if(count($data) > 0)
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            Menampilkan data dari {{ count($data) }} bulan
+                        </p>
+                        @endif
+                    </div>
+
+                    <form wire:submit="predict" class="space-y-6">
+                        @foreach($data as $monthIndex => $monthData)
+                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                            <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                                <h4 class="text-lg font-medium text-gray-900 dark:text-white">{{ $monthData['month_name'] }}</h4>
+                            </div>
+                            
+                            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                                @foreach($monthData['komoditi_data'] as $itemIndex => $item)
+                                <div class="p-4 {{ $loop->even ? 'bg-gray-50 dark:bg-gray-700/50' : 'bg-white dark:bg-gray-800' }}">
+                                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                                        <div class="md:col-span-4">
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kelompok Pangan</label>
+                                            <flux:select 
+                                                wire:model.live="data.{{ $monthIndex }}.komoditi_data.{{ $itemIndex }}.kelompok" 
+                                                wire:loading.attr="disabled"
+                                                class="w-full"
+                                                id="kelompok-{{ $monthIndex }}-{{ $itemIndex }}"
+                                            >
+                                                <option value="">Pilih Kelompok</option>
+                                                @foreach(array_keys($komoditiOptions) as $kelompok)
+                                                    <option value="{{ $kelompok }}" {{ $item['kelompok'] === $kelompok ? 'selected' : '' }}>
+                                                        {{ $kelompok }}
+                                                    </option>
+                                                @endforeach
+                                            </flux:select>
+                                            @error("data.{$monthIndex}.komoditi_data.{$itemIndex}.kelompok")
+                                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        
+                                        <div class="md:col-span-4">
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Komoditi</label>
+                                            <div class="flex space-x-2">
+                                                <flux:select 
+                                                    wire:model="data.{{ $monthIndex }}.komoditi_data.{{ $itemIndex }}.komoditi" 
+                                                    wire:loading.attr="disabled"
+                                                    class="w-full"
+                                                    id="komoditi-{{ $monthIndex }}-{{ $itemIndex }}"
+                                                >
+                                                    <option value="">Pilih Komoditi</option>
+                                                    @if(!empty($item['kelompok']) && isset($komoditiOptions[$item['kelompok']]))
+                                                        @foreach($komoditiOptions[$item['kelompok']] as $komoditi)
+                                                            <option value="{{ $komoditi['value'] }}" {{ $item['komoditi'] === $komoditi['value'] ? 'selected' : '' }}>
+                                                                {{ $komoditi['label'] }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
+                                                </flux:select>
+                                                
+                                                @if($itemIndex > 0)
+                                                <button 
+                                                    type="button" 
+                                                    wire:click="$remove('data.' . $monthIndex . '.komoditi_data', $itemIndex)"
+                                                    class="px-3 py-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                                                    title="Hapus komoditi"
+                                                    wire:loading.attr="disabled"
+                                                >
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                </button>
+                                                @endif
+                                            </div>
+                                            @error("data.{$monthIndex}.komoditi_data.{$itemIndex}.komoditi")
+                                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        
+                                        <div class="md:col-span-3">
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kalori per Hari</label>
+                                            <div class="relative">
+                                                <flux:input 
+                                                    wire:model="data.{{ $monthIndex }}.komoditi_data.{{ $itemIndex }}.kalori_hari" 
+                                                    type="number" 
+                                                    step="0.01" 
+                                                    min="0" 
+                                                    max="1000"
+                                                    placeholder="0.00"
+                                                    class="pr-12"
+                                                    id="kalori-{{ $monthIndex }}-{{ $itemIndex }}"
+                                                />
+                                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                    <span class="text-gray-500 dark:text-gray-400 text-sm">kcal/hari</span>
+                                                </div>
+                                            </div>
+                                            @error("data.{$monthIndex}.komoditi_data.{$itemIndex}.kalori_hari")
+                                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        
+                                        <div class="md:col-span-1 flex justify-end">
+                                            @if($itemIndex === count($monthData['komoditi_data']) - 1)
+                                            <button 
+                                                type="button" 
+                                                wire:click="$push('data.{{ $monthIndex }}.komoditi_data', ['kelompok' => '', 'komoditi' => '', 'kalori_hari' => ''])"
+                                                class="p-2 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors"
+                                                title="Tambah komoditi"
+                                                wire:loading.attr="disabled"
+                                            >
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                                </svg>
+                                            </button>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <flux:select 
-                                        wire:model.live="data.{{ $index }}.kelompok" 
-                                        wire:loading.attr="disabled"
-                                        class="w-full"
-                                    >
-                                        <option value="">Pilih Kelompok</option>
-                                        @foreach(array_keys($komoditiOptions) as $kelompok)
-                                            <option value="{{ $kelompok }}">{{ $kelompok }}</option>
-                                        @endforeach
-                                    </flux:select>
-                                </div>
-                                <div>
-                                    <flux:select 
-                                        wire:model="data.{{ $index }}.komoditi" 
-                                        wire:loading.attr="disabled"
-                                        class="w-full"
-                                    >
-                                        <option value="">Pilih Komoditi</option>
-                                        @if(!empty($data[$index]['kelompok']) && isset($komoditiOptions[$data[$index]['kelompok']]))
-                                            @foreach($komoditiOptions[$data[$index]['kelompok']] as $komoditi)
-                                                <option value="{{ $komoditi['value'] }}" @selected($data[$index]['komoditi'] === $komoditi['value'])>
-                                                    {{ $komoditi['label'] }}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                    </flux:select>
-                                </div>
-                                <div>
-                                    <flux:input 
-                                        wire:model="data.{{ $index }}.kalori_hari" 
-                                        type="number" 
-                                        step="0.01" 
-                                        min="0" 
-                                        max="1000"
-                                        placeholder="0.00"
-                                        suffix="kcal/hari"
-                                    />
-                                </div>
+                                @endforeach
                             </div>
                         </div>
                         @endforeach

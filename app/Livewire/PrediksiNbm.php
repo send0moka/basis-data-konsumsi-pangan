@@ -2,18 +2,44 @@
 
 namespace App\Livewire;
 
+use App\Models\Komoditi;
 use App\Services\NBMPredictionService;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
 
 class PrediksiNbm extends Component
 {
     public $data = [];
-    public $predictionResult = null;
-    public $apiStatus = 'checking';
-    public $modelStats = null;
-    public $isLoading = false;
+    public $startDate;
+    public $endDate;
     public $komoditiOptions = [];
+    public $isLoading = false;
+    public $predictionResult = null;
+    public $modelStats = [];
+    public $apiStatus = 'checking';
+    protected $listeners = ['updateDateRange' => 'updateDateRange'];
+    
+    protected $rules = [
+        'data.*.komoditi_data.*.kelompok' => 'required|string',
+        'data.*.komoditi_data.*.komoditi' => 'required|string',
+        'data.*.komoditi_data.*.kalori_hari' => 'required|numeric|min:0|max:1000',
+        'startDate' => 'required|date_format:Y-m',
+        'endDate' => 'required|date_format:Y-m|after_or_equal:startDate',
+    ];
+    
+    protected $messages = [
+        'data.*.komoditi_data.*.kelompok.required' => 'Kelompok pangan harus dipilih',
+        'data.*.komoditi_data.*.komoditi.required' => 'Komoditi harus dipilih',
+        'data.*.komoditi_data.*.kalori_hari.required' => 'Nilai kalori harus diisi',
+        'data.*.komoditi_data.*.kalori_hari.numeric' => 'Nilai kalori harus berupa angka',
+        'data.*.komoditi_data.*.kalori_hari.min' => 'Nilai kalori minimal 0',
+        'data.*.komoditi_data.*.kalori_hari.max' => 'Nilai kalori maksimal 1000',
+        'startDate.required' => 'Tanggal mulai harus diisi',
+        'endDate.required' => 'Tanggal selesai harus diisi',
+        'endDate.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal mulai',
+    ];
     
     protected NBMPredictionService $predictionService;
     
@@ -24,28 +50,90 @@ class PrediksiNbm extends Component
     
     public function mount()
     {
-        $this->initializeData();
         $this->checkApiHealth();
-        $this->loadModelStats();
+        $this->initializeData();
         $this->komoditiOptions = $this->getKomoditiOptions();
+        
+        // Set default date range (last 6 months)
+        $this->endDate = now()->format('Y-m');
+        $this->startDate = now()->subMonths(5)->format('Y-m');
+        
+        $this->updateData();
+        $this->loadModelStats();
     }
     
     public function initializeData()
     {
         $currentDate = now();
-        $this->data = [];
-        
-        for ($i = 5; $i >= 0; $i--) {
-            $date = $currentDate->copy()->subMonths($i);
-            $this->data[] = [
-                'tahun' => $date->year,
-                'bulan' => $date->month,
-                'month_name' => $date->locale('id')->format('F Y'),
-                'kelompok' => '',
-                'komoditi' => '',
-                'kalori_hari' => ''
-            ];
+        $this->startDate = $currentDate->copy()->subMonths(5)->format('Y-m');
+        $this->endDate = $currentDate->format('Y-m');
+        $this->updateData();
+    }
+    
+    public function updateDateRange($start, $end)
+    {
+        $this->startDate = $start;
+        $this->endDate = $end;
+        $this->updateData();
+    }
+    
+    public function updatedStartDate($value)
+    {
+        $this->validateOnly('startDate');
+        $this->updateData();
+    }
+    
+    public function updatedEndDate($value)
+    {
+        $this->validateOnly('endDate');
+        $this->updateData();
+    }
+    
+    public function updateData()
+    {
+        if (empty($this->startDate) || empty($this->endDate)) {
+            return;
         }
+        
+        $start = \Carbon\Carbon::createFromFormat('Y-m', $this->startDate);
+        $end = \Carbon\Carbon::createFromFormat('Y-m', $this->endDate);
+        $newData = [];
+        
+        // Create a map of existing data by month for easier lookup
+        $existingData = [];
+        foreach ($this->data as $monthData) {
+            $key = $monthData['tahun'] . '-' . str_pad($monthData['bulan'], 2, '0', STR_PAD_LEFT);
+            $existingData[$key] = $monthData;
+        }
+        
+        $current = $start->copy();
+        while ($current <= $end) {
+            $key = $current->format('Y-m');
+            $monthKey = $current->year . '-' . str_pad($current->month, 2, '0', STR_PAD_LEFT);
+            
+            if (isset($existingData[$monthKey])) {
+                // Keep existing data for this month
+                $newData[] = $existingData[$monthKey];
+            } else {
+                // Add new month with empty data
+                $newData[] = [
+                    'tahun' => $current->year,
+                    'bulan' => $current->month,
+                    'month_name' => $current->locale('id')->format('F Y'),
+                    'komoditi_data' => [
+                        [
+                            'kelompok' => '',
+                            'komoditi' => '',
+                            'kalori_hari' => ''
+                        ]
+                    ]
+                ];
+            }
+            
+            $current->addMonth();
+        }
+        
+        $this->data = $newData;
     }
     
     public function checkApiHealth()
@@ -73,63 +161,111 @@ class PrediksiNbm extends Component
     
     public function loadSampleData()
     {
-        $sampleData = [
-            ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori' => 45.5],
-            ['kelompok' => 'Umbi-umbian', 'komoditi' => 'Ubi kayu', 'kalori' => 47.2],
-            ['kelompok' => 'Ikan/udang/cumi/kerang', 'komoditi' => 'Ikan segar', 'kalori' => 46.8],
-            ['kelompok' => 'Daging', 'komoditi' => 'Daging ayam', 'kalori' => 48.1],
-            ['kelompok' => 'Telur dan susu', 'komoditi' => 'Telur ayam', 'kalori' => 47.9],
-            ['kelompok' => 'Sayur-sayuran', 'komoditi' => 'Bayam', 'kalori' => 49.3]
-        ];
-        
-        // Create a new array to hold the updated data
-        $newData = [];
-        
-        foreach ($this->data as $index => $item) {
-            if (isset($sampleData[$index])) {
+        try {
+            $sampleData = [
+                [
+                    ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori_hari' => 30.5],
+                    ['kelompok' => 'Ikan/udang/cumi/kerang', 'komoditi' => 'Ikan segar', 'kalori_hari' => 8.2],
+                    ['kelompok' => 'Sayur-sayuran', 'komoditi' => 'Bayam', 'kalori_hari' => 6.8]
+                ],
+                [
+                    ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori_hari' => 32.1],
+                    ['kelompok' => 'Daging', 'komoditi' => 'Daging ayam', 'kalori_hari' => 12.5],
+                    ['kelompok' => 'Buah-buahan', 'komoditi' => 'Pisang', 'kalori_hari' => 5.3]
+                ],
+                [
+                    ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori_hari' => 31.8],
+                    ['kelompok' => 'Telur dan susu', 'komoditi' => 'Telur ayam', 'kalori_hari' => 7.9],
+                    ['kelompok' => 'Umbi-umbian', 'komoditi' => 'Ubi kayu', 'kalori_hari' => 8.7]
+                ],
+                [
+                    ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori_hari' => 33.2],
+                    ['kelompok' => 'Ikan/udang/cumi/kerang', 'komoditi' => 'Ikan asin', 'kalori_hari' => 9.1],
+                    ['kelompok' => 'Kacang-kacangan', 'komoditi' => 'Kacang tanah', 'kalori_hari' => 5.5]
+                ],
+                [
+                    ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori_hari' => 30.9],
+                    ['kelompok' => 'Daging', 'komoditi' => 'Daging sapi', 'kalori_hari' => 10.2],
+                    ['kelompok' => 'Buah-buahan', 'komoditi' => 'Jeruk', 'kalori_hari' => 6.1]
+                ],
+                [
+                    ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori_hari' => 31.5],
+                    ['kelompok' => 'Telur dan susu', 'komoditi' => 'Susu sapi', 'kalori_hari' => 8.3],
+                    ['kelompok' => 'Sayur-sayuran', 'komoditi' => 'Wortel', 'kalori_hari' => 7.2]
+                ]
+            ];
+            
+            $newData = [];
+            $start = \Carbon\Carbon::createFromFormat('Y-m', $this->startDate);
+            $end = \Carbon\Carbon::createFromFormat('Y-m', $this->endDate);
+            $index = 0;
+            
+            while ($start <= $end) {
                 $newData[] = [
-                    'tahun' => $item['tahun'],
-                    'bulan' => $item['bulan'],
-                    'month_name' => $item['month_name'],
-                    'kelompok' => $sampleData[$index]['kelompok'],
-                    'komoditi' => $sampleData[$index]['komoditi'],
-                    'kalori_hari' => $sampleData[$index]['kalori']
+                    'tahun' => $start->year,
+                    'bulan' => $start->month,
+                    'month_name' => $start->locale('id')->format('F Y'),
+                    'komoditi_data' => $sampleData[$index % count($sampleData)]
                 ];
-            } else {
-                $newData[] = $item;
+                
+                $start->addMonth();
+                $index++;
             }
+            
+            $this->data = $newData;
+            $this->komoditiOptions = $this->getKomoditiOptions();
+            
+            $this->dispatch('show-toast', [
+                'type' => 'success',
+                'message' => 'Data contoh berhasil dimuat.'
+            ]);
+            
+        } catch (\Exception $e) {
+            $this->dispatch('show-toast', [
+                'type' => 'error',
+                'message' => 'Gagal memuat data contoh: ' . $e->getMessage()
+            ]);
+            Log::error('Failed to load sample data: ' . $e->getMessage());
         }
-        
-        // Update the data property in one go
-        $this->data = $newData;
-        
-        // Force update komoditi options
-        $this->komoditiOptions = $this->getKomoditiOptions();
-        
-        // Force Livewire to re-render the view
-        $this->dispatch('$refresh');
     }
     
     public function clearData()
     {
-        $this->initializeData();
+        $this->updateData(); // Reset data structure without clearing the form
         $this->predictionResult = null;
+        
+        // Clear all input values
+        foreach ($this->data as $monthIndex => $monthData) {
+            foreach ($monthData['komoditi_data'] as $itemIndex => $item) {
+                $this->data[$monthIndex]['komoditi_data'][$itemIndex] = [
+                    'kelompok' => '',
+                    'komoditi' => '',
+                    'kalori_hari' => ''
+                ];
+            }
+        }
+        
+        $this->dispatch('show-toast', [
+            'type' => 'success',
+            'message' => 'Semua data inputan telah dihapus.'
+        ]);
     }
     
     public function updatedData($value, $key)
     {
         // Check if the updated field is a kelompok field
-        if (str_contains($key, 'kelompok')) {
-            // Extract the index from the key (e.g., '0.kelompok' -> 0)
-            $index = explode('.', $key)[0];
+        if (preg_match('/data\.(\d+)\.komoditi_data\.(\d+)\.kelompok/', $key, $matches)) {
+            $monthIndex = $matches[1];
+            $itemIndex = $matches[2];
             
             // Reset komoditi when kelompok changes
-            if (isset($this->data[$index])) {
-                $this->data[$index]['komoditi'] = '';
+            if (isset($this->data[$monthIndex]['komoditi_data'][$itemIndex])) {
+                $this->data[$monthIndex]['komoditi_data'][$itemIndex]['komoditi'] = '';
             }
             
             // Update komoditi options
             $this->komoditiOptions = $this->getKomoditiOptions();
+            $this->dispatch('$refresh');
         }
     }
     
@@ -213,25 +349,43 @@ class PrediksiNbm extends Component
     
     public function predict()
     {
+        // Validate all fields
         $this->validate([
-            'data.*.kelompok' => 'required|string',
-            'data.*.komoditi' => 'required|string',
-            'data.*.kalori_hari' => 'required|numeric|min:0|max:1000'
+            'data.*.komoditi_data.*.kelompok' => 'required|string',
+            'data.*.komoditi_data.*.komoditi' => 'required|string',
+            'data.*.komoditi_data.*.kalori_hari' => 'required|numeric|min:0|max:1000'
         ]);
         
         $this->isLoading = true;
         
         try {
             // Prepare data for API
-            $apiData = collect($this->data)->map(function ($item) {
-                return [
-                    'tahun' => (int) $item['tahun'],
-                    'bulan' => (int) $item['bulan'],
-                    'kelompok' => $item['kelompok'],
-                    'komoditi' => $item['komoditi'],
-                    'kalori_hari' => (float) $item['kalori_hari']
+            $apiData = [];
+            
+            foreach ($this->data as $monthData) {
+                if (empty($monthData['komoditi_data'])) {
+                    continue; // Skip months with no commodity data
+                }
+
+                $totalKalori = 0;
+                foreach ($monthData['komoditi_data'] as $item) {
+                    $totalKalori += (float)($item['kalori_hari'] ?? 0);
+                }
+
+                // The model expects one entry per month. We'll sum the calories.
+                // We use the first commodity's group/name as a representative label.
+                $firstItem = $monthData['komoditi_data'][0];
+
+                $apiData[] = [
+                    'tahun' => (int) $monthData['tahun'],
+                    'bulan' => (int) $monthData['bulan'],
+                    'kelompok' => $firstItem['kelompok'],
+                    'komoditi' => $firstItem['komoditi'],
+                    'kalori_hari' => $totalKalori
                 ];
-            })->toArray();
+            }
+
+            Log::info('Data sent to prediction API:', ['data' => $apiData]);
             
             $result = $this->predictionService->predict($apiData);
             
@@ -239,7 +393,26 @@ class PrediksiNbm extends Component
                 $this->predictionResult = $result['data'];
                 session()->flash('message', 'Prediksi berhasil dibuat!');
             } else {
-                session()->flash('error', 'Gagal membuat prediksi: ' . ($result['error'] ?? $result['message'] ?? 'Unknown error'));
+                $errorDetails = $result['error'] ?? ($result['message'] ?? 'Unknown error');
+                $errorMessage = 'Gagal membuat prediksi: ';
+
+                if (is_array($errorDetails)) {
+                    // If we have structured error details from FastAPI/Pydantic
+                    if (isset($errorDetails[0]['msg'])) {
+                        $messages = [];
+                        foreach ($errorDetails as $err) {
+                            $field = implode(' -> ', $err['loc']);
+                            $messages[] = "{$err['msg']} (Input: {$field})";
+                        }
+                        $errorMessage .= implode(', ', $messages);
+                    } else {
+                        $errorMessage .= json_encode($errorDetails);
+                    }
+                } else {
+                    $errorMessage .= $errorDetails;
+                }
+
+                session()->flash('error', $errorMessage);
             }
         } catch (\Exception $e) {
             session()->flash('error', 'Error: ' . $e->getMessage());
