@@ -251,7 +251,6 @@
                                                     min="0" 
                                                     max="1000"
                                                     placeholder="0.00"
-                                                    class="pr-12"
                                                     id="kalori-{{ $monthIndex }}-{{ $itemIndex }}"
                                                 />
                                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
