@@ -136,6 +136,7 @@
                                     wire:model.live="startDate"
                                     wire:change="$set('startDate', $event.target.value)"
                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                    max="{{ now()->subMonth()->format('Y-m') }}"
                                 >
                                 @error('startDate')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -148,6 +149,7 @@
                                     wire:model.live="endDate"
                                     wire:change="$set('endDate', $event.target.value)"
                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                    max="{{ now()->subMonth()->format('Y-m') }}"
                                 >
                                 @error('endDate')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>

@@ -55,8 +55,8 @@ class PrediksiNbm extends Component
         $this->komoditiOptions = $this->getKomoditiOptions();
         
         // Set default date range (last 6 months)
-        $this->endDate = now()->format('Y-m');
-        $this->startDate = now()->subMonths(5)->format('Y-m');
+        $this->endDate = now()->subMonth()->format('Y-m');
+        $this->startDate = now()->subMonths(6)->format('Y-m');
         
         $this->updateData();
         $this->loadModelStats();
@@ -65,8 +65,8 @@ class PrediksiNbm extends Component
     public function initializeData()
     {
         $currentDate = now();
-        $this->startDate = $currentDate->copy()->subMonths(5)->format('Y-m');
-        $this->endDate = $currentDate->format('Y-m');
+        $this->endDate = $currentDate->copy()->subMonth()->format('Y-m');
+        $this->startDate = $currentDate->copy()->subMonths(6)->format('Y-m');
         $this->updateData();
     }
     
@@ -197,7 +197,8 @@ class PrediksiNbm extends Component
             
             $newData = [];
             $start = \Carbon\Carbon::createFromFormat('Y-m', $this->startDate);
-            $end = \Carbon\Carbon::createFromFormat('Y-m', $this->startDate)->addMonths(5);
+            $this->endDate = $start->copy()->addMonths(5)->format('Y-m');
+            $end = \Carbon\Carbon::createFromFormat('Y-m', $this->endDate);
             $index = 0;
             
             while ($start <= $end) {
