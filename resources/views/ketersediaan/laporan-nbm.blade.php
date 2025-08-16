@@ -8,19 +8,19 @@
             <nav class="flex mb-8" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
                     <li class="inline-flex items-center">
-                        <a href="{{ route('home') }}" class="text-gray-700 hover:text-blue-600">Home</a>
+                        <a href="{{ route('home') }}" class="text-neutral-700 hover:text-blue-600">Home</a>
                     </li>
                     <li>
                         <div class="flex items-center">
-                            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-6 h-6 text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                             </svg>
-                            <span class="ml-1 text-gray-500">Ketersediaan</span>
+                            <span class="ml-1 text-neutral-500">Ketersediaan</span>
                         </div>
                     </li>
                     <li>
                         <div class="flex items-center">
-                            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-6 h-6 text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                             </svg>
                             <span class="ml-1 text-blue-600 font-medium">Laporan Data NBM</span>
@@ -31,10 +31,10 @@
 
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                <h1 class="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
                     Laporan Data Neraca Bahan Makanan
                 </h1>
-                <p class="text-xl text-gray-600">
+                <p class="text-xl text-neutral-600">
                     Cari dan analisis data ketersediaan pangan Indonesia melalui Neraca Bahan Makanan (NBM)
                 </p>
             </div>
@@ -43,18 +43,18 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" x-data="searchForm()">
                 <!-- Search Form - Left Column -->
                 <div class="lg:col-span-1">
-                    <div class="bg-gray-50 rounded-lg p-6 sticky top-24">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-6">Filter Data Ketersediaan</h3>
+                    <div class="bg-neutral-50 rounded-lg p-6 sticky top-24">
+                        <h3 class="text-lg font-semibold text-neutral-900 mb-6">Filter Data Ketersediaan</h3>
                         
                         <form @submit.prevent="searchData" class="space-y-6">
                             <!-- Pilih Kelompok -->
                             <div>
-                                <label for="kelompok" class="block text-sm font-medium text-gray-700 mb-2">
+                                <label for="kelompok" class="block text-sm font-medium text-neutral-700 mb-2">
                                     Kelompok Pangan
                                 </label>
                                 <select x-model="filters.kelompok" 
                                         @change="loadKomoditi()"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                     <option value="">Pilih Kelompok</option>
                                     <option value="padi-padian">Padi-padian</option>
                                     <option value="makanan-berpati">Makanan Berpati</option>
@@ -71,12 +71,12 @@
 
                             <!-- Pilih Komoditi -->
                             <div>
-                                <label for="komoditi" class="block text-sm font-medium text-gray-700 mb-2">
+                                <label for="komoditi" class="block text-sm font-medium text-neutral-700 mb-2">
                                     Komoditi
                                 </label>
                                 <select x-model="filters.komoditi" 
                                         :disabled="!filters.kelompok"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100">
+                                        class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-neutral-100">
                                     <option value="">Pilih Komoditi</option>
                                     <template x-for="komoditi in availableKomoditi" :key="komoditi.value">
                                         <option :value="komoditi.value" x-text="komoditi.label"></option>
@@ -86,12 +86,12 @@
 
                             <!-- Tahun Awal -->
                             <div>
-                                <label for="tahun_awal" class="block text-sm font-medium text-gray-700 mb-2">
+                                <label for="tahun_awal" class="block text-sm font-medium text-neutral-700 mb-2">
                                     Tahun Awal
                                 </label>
                                 <select x-model="filters.tahun_awal" 
                                         @change="validateYearRange()"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                     <option value="">Pilih Tahun</option>
                                     <template x-for="year in years" :key="year">
                                         <option :value="year" x-text="year"></option>
@@ -101,12 +101,12 @@
 
                             <!-- Tahun Akhir -->
                             <div>
-                                <label for="tahun_akhir" class="block text-sm font-medium text-gray-700 mb-2">
+                                <label for="tahun_akhir" class="block text-sm font-medium text-neutral-700 mb-2">
                                     Tahun Akhir
                                 </label>
                                 <select x-model="filters.tahun_akhir" 
                                         :disabled="!filters.tahun_awal"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100">
+                                        class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-neutral-100">
                                     <option value="">Pilih Tahun</option>
                                     <template x-for="year in availableEndYears" :key="year">
                                         <option :value="year" x-text="year"></option>
@@ -117,7 +117,7 @@
                             <!-- Button Tampilkan Data -->
                             <button type="submit" 
                                     :disabled="!canSearch"
-                                    :class="canSearch ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'"
+                                    :class="canSearch ? 'bg-blue-600 hover:bg-blue-700' : 'bg-neutral-400 cursor-not-allowed'"
                                     class="w-full text-white px-4 py-3 rounded-md font-medium transition duration-200">
                                 <span x-show="!loading">Tampilkan Data</span>
                                 <span x-show="loading" class="flex items-center justify-center">
@@ -132,15 +132,15 @@
                             <!-- Reset Button -->
                             <button type="button" 
                                     @click="resetForm()"
-                                    class="w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md font-medium transition duration-200">
+                                    class="w-full bg-neutral-500 hover:bg-neutral-600 text-white px-4 py-2 rounded-md font-medium transition duration-200">
                                 Reset Filter
                             </button>
                         </form>
 
                         <!-- Quick Stats -->
-                        <div class="mt-8 pt-6 border-t border-gray-200">
-                            <h4 class="font-medium text-gray-900 mb-3">Informasi Data</h4>
-                            <div class="space-y-2 text-sm text-gray-600">
+                        <div class="mt-8 pt-6 border-t border-neutral-200">
+                            <h4 class="font-medium text-neutral-900 mb-3">Informasi Data</h4>
+                            <div class="space-y-2 text-sm text-neutral-600">
                                 <p>• Periode: 1993 - 2025</p>
                                 <p>• 10 Kelompok Pangan</p>
                                 <p>• 200+ Komoditas</p>
@@ -154,11 +154,11 @@
                 <div class="lg:col-span-2">
                     <!-- No Data State -->
                     <div x-show="!hasSearched && !hasData" class="text-center py-12">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="mx-auto h-12 w-12 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <h3 class="mt-2 text-sm font-medium text-gray-900">Belum Ada Data yang Ditampilkan</h3>
-                        <p class="mt-1 text-sm text-gray-500">Pilih filter dan klik "Tampilkan Data" untuk melihat hasil</p>
+                        <h3 class="mt-2 text-sm font-medium text-neutral-900">Belum Ada Data yang Ditampilkan</h3>
+                        <p class="mt-1 text-sm text-neutral-500">Pilih filter dan klik "Tampilkan Data" untuk melihat hasil</p>
                     </div>
 
                     <!-- Loading State -->
@@ -167,16 +167,16 @@
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <p class="mt-2 text-sm text-gray-600">Memuat data...</p>
+                        <p class="mt-2 text-sm text-neutral-600">Memuat data...</p>
                     </div>
 
                     <!-- Results Table -->
-                    <div x-show="hasData && !loading" class="bg-white rounded-lg border border-gray-200">
+                    <div x-show="hasData && !loading" class="bg-white rounded-lg border border-neutral-200">
                         <!-- Results Header -->
-                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <div class="bg-neutral-50 px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-900">Hasil Pencarian</h3>
-                                <p class="text-sm text-gray-600" x-text="`${results.length} data ditemukan`"></p>
+                                <h3 class="text-lg font-semibold text-neutral-900">Hasil Pencarian</h3>
+                                <p class="text-sm text-neutral-600" x-text="`${results.length} data ditemukan`"></p>
                             </div>
                             <button @click="exportToExcel()" 
                                     class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center space-x-2 transition duration-200">
@@ -207,7 +207,7 @@
 
                         <!-- Catatan Section -->
                         <div class="p-6">
-                            <h4 class="font-semibold text-gray-900 mb-4">Data NBM (Ketersediaan Per Kapita Per Tahun):</h4>
+                            <h4 class="font-semibold text-neutral-900 mb-4">Data NBM (Ketersediaan Per Kapita Per Tahun):</h4>
                             
                             <!-- Custom Table with specific styling -->
                             <style>
@@ -412,30 +412,30 @@
                             </div>
 
                             <!-- Additional Data Summary -->
-                            <div class="mt-6 bg-gray-50 p-4 rounded-lg">
-                                <h5 class="font-medium text-gray-900 mb-2">Ringkasan Data:</h5>
+                            <div class="mt-6 bg-neutral-50 p-4 rounded-lg">
+                                <h5 class="font-medium text-neutral-900 mb-2">Ringkasan Data:</h5>
                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                     <div>
-                                        <span class="text-gray-600">Rata-rata Ketersediaan:</span>
+                                        <span class="text-neutral-600">Rata-rata Ketersediaan:</span>
                                         <div class="font-semibold" x-text="getAverageKetersediaan() + ' kg/kap/thn'"></div>
                                     </div>
                                     <div>
-                                        <span class="text-gray-600">Rata-rata Produksi:</span>
+                                        <span class="text-neutral-600">Rata-rata Produksi:</span>
                                         <div class="font-semibold" x-text="getAverageProduksi() + ' ribu ton'"></div>
                                     </div>
                                     <div>
-                                        <span class="text-gray-600">Periode Data:</span>
+                                        <span class="text-neutral-600">Periode Data:</span>
                                         <div class="font-semibold" x-text="results.length + ' tahun'"></div>
                                     </div>
                                     <div>
-                                        <span class="text-gray-600">Tren:</span>
+                                        <span class="text-neutral-600">Tren:</span>
                                         <div class="font-semibold" x-text="getTrend()"></div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Data Notes -->
-                            <div class="mt-4 text-sm text-gray-600">
+                            <div class="mt-4 text-sm text-neutral-600">
                                 <p><strong>Catatan:</strong></p>
                                 <ul class="list-disc list-inside mt-1 space-y-1">
                                     <li>Data ketersediaan dihitung berdasarkan Neraca Bahan Makanan (NBM)</li>
@@ -448,31 +448,31 @@
                     </div>
 
                     <!-- No Results -->
-                    <div x-show="hasSearched && !hasData && !loading" class="text-center py-12 bg-white rounded-lg border border-gray-200">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div x-show="hasSearched && !hasData && !loading" class="text-center py-12 bg-white rounded-lg border border-neutral-200">
+                        <svg class="mx-auto h-12 w-12 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak Ada Data Ditemukan</h3>
-                        <p class="mt-1 text-sm text-gray-500">Coba ubah filter pencarian atau periode tahun</p>
+                        <h3 class="mt-2 text-sm font-medium text-neutral-900">Tidak Ada Data Ditemukan</h3>
+                        <p class="mt-1 text-sm text-neutral-500">Coba ubah filter pencarian atau periode tahun</p>
                     </div>
                 </div>
             </div>
 
             <!-- Related Links -->
-            <div class="mt-12 bg-gray-50 p-6 rounded-lg">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Halaman Terkait</h3>
+            <div class="mt-12 bg-neutral-50 p-6 rounded-lg">
+                <h3 class="text-lg font-semibold text-neutral-900 mb-4">Halaman Terkait</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <a href="{{ route('ketersediaan.konsep-metode') }}" class="block p-4 bg-white rounded border hover:shadow-md transition duration-200">
                         <h4 class="font-medium text-blue-600">Konsep dan Metode</h4>
-                        <p class="text-sm text-gray-600 mt-1">Metodologi penyusunan NBM</p>
+                        <p class="text-sm text-neutral-600 mt-1">Metodologi penyusunan NBM</p>
                     </a>
                     <a href="{{ route('konsumsi.laporan-susenas') }}" class="block p-4 bg-white rounded border hover:shadow-md transition duration-200">
                         <h4 class="font-medium text-blue-600">Data Konsumsi</h4>
-                        <p class="text-sm text-gray-600 mt-1">Lihat data konsumsi pangan dari Susenas</p>
+                        <p class="text-sm text-neutral-600 mt-1">Lihat data konsumsi pangan dari Susenas</p>
                     </a>
                     <a href="{{ route('login') }}" class="block p-4 bg-white rounded border hover:shadow-md transition duration-200">
                         <h4 class="font-medium text-blue-600">Manajemen Data</h4>
-                        <p class="text-sm text-gray-600 mt-1">Login untuk akses data lengkap</p>
+                        <p class="text-sm text-neutral-600 mt-1">Login untuk akses data lengkap</p>
                     </a>
                 </div>
             </div>

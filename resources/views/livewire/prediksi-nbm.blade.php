@@ -26,7 +26,7 @@
                             API Error
                         </div>
                     @endif
-                    <flux:button wire:click="checkApiHealth" variant="outline" size="sm" class="border-gray-300 hover:border-blue-500 hover:text-blue-600">
+                    <flux:button wire:click="checkApiHealth" variant="outline" size="sm" class="border-neutral-300 hover:border-blue-500 hover:text-blue-600">
                         <svg class="w-4 h-4 inline mr-2 -translate-y-[1.5px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
@@ -84,7 +84,7 @@
         </div>
         
         <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-6 text-center">
-            <div class="text-gray-500 mb-3">
+            <div class="text-neutral-500 mb-3">
                 <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -126,16 +126,16 @@
                         </div>
                     </div>
 
-                    <div class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Rentang Waktu</h3>
+                    <div class="mb-6 bg-white dark:bg-neutral-800 rounded-lg shadow p-4">
+                        <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Rentang Waktu</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dari Bulan</label>
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Dari Bulan</label>
                                 <input 
                                     type="month" 
                                     wire:model.live="startDate"
                                     wire:change="$set('startDate', $event.target.value)"
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                    class="w-full p-2 rounded-md border-neutral-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white"
                                     max="{{ now()->subMonth()->format('Y-m') }}"
                                 >
                                 @error('startDate')
@@ -143,12 +143,12 @@
                                 @enderror
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sampai Bulan</label>
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Sampai Bulan</label>
                                 <input 
                                     type="month" 
                                     wire:model.live="endDate"
                                     wire:change="$set('endDate', $event.target.value)"
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                    class="w-full p-2 rounded-md border-neutral-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-700 dark:border-neutral-600 dark:placeholder-neutral-400 dark:text-white"
                                     max="{{ now()->subMonth()->format('Y-m') }}"
                                 >
                                 @error('endDate')
@@ -166,7 +166,7 @@
                             </div>
                         </div>
                         @if(count($data) > 0)
-                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        <p class="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
                             Menampilkan data dari {{ count($data) }} bulan
                         </p>
                         @endif
@@ -174,17 +174,17 @@
 
                     <form wire:submit="predict" class="space-y-6">
                         @foreach($data as $monthIndex => $monthData)
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-                            <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                                <h4 class="text-lg font-medium text-gray-900 dark:text-white">{{ $monthData['month_name'] }}</h4>
+                        <div class="bg-white dark:bg-neutral-800 rounded-lg shadow overflow-hidden">
+                            <div class="px-4 py-3 bg-neutral-50 dark:bg-neutral-700 border-b border-neutral-200 dark:border-neutral-600">
+                                <h4 class="text-lg font-medium text-neutral-900 dark:text-white">{{ $monthData['month_name'] }}</h4>
                             </div>
                             
-                            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <div class="divide-y divide-neutral-200 dark:divide-neutral-700">
                                 @foreach($monthData['komoditi_data'] as $itemIndex => $item)
-                                <div class="p-4 {{ $loop->even ? 'bg-gray-50 dark:bg-gray-700/50' : 'bg-white dark:bg-gray-800' }}">
+                                <div class="p-4 {{ $loop->even ? 'bg-neutral-50 dark:bg-neutral-700/50' : 'bg-white dark:bg-neutral-800' }}">
                                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                                         <div class="md:col-span-4">
-                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kelompok Pangan</label>
+                                            <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kelompok Pangan</label>
                                             <flux:select 
                                                 wire:model.live="data.{{ $monthIndex }}.komoditi_data.{{ $itemIndex }}.kelompok" 
                                                 wire:loading.attr="disabled"
@@ -204,7 +204,7 @@
                                         </div>
                                         
                                         <div class="md:col-span-4">
-                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Komoditi</label>
+                                            <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Komoditi</label>
                                             <div class="flex space-x-2">
                                                 <flux:select 
                                                     wire:model="data.{{ $monthIndex }}.komoditi_data.{{ $itemIndex }}.komoditi" 
@@ -242,7 +242,7 @@
                                         </div>
                                         
                                         <div class="md:col-span-3">
-                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kalori per Hari</label>
+                                            <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kalori per Hari</label>
                                             <div class="relative">
                                                 <flux:input 
                                                     wire:model="data.{{ $monthIndex }}.komoditi_data.{{ $itemIndex }}.kalori_hari" 
@@ -254,7 +254,7 @@
                                                     id="kalori-{{ $monthIndex }}-{{ $itemIndex }}"
                                                 />
                                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                    <span class="text-gray-500 dark:text-gray-400 text-sm">kcal/hari</span>
+                                                    <span class="text-neutral-500 dark:text-neutral-400 text-sm">kcal/hari</span>
                                                 </div>
                                             </div>
                                             @error("data.{$monthIndex}.komoditi_data.{$itemIndex}.kalori_hari")
@@ -325,28 +325,28 @@
                         
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confidence Interval</label>
-                                <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Confidence Interval</label>
+                                <div class="flex justify-between text-sm text-neutral-600 dark:text-neutral-400 mb-1">
                                     <span>{{ number_format($predictionResult['confidence_interval']['lower_bound'] ?? 0, 2) }} kcal</span>
                                     <span>{{ number_format($predictionResult['confidence_interval']['upper_bound'] ?? 0, 2) }} kcal</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="w-full bg-neutral-200 rounded-full h-2">
                                     <div class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full" style="width: 85%"></div>
                                 </div>
                             </div>
                             
                             <div class="grid grid-cols-2 gap-2">
-                                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 text-center">
-                                    <div class="text-xs text-gray-500 mb-1">Model Accuracy</div>
+                                <div class="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3 text-center">
+                                    <div class="text-xs text-neutral-500 mb-1">Model Accuracy</div>
                                     <div class="font-semibold">{{ $predictionResult['model_info']['accuracy'] ?? 'N/A' }}</div>
                                 </div>
-                                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 text-center">
-                                    <div class="text-xs text-gray-500 mb-1">MAPE</div>
+                                <div class="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-3 text-center">
+                                    <div class="text-xs text-neutral-500 mb-1">MAPE</div>
                                     <div class="font-semibold">{{ $predictionResult['model_info']['mape'] ?? 'N/A' }}</div>
                                 </div>
                             </div>
                             
-                            <div class="text-center text-sm text-gray-500">
+                            <div class="text-center text-sm text-neutral-500">
                                 @if(isset($predictionResult['timestamp']))
                                     {{ \Carbon\Carbon::parse($predictionResult['timestamp'])->format('d M Y H:i:s') }}
                                 @else
@@ -355,7 +355,7 @@
                             </div>
                         </div>
                     @else
-                        <div class="text-center text-gray-500 py-8">
+                        <div class="text-center text-neutral-500 py-8">
                             <svg class="w-16 h-16 mx-auto mb-4 opacity-25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4"></path>
                             </svg>

@@ -5,21 +5,21 @@
             <nav class="flex mb-8" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
                     <li class="inline-flex items-center">
-                        <a href="{{ route('home') }}" class="text-gray-700 hover:text-blue-600">
+                        <a href="{{ route('home') }}" class="text-neutral-700 hover:text-blue-600">
                             Home
                         </a>
                     </li>
                     <li>
                         <div class="flex items-center">
-                            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-6 h-6 text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                             </svg>
-                            <span class="ml-1 text-gray-500">Konsumsi</span>
+                            <span class="ml-1 text-neutral-500">Konsumsi</span>
                         </div>
                     </li>
                     <li>
                         <div class="flex items-center">
-                            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-6 h-6 text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                             </svg>
                             <span class="ml-1 text-blue-600 font-medium">Konsep dan Metode</span>
@@ -30,10 +30,10 @@
 
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                <h1 class="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
                     Konsep dan Metode Konsumsi Pangan
                 </h1>
-                <p class="text-xl text-gray-600">
+                <p class="text-xl text-neutral-600">
                     Pemahaman konsep dan metodologi pengumpulan data konsumsi pangan melalui Survei Sosial Ekonomi Nasional (Susenas)
                 </p>
             </div>
@@ -42,31 +42,31 @@
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8" x-data="{ activeSection: 'konsep' }">
                 <!-- Sidebar Navigation -->
                 <div class="lg:col-span-1">
-                    <div class="bg-gray-50 rounded-lg p-4 sticky top-24">
-                        <h3 class="font-semibold text-gray-900 mb-4">Daftar Isi</h3>
+                    <div class="bg-neutral-50 rounded-lg p-4 sticky top-24">
+                        <h3 class="font-semibold text-neutral-900 mb-4">Daftar Isi</h3>
                         <nav class="space-y-2">
                             <button @click="activeSection = 'konsep'" 
-                                    :class="activeSection === 'konsep' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-gray-600 hover:text-blue-600'"
+                                    :class="activeSection === 'konsep' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-neutral-600 hover:text-blue-600'"
                                     class="w-full text-left px-3 py-2 rounded-md text-sm font-medium border transition-colors">
                                 Konsep & Metode
                             </button>
                             <button @click="activeSection = 'perkembangan'" 
-                                    :class="activeSection === 'perkembangan' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-gray-600 hover:text-blue-600'"
+                                    :class="activeSection === 'perkembangan' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-neutral-600 hover:text-blue-600'"
                                     class="w-full text-left px-3 py-2 rounded-md text-sm font-medium border transition-colors">
                                 Perkembangan Susenas
                             </button>
                             <button @click="activeSection = 'metodologi'" 
-                                    :class="activeSection === 'metodologi' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-gray-600 hover:text-blue-600'"
+                                    :class="activeSection === 'metodologi' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-neutral-600 hover:text-blue-600'"
                                     class="w-full text-left px-3 py-2 rounded-md text-sm font-medium border transition-colors">
                                 Metodologi
                             </button>
                             <button @click="activeSection = 'jenis-data'" 
-                                    :class="activeSection === 'jenis-data' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-gray-600 hover:text-blue-600'"
+                                    :class="activeSection === 'jenis-data' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-neutral-600 hover:text-blue-600'"
                                     class="w-full text-left px-3 py-2 rounded-md text-sm font-medium border transition-colors">
                                 Jenis Data
                             </button>
                             <button @click="activeSection = 'indikator'" 
-                                    :class="activeSection === 'indikator' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-gray-600 hover:text-blue-600'"
+                                    :class="activeSection === 'indikator' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'text-neutral-600 hover:text-blue-600'"
                                     class="w-full text-left px-3 py-2 rounded-md text-sm font-medium border transition-colors">
                                 Indikator Utama
                             </button>
@@ -83,8 +83,8 @@
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="bg-white rounded-lg border p-6">
                         
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Konsep & Metode Pengumpulan Data Konsumsi</h2>
-                        <p class="text-gray-700 leading-relaxed mb-6">
+                        <h2 class="text-2xl font-bold text-neutral-900 mb-4">Konsep & Metode Pengumpulan Data Konsumsi</h2>
+                        <p class="text-neutral-700 leading-relaxed mb-6">
                             Data konsumsi yang dimaksud adalah konsumsi di rumah tangga yang bersumber dari Survei Sosial Ekonomi Nasional (Susenas). 
                             Susenas merupakan salah satu survei yang diselenggarakan oleh BPS.
                         </p>
@@ -92,15 +92,15 @@
                         <!-- Expandable Details -->
                         <div x-data="{ expanded: false }" class="border rounded-lg">
                             <button @click="expanded = !expanded" 
-                                    class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50 transition-colors">
-                                <span class="font-medium text-gray-900">Detail Aspek Sosial Ekonomi</span>
-                                <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                    class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-neutral-50 transition-colors">
+                                <span class="font-medium text-neutral-900">Detail Aspek Sosial Ekonomi</span>
+                                <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-neutral-500 transition-transform">
                                     <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
                                 </svg>
                             </button>
                             <div x-show="expanded" x-collapse class="px-4 pb-4">
-                                <p class="text-gray-600 mb-3">Hasil dari Susenas merupakan data mengenai berbagai aspek sosial ekonomi dan pemenuhan kebutuhan hidup:</p>
-                                <ul class="list-disc list-inside space-y-1 text-gray-600 ml-4">
+                                <p class="text-neutral-600 mb-3">Hasil dari Susenas merupakan data mengenai berbagai aspek sosial ekonomi dan pemenuhan kebutuhan hidup:</p>
+                                <ul class="list-disc list-inside space-y-1 text-neutral-600 ml-4">
                                     <li>Sandang (pakaian dan tekstil)</li>
                                     <li>Pangan (makanan dan minuman)</li>
                                     <li>Papan (perumahan dan fasilitas)</li>
@@ -120,7 +120,7 @@
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="bg-white rounded-lg border p-6">
                         
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Perkembangan Pelaksanaan Susenas</h2>
+                        <h2 class="text-2xl font-bold text-neutral-900 mb-4">Perkembangan Pelaksanaan Susenas</h2>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
@@ -149,19 +149,19 @@
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="bg-white rounded-lg border p-6 space-y-6">
                         
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Metodologi Pengumpulan Data</h2>
+                        <h2 class="text-2xl font-bold text-neutral-900 mb-4">Metodologi Pengumpulan Data</h2>
 
                         <!-- Metode Wawancara -->
                         <div x-data="{ expanded: false }" class="border rounded-lg">
                             <button @click="expanded = !expanded" 
-                                    class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
-                                <span class="font-medium text-gray-900">Metode Wawancara & Recall</span>
-                                <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                    class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-neutral-50">
+                                <span class="font-medium text-neutral-900">Metode Wawancara & Recall</span>
+                                <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-neutral-500 transition-transform">
                                     <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
                                 </svg>
                             </button>
                             <div x-show="expanded" x-collapse class="px-4 pb-4">
-                                <p class="text-gray-600 mb-3">Wawancara dengan kepala rumah tangga menggunakan metode recall:</p>
+                                <p class="text-neutral-600 mb-3">Wawancara dengan kepala rumah tangga menggunakan metode recall:</p>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="bg-orange-50 p-3 rounded border-l-4 border-orange-400">
                                         <h4 class="font-medium text-orange-900">Makanan</h4>
@@ -196,20 +196,20 @@
                         </div>
 
                         <!-- Cakupan -->
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-gray-900 mb-3">Cakupan Wilayah dan Waktu</h4>
+                        <div class="bg-neutral-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-neutral-900 mb-3">Cakupan Wilayah dan Waktu</h4>
                             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                                 <div>
-                                    <span class="font-medium text-gray-700">Wilayah:</span>
-                                    <p class="text-gray-600">34 provinsi</p>
+                                    <span class="font-medium text-neutral-700">Wilayah:</span>
+                                    <p class="text-neutral-600">34 provinsi</p>
                                 </div>
                                 <div>
-                                    <span class="font-medium text-gray-700">Klasifikasi:</span>
-                                    <p class="text-gray-600">Kota & Desa</p>
+                                    <span class="font-medium text-neutral-700">Klasifikasi:</span>
+                                    <p class="text-neutral-600">Kota & Desa</p>
                                 </div>
                                 <div>
-                                    <span class="font-medium text-gray-700">Periode:</span>
-                                    <p class="text-gray-600">Sejak 1993</p>
+                                    <span class="font-medium text-neutral-700">Periode:</span>
+                                    <p class="text-neutral-600">Sejak 1993</p>
                                 </div>
                             </div>
                         </div>
@@ -222,19 +222,19 @@
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="bg-white rounded-lg border p-6">
                         
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Jenis Data yang Dikumpulkan</h2>
+                        <h2 class="text-2xl font-bold text-neutral-900 mb-4">Jenis Data yang Dikumpulkan</h2>
                         
                         <div class="space-y-4">
                             <div x-data="{ expanded: false }" class="border rounded-lg">
                                 <button @click="expanded = !expanded" 
-                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
-                                    <span class="font-medium text-gray-900">Data Konsumsi Pangan</span>
-                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-neutral-50">
+                                    <span class="font-medium text-neutral-900">Data Konsumsi Pangan</span>
+                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-neutral-500 transition-transform">
                                         <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
                                     </svg>
                                 </button>
                                 <div x-show="expanded" x-collapse class="px-4 pb-4">
-                                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                                    <ul class="list-disc list-inside space-y-2 text-neutral-600">
                                         <li><strong>Konsumsi Kalori:</strong> Jumlah energi per kapita per hari</li>
                                         <li><strong>Konsumsi Protein:</strong> Jumlah protein per kapita per hari</li>
                                         <li><strong>Konsumsi per Komoditas:</strong> Kuantitas untuk setiap jenis pangan</li>
@@ -245,9 +245,9 @@
 
                             <div x-data="{ expanded: false }" class="border rounded-lg">
                                 <button @click="expanded = !expanded" 
-                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
-                                    <span class="font-medium text-gray-900">Kelompok Pangan (14 Kelompok)</span>
-                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-neutral-50">
+                                    <span class="font-medium text-neutral-900">Kelompok Pangan (14 Kelompok)</span>
+                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-neutral-500 transition-transform">
                                         <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
                                     </svg>
                                 </button>
@@ -284,7 +284,7 @@
                          x-transition:enter-end="opacity-100 transform translate-y-0"
                          class="bg-white rounded-lg border p-6">
                         
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Indikator Utama</h2>
+                        <h2 class="text-2xl font-bold text-neutral-900 mb-4">Indikator Utama</h2>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
@@ -305,8 +305,8 @@
                             </div>
                         </div>
 
-                        <div class="mt-6 bg-gray-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-gray-900 mb-3">Pengolahan dan Analisis Data</h4>
+                        <div class="mt-6 bg-neutral-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-neutral-900 mb-3">Pengolahan dan Analisis Data</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                                 <div class="text-center">
                                     <div class="bg-blue-100 p-2 rounded-full w-8 h-8 mx-auto mb-2 flex items-center justify-center">
@@ -333,14 +333,14 @@
                         <div class="mt-6 space-y-4">
                             <div x-data="{ expanded: false }" class="border rounded-lg">
                                 <button @click="expanded = !expanded" 
-                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
-                                    <span class="font-medium text-gray-900">Kegunaan Data Susenas</span>
-                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-neutral-50">
+                                    <span class="font-medium text-neutral-900">Kegunaan Data Susenas</span>
+                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-neutral-500 transition-transform">
                                         <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
                                     </svg>
                                 </button>
                                 <div x-show="expanded" x-collapse class="px-4 pb-4">
-                                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                                    <ul class="list-disc list-inside space-y-2 text-neutral-600">
                                         <li>Penyusunan peta ketahanan dan kerentanan pangan</li>
                                         <li>Monitoring pencapaian target konsumsi energi dan protein</li>
                                         <li>Evaluasi program fortifikasi pangan</li>
@@ -353,14 +353,14 @@
 
                             <div x-data="{ expanded: false }" class="border rounded-lg">
                                 <button @click="expanded = !expanded" 
-                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-gray-50">
-                                    <span class="font-medium text-gray-900">Keterbatasan Data</span>
-                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-gray-500 transition-transform">
+                                        class="w-full px-4 py-3 text-left flex justify-between items-center hover:bg-neutral-50">
+                                    <span class="font-medium text-neutral-900">Keterbatasan Data</span>
+                                    <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 text-neutral-500 transition-transform">
                                         <path fill="currentColor" d="M16.293 9.293L12 13.586 7.707 9.293A1 1 0 016.293 10.707l5 5a1 1 0 001.414 0l5-5a1 1 0 00-1.414-1.414z"/>
                                     </svg>
                                 </button>
                                 <div x-show="expanded" x-collapse class="px-4 pb-4">
-                                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                                    <ul class="list-disc list-inside space-y-2 text-neutral-600">
                                         <li>Data konsumsi di luar rumah tangga belum tercakup secara detail</li>
                                         <li>Recall bias pada pengisian kuesioner</li>
                                         <li>Seasonal variation belum dapat ditangkap dengan baik</li>
@@ -374,28 +374,28 @@
             </div>
 
             <!-- Related Links -->
-            <div class="mt-8 bg-gray-50 p-6 rounded-lg">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Halaman Terkait</h3>
+            <div class="mt-8 bg-neutral-50 p-6 rounded-lg">
+                <h3 class="text-lg font-semibold text-neutral-900 mb-4">Halaman Terkait</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <a href="{{ route('konsumsi.laporan-susenas') }}" 
                        class="block p-4 bg-white rounded border hover:shadow-md transition duration-200">
                         <h4 class="font-medium text-blue-600">Laporan Data Susenas</h4>
-                        <p class="text-sm text-gray-600 mt-1">Akses data dan laporan konsumsi pangan dari Susenas</p>
+                        <p class="text-sm text-neutral-600 mt-1">Akses data dan laporan konsumsi pangan dari Susenas</p>
                     </a>
                     <a href="{{ route('konsumsi.per-kapita-seminggu') }}" 
                        class="block p-4 bg-white rounded border hover:shadow-md transition duration-200">
                         <h4 class="font-medium text-blue-600">Konsumsi Per Kapita Seminggu</h4>
-                        <p class="text-sm text-gray-600 mt-1">Data konsumsi pangan per kapita dalam periode seminggu</p>
+                        <p class="text-sm text-neutral-600 mt-1">Data konsumsi pangan per kapita dalam periode seminggu</p>
                     </a>
                     <a href="{{ route('konsumsi.per-kapita-setahun') }}" 
                        class="block p-4 bg-white rounded border hover:shadow-md transition duration-200">
                         <h4 class="font-medium text-blue-600">Konsumsi Per Kapita Setahun</h4>
-                        <p class="text-sm text-gray-600 mt-1">Data konsumsi pangan per kapita dalam periode setahun</p>
+                        <p class="text-sm text-neutral-600 mt-1">Data konsumsi pangan per kapita dalam periode setahun</p>
                     </a>
                     <a href="{{ route('login') }}" 
                        class="block p-4 bg-white rounded border hover:shadow-md transition duration-200">
                         <h4 class="font-medium text-blue-600">Manajemen Data</h4>
-                        <p class="text-sm text-gray-600 mt-1">Login untuk mengakses dan mengelola data konsumsi</p>
+                        <p class="text-sm text-neutral-600 mt-1">Login untuk mengakses dan mengelola data konsumsi</p>
                     </a>
                 </div>
             </div>

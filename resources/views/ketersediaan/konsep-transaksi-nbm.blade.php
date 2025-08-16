@@ -21,28 +21,28 @@
     </section>
 
     <!-- Navigation Quick Menu -->
-    <section class="bg-gray-50 dark:bg-zinc-800 py-8">
+    <section class="bg-neutral-50 dark:bg-zinc-800 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-sm border border-gray-200 dark:border-zinc-700 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📚 Daftar Isi</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-sm border border-neutral-200 dark:border-zinc-700 p-6">
+                <h2 class="text-lg font-semibold text-neutral-900 dark:text-white mb-4">📚 Daftar Isi</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4" x-data="{ activeSection: 'overview' }">
                     <button @click="activeSection = 'overview'; document.getElementById('overview').scrollIntoView({behavior: 'smooth'})"
-                            :class="activeSection === 'overview' ? 'bg-blue-50 dark:bg-blue-900/50 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-600 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700'"
+                            :class="activeSection === 'overview' ? 'bg-blue-50 dark:bg-blue-900/50 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300' : 'bg-neutral-50 dark:bg-zinc-800 border-neutral-200 dark:border-zinc-600 text-neutral-700 dark:text-zinc-300 hover:bg-neutral-100 dark:hover:bg-zinc-700'"
                             class="text-sm font-medium px-4 py-2 border rounded-lg transition-colors">
                         📖 Overview NBM
                     </button>
                     <button @click="activeSection = 'dataflow'; document.getElementById('dataflow').scrollIntoView({behavior: 'smooth'})"
-                            :class="activeSection === 'dataflow' ? 'bg-blue-50 dark:bg-blue-900/50 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-600 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700'"
+                            :class="activeSection === 'dataflow' ? 'bg-blue-50 dark:bg-blue-900/50 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300' : 'bg-neutral-50 dark:bg-zinc-800 border-neutral-200 dark:border-zinc-600 text-neutral-700 dark:text-zinc-300 hover:bg-neutral-100 dark:hover:bg-zinc-700'"
                             class="text-sm font-medium px-4 py-2 border rounded-lg transition-colors">
                         🔄 Alur Data
                     </button>
                     <button @click="activeSection = 'calculation'; document.getElementById('calculation').scrollIntoView({behavior: 'smooth'})"
-                            :class="activeSection === 'calculation' ? 'bg-blue-50 dark:bg-blue-900/50 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-600 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700'"
+                            :class="activeSection === 'calculation' ? 'bg-blue-50 dark:bg-blue-900/50 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300' : 'bg-neutral-50 dark:bg-zinc-800 border-neutral-200 dark:border-zinc-600 text-neutral-700 dark:text-zinc-300 hover:bg-neutral-100 dark:hover:bg-zinc-700'"
                             class="text-sm font-medium px-4 py-2 border rounded-lg transition-colors">
                         ⚡ Perhitungan
                     </button>
                     <button @click="activeSection = 'demo'; document.getElementById('demo').scrollIntoView({behavior: 'smooth'})"
-                            :class="activeSection === 'demo' ? 'bg-blue-50 dark:bg-blue-900/50 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-600 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700'"
+                            :class="activeSection === 'demo' ? 'bg-blue-50 dark:bg-blue-900/50 border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300' : 'bg-neutral-50 dark:bg-zinc-800 border-neutral-200 dark:border-zinc-600 text-neutral-700 dark:text-zinc-300 hover:bg-neutral-100 dark:hover:bg-zinc-700'"
                             class="text-sm font-medium px-4 py-2 border rounded-lg transition-colors">
                         🧪 Demo & Test
                     </button>
@@ -56,8 +56,8 @@
         
         <!-- Section 1: Overview NBM -->
         <section id="overview" class="mb-16">
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 p-8">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">📖 Apa itu Transaksi NBM?</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-neutral-200 dark:border-zinc-700 p-8">
+                <h2 class="text-3xl font-bold text-neutral-900 dark:text-white mb-6">📖 Apa itu Transaksi NBM?</h2>
                 
                 <div class="space-y-6">
                     <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 dark:border-blue-500 p-6 rounded-r-lg">
@@ -106,23 +106,23 @@
 
         <!-- Section 2: Data Flow -->
         <section id="dataflow" class="mb-16">
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 p-8">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">🔄 Alur Data dalam Sistem</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-neutral-200 dark:border-zinc-700 p-8">
+                <h2 class="text-3xl font-bold text-neutral-900 dark:text-white mb-6">🔄 Alur Data dalam Sistem</h2>
                 
                 <div class="space-y-8">
                     <!-- Step 1: Input Data -->
-                    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">1️⃣ Input Data (Entry)</h3>
+                    <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">1️⃣ Input Data (Entry)</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
-                                <p class="text-gray-700 dark:text-zinc-300 mb-4">
+                                <p class="text-neutral-700 dark:text-zinc-300 mb-4">
                                     Admin memasukkan data transaksi NBM melalui form yang tersedia. 
                                     Data ini berisi komponen-komponen neraca seperti produksi, impor, ekspor, dll.
                                 </p>
                                 
-                                <div class="bg-gray-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
+                                <div class="bg-neutral-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-gray-400">📁 TransaksiNbmManagement.php</span>
+                                        <span class="text-neutral-400">📁 TransaksiNbmManagement.php</span>
                                         <a href="https://github.com/send0moka/basis-data-konsumsi-pangan/tree/main/app/Livewire/Admin/TransaksiNbmManagement.php" 
                                            target="_blank" 
                                            class="text-blue-400 hover:text-blue-300 text-xs">
@@ -155,18 +155,18 @@ protected $rules = [
                     </div>
 
                     <!-- Step 2: Processing -->
-                    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">2️⃣ Proses Penyimpanan (Storage)</h3>
+                    <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">2️⃣ Proses Penyimpanan (Storage)</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
-                                <p class="text-gray-700 dark:text-zinc-300 mb-4">
+                                <p class="text-neutral-700 dark:text-zinc-300 mb-4">
                                     Data yang sudah divalidasi kemudian disimpan ke database. 
                                     Sistem juga melakukan pengecekan duplikasi untuk kombinasi kelompok-komoditi-tahun.
                                 </p>
                                 
-                                <div class="bg-gray-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
+                                <div class="bg-neutral-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-gray-400">📁 TransaksiNbm Model</span>
+                                        <span class="text-neutral-400">📁 TransaksiNbm Model</span>
                                         <a href="https://github.com/send0moka/basis-data-konsumsi-pangan/tree/main/app/Models/TransaksiNbm.php" 
                                            target="_blank" 
                                            class="text-blue-400 hover:text-blue-300 text-xs">
@@ -197,18 +197,18 @@ public function komoditi() {
                     </div>
 
                     <!-- Step 3: Calculation -->
-                    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">3️⃣ Perhitungan Otomatis (Calculation)</h3>
+                    <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">3️⃣ Perhitungan Otomatis (Calculation)</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
-                                <p class="text-gray-700 dark:text-zinc-300 mb-4">
+                                <p class="text-neutral-700 dark:text-zinc-300 mb-4">
                                     Setelah data tersimpan, sistem secara otomatis menghitung ketersediaan bersih dan 
                                     ketersediaan per kapita menggunakan rumus NBM standar.
                                 </p>
                                 
-                                <div class="bg-gray-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
+                                <div class="bg-neutral-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-gray-400">📁 Calculation Logic</span>
+                                        <span class="text-neutral-400">📁 Calculation Logic</span>
                                         <a href="https://github.com/send0moka/basis-data-konsumsi-pangan/tree/main/app/Livewire/Admin/TransaksiNbmManagement.php#L150" 
                                            target="_blank" 
                                            class="text-blue-400 hover:text-blue-300 text-xs">
@@ -239,18 +239,18 @@ $ketersediaan_perkapita =
                     </div>
 
                     <!-- Step 4: Output -->
-                    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">4️⃣ Output & Export (Report)</h3>
+                    <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">4️⃣ Output & Export (Report)</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
-                                <p class="text-gray-700 dark:text-zinc-300 mb-4">
+                                <p class="text-neutral-700 dark:text-zinc-300 mb-4">
                                     Data yang sudah dihitung dapat dilihat dalam bentuk tabel, dicetak, atau 
                                     diekspor ke Excel untuk analisis lebih lanjut.
                                 </p>
                                 
-                                <div class="bg-gray-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
+                                <div class="bg-neutral-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-gray-400">📁 Export Functionality</span>
+                                        <span class="text-neutral-400">📁 Export Functionality</span>
                                         <a href="https://github.com/send0moka/basis-data-konsumsi-pangan/tree/main/app/Exports/TransaksiNbmExport.php" 
                                            target="_blank" 
                                            class="text-blue-400 hover:text-blue-300 text-xs">
@@ -286,8 +286,8 @@ public function headings(): array {
 
         <!-- Section 3: Detailed Calculation -->
         <section id="calculation" class="mb-16">
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 p-8">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">⚡ Detail Perhitungan NBM</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-neutral-200 dark:border-zinc-700 p-8">
+                <h2 class="text-3xl font-bold text-neutral-900 dark:text-white mb-6">⚡ Detail Perhitungan NBM</h2>
                 
                 <div class="space-y-8">
                     <!-- Formula Explanation -->
@@ -296,35 +296,35 @@ public function headings(): array {
                         
                         <div class="space-y-4">
                             <div class="bg-white dark:bg-zinc-900 rounded-lg p-4 border-l-4 border-blue-500">
-                                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">1. Ketersediaan Kotor (Supply)</h4>
-                                <div class="bg-gray-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-gray-800 dark:text-zinc-200">
+                                <h4 class="font-semibold text-neutral-900 dark:text-white mb-2">1. Ketersediaan Kotor (Supply)</h4>
+                                <div class="bg-neutral-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-neutral-800 dark:text-zinc-200">
                                     Supply = Produksi + Impor + Stok Awal
                                 </div>
-                                <p class="text-gray-600 dark:text-zinc-400 text-sm mt-2">Total semua yang masuk ke sistem pangan</p>
+                                <p class="text-neutral-600 dark:text-zinc-400 text-sm mt-2">Total semua yang masuk ke sistem pangan</p>
                             </div>
 
                             <div class="bg-white dark:bg-zinc-900 rounded-lg p-4 border-l-4 border-red-500">
-                                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">2. Total Penggunaan (Demand)</h4>
-                                <div class="bg-gray-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-gray-800 dark:text-zinc-200">
+                                <h4 class="font-semibold text-neutral-900 dark:text-white mb-2">2. Total Penggunaan (Demand)</h4>
+                                <div class="bg-neutral-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-neutral-800 dark:text-zinc-200">
                                     Demand = Ekspor + Pakan + Bibit + Industri + Susut
                                 </div>
-                                <p class="text-gray-600 dark:text-zinc-400 text-sm mt-2">Total semua yang keluar dari sistem pangan</p>
+                                <p class="text-neutral-600 dark:text-zinc-400 text-sm mt-2">Total semua yang keluar dari sistem pangan</p>
                             </div>
 
                             <div class="bg-white dark:bg-zinc-900 rounded-lg p-4 border-l-4 border-green-500">
-                                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">3. Ketersediaan Bersih</h4>
-                                <div class="bg-gray-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-gray-800 dark:text-zinc-200">
+                                <h4 class="font-semibold text-neutral-900 dark:text-white mb-2">3. Ketersediaan Bersih</h4>
+                                <div class="bg-neutral-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-neutral-800 dark:text-zinc-200">
                                     Ketersediaan Bersih = Supply - Demand
                                 </div>
-                                <p class="text-gray-600 dark:text-zinc-400 text-sm mt-2">Yang tersisa untuk konsumsi masyarakat</p>
+                                <p class="text-neutral-600 dark:text-zinc-400 text-sm mt-2">Yang tersisa untuk konsumsi masyarakat</p>
                             </div>
 
                             <div class="bg-white dark:bg-zinc-900 rounded-lg p-4 border-l-4 border-purple-500">
-                                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">4. Ketersediaan Per Kapita</h4>
-                                <div class="bg-gray-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-gray-800 dark:text-zinc-200">
+                                <h4 class="font-semibold text-neutral-900 dark:text-white mb-2">4. Ketersediaan Per Kapita</h4>
+                                <div class="bg-neutral-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-neutral-800 dark:text-zinc-200">
                                     Per Kapita = (Ketersediaan Bersih × 1000) ÷ Populasi
                                 </div>
-                                <p class="text-gray-600 dark:text-zinc-400 text-sm mt-2">Dalam satuan kg per orang per tahun</p>
+                                <p class="text-neutral-600 dark:text-zinc-400 text-sm mt-2">Dalam satuan kg per orang per tahun</p>
                             </div>
                         </div>
                     </div>
@@ -408,12 +408,12 @@ public function headings(): array {
                     </div>
 
                     <!-- Code Implementation -->
-                    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">💻 Implementasi dalam Kode</h3>
+                    <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">💻 Implementasi dalam Kode</h3>
                         
-                        <div class="bg-gray-800 dark:bg-zinc-900 rounded-lg p-6 text-green-400 font-mono text-sm overflow-x-auto">
+                        <div class="bg-neutral-800 dark:bg-zinc-900 rounded-lg p-6 text-green-400 font-mono text-sm overflow-x-auto">
                             <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-400">📁 app/Livewire/Admin/TransaksiNbmManagement.php</span>
+                                <span class="text-neutral-400">📁 app/Livewire/Admin/TransaksiNbmManagement.php</span>
                                 <a href="https://github.com/send0moka/basis-data-konsumsi-pangan/tree/main/app/Livewire/Admin/TransaksiNbmManagement.php#L200" 
                                    target="_blank" 
                                    class="text-blue-400 hover:text-blue-300 text-xs">
@@ -477,8 +477,8 @@ public function calculateNBM($data) {
 
         <!-- Section 4: Demo & Test -->
         <section id="demo" class="mb-16">
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 p-8">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">🧪 Demo Perhitungan NBM</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-neutral-200 dark:border-zinc-700 p-8">
+                <h2 class="text-3xl font-bold text-neutral-900 dark:text-white mb-6">🧪 Demo Perhitungan NBM</h2>
                 
                 <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-200 dark:border-indigo-700 rounded-lg p-6 mb-8">
                     <h3 class="text-xl font-semibold text-indigo-900 dark:text-indigo-300 mb-3">🎮 Interactive Calculator</h3>
@@ -491,8 +491,8 @@ public function calculateNBM($data) {
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" x-data="nbmCalculator()">
                     <!-- Input Form -->
                     <div class="lg:col-span-1">
-                        <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6 sticky top-24">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">📝 Input Data NBM</h3>
+                        <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6 sticky top-24">
+                            <h3 class="text-lg font-semibold text-neutral-900 dark:text-white mb-6">📝 Input Data NBM</h3>
                             
                             <form @submit.prevent="calculateNBM" class="space-y-4">
                                 <!-- Supply Section -->
@@ -500,33 +500,33 @@ public function calculateNBM($data) {
                                     <h4 class="font-medium text-green-700 dark:text-green-300 border-b border-green-200 dark:border-green-700 pb-1">📈 Supply (Masuk)</h4>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">Produksi (ton)</label>
+                                        <label class="block text-sm font-medium text-neutral-700 dark:text-zinc-300 mb-1">Produksi (ton)</label>
                                         <input type="number" 
                                                x-model="input.produksi" 
                                                @input="calculateNBM"
                                                step="0.01" 
                                                min="0"
-                                               class="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                               class="w-full px-3 py-2 border border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-neutral-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">Impor (ton)</label>
+                                        <label class="block text-sm font-medium text-neutral-700 dark:text-zinc-300 mb-1">Impor (ton)</label>
                                         <input type="number" 
                                                x-model="input.impor" 
                                                @input="calculateNBM"
                                                step="0.01" 
                                                min="0"
-                                               class="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                               class="w-full px-3 py-2 border border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-neutral-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">Stok Awal (ton)</label>
+                                        <label class="block text-sm font-medium text-neutral-700 dark:text-zinc-300 mb-1">Stok Awal (ton)</label>
                                         <input type="number" 
                                                x-model="input.stok_awal" 
                                                @input="calculateNBM"
                                                step="0.01" 
                                                min="0"
-                                               class="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                               class="w-full px-3 py-2 border border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-neutral-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                                     </div>
                                 </div>
 
@@ -535,53 +535,53 @@ public function calculateNBM($data) {
                                     <h4 class="font-medium text-red-700 dark:text-red-300 border-b border-red-200 dark:border-red-700 pb-1">📉 Demand (Keluar)</h4>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">Ekspor (ton)</label>
+                                        <label class="block text-sm font-medium text-neutral-700 dark:text-zinc-300 mb-1">Ekspor (ton)</label>
                                         <input type="number" 
                                                x-model="input.ekspor" 
                                                @input="calculateNBM"
                                                step="0.01" 
                                                min="0"
-                                               class="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                               class="w-full px-3 py-2 border border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-neutral-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">Pakan (ton)</label>
+                                        <label class="block text-sm font-medium text-neutral-700 dark:text-zinc-300 mb-1">Pakan (ton)</label>
                                         <input type="number" 
                                                x-model="input.pakan" 
                                                @input="calculateNBM"
                                                step="0.01" 
                                                min="0"
-                                               class="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                               class="w-full px-3 py-2 border border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-neutral-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">Bibit (ton)</label>
+                                        <label class="block text-sm font-medium text-neutral-700 dark:text-zinc-300 mb-1">Bibit (ton)</label>
                                         <input type="number" 
                                                x-model="input.bibit" 
                                                @input="calculateNBM"
                                                step="0.01" 
                                                min="0"
-                                               class="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                               class="w-full px-3 py-2 border border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-neutral-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">Industri (ton)</label>
+                                        <label class="block text-sm font-medium text-neutral-700 dark:text-zinc-300 mb-1">Industri (ton)</label>
                                         <input type="number" 
                                                x-model="input.industri" 
                                                @input="calculateNBM"
                                                step="0.01" 
                                                min="0"
-                                               class="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                               class="w-full px-3 py-2 border border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-neutral-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1">Susut (ton)</label>
+                                        <label class="block text-sm font-medium text-neutral-700 dark:text-zinc-300 mb-1">Susut (ton)</label>
                                         <input type="number" 
                                                x-model="input.susut" 
                                                @input="calculateNBM"
                                                step="0.01" 
                                                min="0"
-                                               class="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                               class="w-full px-3 py-2 border border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-neutral-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
                                     </div>
                                 </div>
 
@@ -594,7 +594,7 @@ public function calculateNBM($data) {
                                     </button>
                                     <button type="button" 
                                             @click="resetForm()"
-                                            class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                                            class="flex-1 bg-neutral-600 hover:bg-neutral-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
                                         🔄 Reset
                                     </button>
                                 </div>
@@ -615,7 +615,7 @@ public function calculateNBM($data) {
                                             <span class="font-medium text-green-700 dark:text-green-300">Total Supply:</span>
                                             <span class="font-mono text-lg text-green-800 dark:text-green-200" x-text="formatNumber(results.supply_total) + ' ton'"></span>
                                         </div>
-                                        <div class="text-sm text-gray-600 dark:text-zinc-400 mt-1">
+                                        <div class="text-sm text-neutral-600 dark:text-zinc-400 mt-1">
                                             <span x-text="formatNumber(input.produksi)"></span> + 
                                             <span x-text="formatNumber(input.impor)"></span> + 
                                             <span x-text="formatNumber(input.stok_awal)"></span>
@@ -627,7 +627,7 @@ public function calculateNBM($data) {
                                             <span class="font-medium text-red-700 dark:text-red-300">Total Demand:</span>
                                             <span class="font-mono text-lg text-red-800 dark:text-red-200" x-text="formatNumber(results.demand_total) + ' ton'"></span>
                                         </div>
-                                        <div class="text-sm text-gray-600 dark:text-zinc-400 mt-1">
+                                        <div class="text-sm text-neutral-600 dark:text-zinc-400 mt-1">
                                             <span x-text="formatNumber(input.ekspor)"></span> + 
                                             <span x-text="formatNumber(input.pakan)"></span> + 
                                             <span x-text="formatNumber(input.bibit)"></span> + 
@@ -641,7 +641,7 @@ public function calculateNBM($data) {
                                             <span class="font-medium text-purple-700 dark:text-purple-300">Ketersediaan Bersih:</span>
                                             <span class="font-mono text-xl font-bold text-purple-900 dark:text-purple-200" x-text="formatNumber(results.ketersediaan_bersih) + ' ton'"></span>
                                         </div>
-                                        <div class="text-sm text-gray-600 dark:text-zinc-400 mt-1">
+                                        <div class="text-sm text-neutral-600 dark:text-zinc-400 mt-1">
                                             <span x-text="formatNumber(results.supply_total)"></span> - 
                                             <span x-text="formatNumber(results.demand_total)"></span>
                                         </div>
@@ -652,7 +652,7 @@ public function calculateNBM($data) {
                                             <span class="font-medium text-green-700 dark:text-green-300">Per Kapita/Tahun:</span>
                                             <span class="font-mono text-xl font-bold text-green-900 dark:text-green-200" x-text="formatNumber(results.ketersediaan_perkapita, 3) + ' kg'"></span>
                                         </div>
-                                        <div class="text-sm text-gray-600 dark:text-zinc-400 mt-1">
+                                        <div class="text-sm text-neutral-600 dark:text-zinc-400 mt-1">
                                             (<span x-text="formatNumber(results.ketersediaan_bersih)"></span> × 1000) ÷ 273,500,000
                                         </div>
                                         <div class="text-sm text-green-600 dark:text-green-300 mt-2 font-medium">
@@ -709,7 +709,7 @@ public function calculateNBM($data) {
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('admin.transaksi-nbm') }}" 
-                   class="bg-white text-indigo-700 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 dark:hover:bg-gray-100 transition duration-300 inline-flex items-center justify-center">
+                   class="bg-white text-indigo-700 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 dark:hover:bg-neutral-100 transition duration-300 inline-flex items-center justify-center">
                     📊 Kelola Data NBM
                 </a>
                 <a href="{{ route('ketersediaan.laporan-nbm') }}" 
