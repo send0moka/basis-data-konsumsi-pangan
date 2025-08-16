@@ -197,7 +197,7 @@ class PrediksiNbm extends Component
             
             $newData = [];
             $start = \Carbon\Carbon::createFromFormat('Y-m', $this->startDate);
-            $end = \Carbon\Carbon::createFromFormat('Y-m', $this->endDate);
+            $end = \Carbon\Carbon::createFromFormat('Y-m', $this->startDate)->addMonths(5);
             $index = 0;
             
             while ($start <= $end) {
