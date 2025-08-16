@@ -13,6 +13,7 @@ class PrediksiNbm extends Component
     public $apiStatus = 'checking';
     public $modelStats = null;
     public $isLoading = false;
+    public $komoditiOptions = [];
     
     protected NBMPredictionService $predictionService;
     
@@ -26,6 +27,7 @@ class PrediksiNbm extends Component
         $this->initializeData();
         $this->checkApiHealth();
         $this->loadModelStats();
+        $this->komoditiOptions = $this->getKomoditiOptions();
     }
     
     public function initializeData()
@@ -93,6 +95,101 @@ class PrediksiNbm extends Component
     {
         $this->initializeData();
         $this->predictionResult = null;
+    }
+    
+    public function updatedData($value, $key)
+    {
+        // Check if the updated field is a kelompok field
+        if (str_contains($key, 'kelompok')) {
+            // Extract the index from the key (e.g., '0.kelompok' -> 0)
+            $index = explode('.', $key)[0];
+            
+            // Reset komoditi when kelompok changes
+            if (isset($this->data[$index])) {
+                $this->data[$index]['komoditi'] = '';
+            }
+            
+            // Update komoditi options
+            $this->komoditiOptions = $this->getKomoditiOptions();
+        }
+    }
+    
+    protected function getKomoditiOptions()
+    {
+        return [
+            'Padi-padian' => [
+                ['value' => 'Beras', 'label' => 'Beras'],
+                ['value' => 'Jagung', 'label' => 'Jagung'],
+                ['value' => 'Gandum', 'label' => 'Gandum'],
+                ['value' => 'Sorgum', 'label' => 'Sorgum'],
+                ['value' => 'Ketan', 'label' => 'Ketan']
+            ],
+            'Umbi-umbian' => [
+                ['value' => 'Ubi kayu', 'label' => 'Ubi kayu'],
+                ['value' => 'Ubi jalar', 'label' => 'Ubi jalar'],
+                ['value' => 'Talas', 'label' => 'Talas'],
+                ['value' => 'Ganyong', 'label' => 'Ganyong']
+            ],
+            'Ikan/udang/cumi/kerang' => [
+                ['value' => 'Ikan segar', 'label' => 'Ikan segar'],
+                ['value' => 'Ikan asin', 'label' => 'Ikan asin'],
+                ['value' => 'Udang', 'label' => 'Udang'],
+                ['value' => 'Cumi', 'label' => 'Cumi'],
+                ['value' => 'Kerang', 'label' => 'Kerang']
+            ],
+            'Daging' => [
+                ['value' => 'Daging sapi', 'label' => 'Daging sapi'],
+                ['value' => 'Daging ayam', 'label' => 'Daging ayam'],
+                ['value' => 'Daging kambing', 'label' => 'Daging kambing'],
+                ['value' => 'Daging bebek', 'label' => 'Daging bebek']
+            ],
+            'Telur dan susu' => [
+                ['value' => 'Telur ayam', 'label' => 'Telur ayam'],
+                ['value' => 'Telur bebek', 'label' => 'Telur bebek'],
+                ['value' => 'Susu sapi', 'label' => 'Susu sapi'],
+                ['value' => 'Susu kambing', 'label' => 'Susu kambing']
+            ],
+            'Sayur-sayuran' => [
+                ['value' => 'Bayam', 'label' => 'Bayam'],
+                ['value' => 'Kangkung', 'label' => 'Kangkung'],
+                ['value' => 'Sawi', 'label' => 'Sawi'],
+                ['value' => 'Wortel', 'label' => 'Wortel']
+            ],
+            'Kacang-kacangan' => [
+                ['value' => 'Kacang tanah', 'label' => 'Kacang tanah'],
+                ['value' => 'Kacang hijau', 'label' => 'Kacang hijau'],
+                ['value' => 'Kedelai', 'label' => 'Kedelai'],
+                ['value' => 'Kacang merah', 'label' => 'Kacang merah']
+            ],
+            'Buah-buahan' => [
+                ['value' => 'Pisang', 'label' => 'Pisang'],
+                ['value' => 'Jeruk', 'label' => 'Jeruk'],
+                ['value' => 'Mangga', 'label' => 'Mangga'],
+                ['value' => 'Apel', 'label' => 'Apel']
+            ],
+            'Minyak dan lemak' => [
+                ['value' => 'Minyak goreng', 'label' => 'Minyak goreng'],
+                ['value' => 'Mentega', 'label' => 'Mentega'],
+                ['value' => 'Margarin', 'label' => 'Margarin']
+            ],
+            'Bahan minuman' => [
+                ['value' => 'Kopi', 'label' => 'Kopi'],
+                ['value' => 'Teh', 'label' => 'Teh'],
+                ['value' => 'Coklat', 'label' => 'Coklat']
+            ],
+            'Bumbu-bumbuan' => [
+                ['value' => 'Bawang merah', 'label' => 'Bawang merah'],
+                ['value' => 'Bawang putih', 'label' => 'Bawang putih'],
+                ['value' => 'Cabai', 'label' => 'Cabai'],
+                ['value' => 'Kunyit', 'label' => 'Kunyit']
+            ],
+            'Konsumsi lainnya' => [
+                ['value' => 'Gula', 'label' => 'Gula'],
+                ['value' => 'Garam', 'label' => 'Garam'],
+                ['value' => 'Kecap', 'label' => 'Kecap'],
+                ['value' => 'Saus', 'label' => 'Saus']
+            ]
+        ];
     }
     
     public function predict()
