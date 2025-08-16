@@ -156,7 +156,9 @@
                                         <option value="">Pilih Komoditi</option>
                                         @if(!empty($data[$index]['kelompok']) && isset($komoditiOptions[$data[$index]['kelompok']]))
                                             @foreach($komoditiOptions[$data[$index]['kelompok']] as $komoditi)
-                                                <option value="{{ $komoditi['value'] }}">{{ $komoditi['label'] }}</option>
+                                                <option value="{{ $komoditi['value'] }}" @selected($data[$index]['komoditi'] === $komoditi['value'])>
+                                                    {{ $komoditi['label'] }}
+                                                </option>
                                             @endforeach
                                         @endif
                                     </flux:select>

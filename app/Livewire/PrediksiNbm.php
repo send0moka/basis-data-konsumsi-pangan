@@ -75,20 +75,39 @@ class PrediksiNbm extends Component
     {
         $sampleData = [
             ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori' => 45.5],
-            ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori' => 47.2],
-            ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori' => 46.8],
-            ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori' => 48.1],
-            ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori' => 47.9],
-            ['kelompok' => 'Padi-padian', 'komoditi' => 'Beras', 'kalori' => 49.3]
+            ['kelompok' => 'Umbi-umbian', 'komoditi' => 'Ubi kayu', 'kalori' => 47.2],
+            ['kelompok' => 'Ikan/udang/cumi/kerang', 'komoditi' => 'Ikan segar', 'kalori' => 46.8],
+            ['kelompok' => 'Daging', 'komoditi' => 'Daging ayam', 'kalori' => 48.1],
+            ['kelompok' => 'Telur dan susu', 'komoditi' => 'Telur ayam', 'kalori' => 47.9],
+            ['kelompok' => 'Sayur-sayuran', 'komoditi' => 'Bayam', 'kalori' => 49.3]
         ];
+        
+        // Create a new array to hold the updated data
+        $newData = [];
         
         foreach ($this->data as $index => $item) {
             if (isset($sampleData[$index])) {
-                $this->data[$index]['kelompok'] = $sampleData[$index]['kelompok'];
-                $this->data[$index]['komoditi'] = $sampleData[$index]['komoditi'];
-                $this->data[$index]['kalori_hari'] = $sampleData[$index]['kalori'];
+                $newData[] = [
+                    'tahun' => $item['tahun'],
+                    'bulan' => $item['bulan'],
+                    'month_name' => $item['month_name'],
+                    'kelompok' => $sampleData[$index]['kelompok'],
+                    'komoditi' => $sampleData[$index]['komoditi'],
+                    'kalori_hari' => $sampleData[$index]['kalori']
+                ];
+            } else {
+                $newData[] = $item;
             }
         }
+        
+        // Update the data property in one go
+        $this->data = $newData;
+        
+        // Force update komoditi options
+        $this->komoditiOptions = $this->getKomoditiOptions();
+        
+        // Force Livewire to re-render the view
+        $this->dispatch('$refresh');
     }
     
     public function clearData()
