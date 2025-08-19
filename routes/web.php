@@ -10,6 +10,10 @@ Route::get('/', function () {
 
 // Admin Panel Selection Route - setelah login
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/konsumsi-pangan/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
     Route::get('/admin', function () {
         return view('admin.panel-selection');
     })->name('admin.panel-selection');

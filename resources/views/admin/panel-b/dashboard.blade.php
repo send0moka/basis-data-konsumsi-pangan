@@ -6,15 +6,15 @@
               <h1 class="text-3xl font-bold text-neutral-900 dark:text-white">Panel Laporan</h1>
               <p class="text-neutral-600 dark:text-neutral-400">Kelola dan generate laporan sistem</p>
           </div>
-          <flux:link href="{{ route('admin.panel-selection') }}" variant="ghost" class="text-sm">
+          <x-flux.link href="{{ route('admin.panel-selection') }}" variant="ghost" class="text-sm">
               ← Kembali ke Pemilihan Panel
-          </flux:link>
+          </x-flux.link>
       </div>
 
       <!-- Navigation Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Data Reports Card -->
-          <flux:card class="hover:shadow-lg transition-shadow">
+          <x-flux.card class="hover:shadow-lg transition-shadow">
               <div class="p-6">
                   <div class="flex items-center space-x-4">
                       <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
@@ -28,15 +28,15 @@
                       </div>
                   </div>
                   <div class="mt-4">
-                      <flux:link href="{{ route('admin.panel-b.data') }}" class="text-blue-600 hover:text-blue-800 font-medium">
+                      <x-flux.link href="{{ route('admin.panel-b.data') }}" class="text-blue-600 hover:text-blue-800 font-medium">
                           Akses Reports →
-                      </flux:link>
+                      </x-flux.link>
                   </div>
               </div>
-          </flux:card>
+          </x-flux.card>
 
           <!-- System Reports Card -->
-          <flux:card class="hover:shadow-lg transition-shadow">
+          <x-flux.card class="hover:shadow-lg transition-shadow">
               <div class="p-6">
                   <div class="flex items-center space-x-4">
                       <div class="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
@@ -50,15 +50,15 @@
                       </div>
                   </div>
                   <div class="mt-4">
-                      <flux:link href="{{ route('admin.panel-b.reports') }}" class="text-green-600 hover:text-green-800 font-medium">
+                      <x-flux.link href="{{ route('admin.panel-b.reports') }}" class="text-green-600 hover:text-green-800 font-medium">
                           View Reports →
-                      </flux:link>
+                      </x-flux.link>
                   </div>
               </div>
           </flux:card>
 
           <!-- Quick Stats Card -->
-          <flux:card class="hover:shadow-lg transition-shadow">
+          <x-flux.card class="hover:shadow-lg transition-shadow">
               <div class="p-6">
                   <div class="flex items-center space-x-4">
                       <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
@@ -75,11 +75,11 @@
                       <span class="text-purple-600 font-medium">Coming Soon</span>
                   </div>
               </div>
-          </flux:card>
+          </x-flux.card>
       </div>
 
       <!-- Recent Activity -->
-      <flux:card>
+      <x-flux.card>
           <div class="p-6">
               <h2 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">Recent Activity</h2>
               <div class="space-y-3">
@@ -106,6 +106,6 @@
                   </div>
               </div>
           </div>
-      </flux:card>
+      </x-flux.card>
   </div>
 </x-layouts.admin>
