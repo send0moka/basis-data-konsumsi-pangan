@@ -8,6 +8,13 @@ Route::get('/', function () {
     return view('homepage');
 })->name('home');
 
+// Admin Panel Selection Route - setelah login
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin', function () {
+        return view('admin.panel-selection');
+    })->name('admin.panel-selection');
+});
+
 // Ketersediaan Routes
 Route::prefix('ketersediaan')->name('ketersediaan.')->group(function () {
     Route::get('konsep-metode', function () {
@@ -79,6 +86,46 @@ Route::middleware(['auth'])->prefix('admin/konsumsi-pangan')->name('admin.')->gr
     Route::middleware(['permission:view transaksi_nbm'])->group(function () {
         Route::view('transaksi-nbm', 'admin.transaksi-nbm')->name('transaksi-nbm');
     });
+});
+
+// Panel B Routes
+Route::middleware(['auth'])->prefix('admin/panel-b')->name('admin.panel-b.')->group(function () {
+    Route::get('/', function () {
+        return view('admin.panel-b.dashboard');
+    })->name('dashboard');
+    
+    Route::view('data', 'admin.panel-b.data')->name('data');
+    Route::view('reports', 'admin.panel-b.reports')->name('reports');
+});
+
+// Panel C Routes
+Route::middleware(['auth'])->prefix('admin/panel-c')->name('admin.panel-c.')->group(function () {
+    Route::get('/', function () {
+        return view('admin.panel-c.dashboard');
+    })->name('dashboard');
+    
+    Route::view('analytics', 'admin.panel-c.analytics')->name('analytics');
+    Route::view('settings', 'admin.panel-c.settings')->name('settings');
+});
+
+// Panel D Routes
+Route::middleware(['auth'])->prefix('admin/panel-d')->name('admin.panel-d.')->group(function () {
+    Route::get('/', function () {
+        return view('admin.panel-d.dashboard');
+    })->name('dashboard');
+    
+    Route::view('monitoring', 'admin.panel-d.monitoring')->name('monitoring');
+    Route::view('alerts', 'admin.panel-d.alerts')->name('alerts');
+});
+
+// Panel E Routes
+Route::middleware(['auth'])->prefix('admin/panel-e')->name('admin.panel-e.')->group(function () {
+    Route::get('/', function () {
+        return view('admin.panel-e.dashboard');
+    })->name('dashboard');
+    
+    Route::view('system', 'admin.panel-e.system')->name('system');
+    Route::view('logs', 'admin.panel-e.logs')->name('logs');
 });
 
 // Susenas Routes (accessible by both superadmin and admin)

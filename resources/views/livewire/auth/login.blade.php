@@ -40,7 +40,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        // Redirect ke halaman pemilihan admin panel
+        $this->redirectIntended(default: route('admin.panel-selection', absolute: false), navigate: true);
     }
 
     /**
