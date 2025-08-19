@@ -9,6 +9,7 @@ use App\Exports\TransaksiNbmExport;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
 
 class TransaksiNbmManagement extends Component
 {
@@ -291,7 +292,16 @@ class TransaksiNbmManagement extends Component
         $this->validate();
         $this->validateKomoditiKelompok();
 
-        TransaksiNbm::create($this->getFormData());
+        DB::transaction(function () {
+            // Hapus data lama jika ada kombinasi unik yang sama
+            TransaksiNbm::where('tahun', $this->tahun)
+                ->where('kode_komoditi', $this->kode_komoditi)
+                ->where('status_angka', $this->status_angka)
+                ->delete();
+
+            // Buat data baru
+            TransaksiNbm::create($this->getFormData());
+        });
 
         session()->flash('message', 'Transaksi NBM berhasil dibuat.');
         $this->closeCreateModal();
@@ -302,9 +312,39 @@ class TransaksiNbmManagement extends Component
         $this->validate();
         $this->validateKomoditiKelompok();
 
-        $this->editingTransaksi->update($this->getFormData());
+        $original = $this->editingTransaksi;
+        $formData = $this->getFormData();
 
-        session()->flash('message', 'Transaksi NBM berhasil diupdate.');
+        // Cek apakah ada perubahan pada kolom unik
+        $isUniqueKeyChanged = $original->tahun != $formData['tahun'] ||
+                              $original->kode_komoditi != $formData['kode_komoditi'] ||
+                              $original->status_angka != $formData['status_angka'];
+
+        DB::transaction(function () use ($isUniqueKeyChanged, $formData) {
+            if ($isUniqueKeyChanged) {
+                // Jika kunci unik berubah, hapus data lama dan buat yang baru
+                // Ini secara efektif mengganti record dengan ID baru
+
+                // Hapus dulu jika ada data lain yang sama dengan kombinasi unik baru
+                TransaksiNbm::where('tahun', $formData['tahun'])
+                    ->where('kode_komoditi', $formData['kode_komoditi'])
+                    ->where('status_angka', $formData['status_angka'])
+                    ->delete();
+
+                // Hapus data asli yang sedang diedit
+                $this->editingTransaksi->delete();
+
+                // Buat record baru
+                TransaksiNbm::create($formData);
+
+                session()->flash('message', 'Transaksi NBM berhasil diganti dengan data baru.');
+            } else {
+                // Jika tidak ada perubahan pada kunci unik, cukup perbarui data
+                $this->editingTransaksi->update($formData);
+                session()->flash('message', 'Transaksi NBM berhasil diupdate.');
+            }
+        });
+
         $this->closeEditModal();
     }
 

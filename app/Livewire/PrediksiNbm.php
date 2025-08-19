@@ -252,6 +252,25 @@ class PrediksiNbm extends Component
         ]);
     }
     
+    public function addKomoditi($monthIndex)
+    {
+        if (isset($this->data[$monthIndex])) {
+            $this->data[$monthIndex]['komoditi_data'][] = [
+                'kelompok' => '',
+                'komoditi' => '',
+                'kalori_hari' => ''
+            ];
+        }
+    }
+
+    public function removeKomoditi($monthIndex, $itemIndex)
+    {
+        if (isset($this->data[$monthIndex]['komoditi_data'][$itemIndex])) {
+            unset($this->data[$monthIndex]['komoditi_data'][$itemIndex]);
+            $this->data[$monthIndex]['komoditi_data'] = array_values($this->data[$monthIndex]['komoditi_data']);
+        }
+    }
+
     public function updatedData($value, $key)
     {
         // Check if the updated field is a kelompok field

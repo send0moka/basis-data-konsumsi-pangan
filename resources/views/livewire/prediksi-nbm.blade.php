@@ -225,8 +225,7 @@
                                                 @if($itemIndex > 0)
                                                 <button 
                                                     type="button" 
-                                                    wire:click="$remove('data.' . $monthIndex . '.komoditi_data', $itemIndex)"
-                                                    class="px-3 py-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                                                    wire:click="removeKomoditi({{ $monthIndex }}, {{ $itemIndex }})"                                                    class="px-3 py-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
                                                     title="Hapus komoditi"
                                                     wire:loading.attr="disabled"
                                                 >
@@ -266,8 +265,7 @@
                                             @if($itemIndex === count($monthData['komoditi_data']) - 1)
                                             <button 
                                                 type="button" 
-                                                wire:click="$push('data.{{ $monthIndex }}.komoditi_data', ['kelompok' => '', 'komoditi' => '', 'kalori_hari' => ''])"
-                                                class="p-2 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors"
+                                                wire:click="addKomoditi({{ $monthIndex }})"                                                class="p-2 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors"
                                                 title="Tambah komoditi"
                                                 wire:loading.attr="disabled"
                                             >
