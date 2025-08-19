@@ -100,6 +100,15 @@ class NBMPredictionService
                 'data' => $result['data'][0]
             ];
         }
+
+        // Pass the detailed error message from predictBatch
+        if (!$result['success']) {
+            return [
+                'success' => false,
+                'error' => $result['error'] ?? 'Prediction failed',
+                'details' => $result['details'] ?? null
+            ];
+        }
         
         return $result;
     }
@@ -179,10 +188,19 @@ class NBMPredictionService
                 ];
             }
             
+            $responseBody = $response->json();
+            $errorMessage = $responseBody['detail'] ?? 'Batch prediction failed';
+
+            Log::error('NBM batch prediction failed', [
+                'status' => $response->status(),
+                'response' => $responseBody
+            ]);
+
             return [
                 'success' => false,
-                'error' => 'Batch prediction failed',
-                'status_code' => $response->status()
+                'error' => $errorMessage,
+                'status_code' => $response->status(),
+                'details' => $responseBody
             ];
             
         } catch (\Exception $e) {

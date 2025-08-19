@@ -21,28 +21,28 @@
     </section>
 
     <!-- Navigation Quick Menu -->
-    <section class="bg-gray-50 dark:bg-zinc-800 py-8">
+    <section class="bg-neutral-50 dark:bg-zinc-800 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-sm border border-gray-200 dark:border-zinc-700 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">📚 Daftar Isi</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-sm border border-neutral-200 dark:border-zinc-700 p-6">
+                <h2 class="text-lg font-semibold text-neutral-900 dark:text-white mb-4">📚 Daftar Isi</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4" x-data="{ activeSection: 'overview' }">
                     <button @click="activeSection = 'overview'; document.getElementById('overview').scrollIntoView({behavior: 'smooth'})"
-                            :class="activeSection === 'overview' ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-600 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700'"
+                            :class="activeSection === 'overview' ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300' : 'bg-neutral-50 dark:bg-zinc-800 border-neutral-200 dark:border-zinc-600 text-neutral-700 dark:text-zinc-300 hover:bg-neutral-100 dark:hover:bg-zinc-700'"
                             class="text-sm font-medium px-4 py-2 border rounded-lg transition-colors">
                         📖 Overview Susenas
                     </button>
                     <button @click="activeSection = 'dataflow'; document.getElementById('dataflow').scrollIntoView({behavior: 'smooth'})"
-                            :class="activeSection === 'dataflow' ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-600 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700'"
+                            :class="activeSection === 'dataflow' ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300' : 'bg-neutral-50 dark:bg-zinc-800 border-neutral-200 dark:border-zinc-600 text-neutral-700 dark:text-zinc-300 hover:bg-neutral-100 dark:hover:bg-zinc-700'"
                             class="text-sm font-medium px-4 py-2 border rounded-lg transition-colors">
                         🔄 Alur Data
                     </button>
                     <button @click="activeSection = 'calculation'; document.getElementById('calculation').scrollIntoView({behavior: 'smooth'})"
-                            :class="activeSection === 'calculation' ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-600 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700'"
+                            :class="activeSection === 'calculation' ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300' : 'bg-neutral-50 dark:bg-zinc-800 border-neutral-200 dark:border-zinc-600 text-neutral-700 dark:text-zinc-300 hover:bg-neutral-100 dark:hover:bg-zinc-700'"
                             class="text-sm font-medium px-4 py-2 border rounded-lg transition-colors">
                         ⚡ Perhitungan
                     </button>
                     <button @click="activeSection = 'demo'; document.getElementById('demo').scrollIntoView({behavior: 'smooth'})"
-                            :class="activeSection === 'demo' ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300' : 'bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-600 text-gray-700 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-700'"
+                            :class="activeSection === 'demo' ? 'bg-emerald-50 dark:bg-emerald-900/50 border-emerald-200 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300' : 'bg-neutral-50 dark:bg-zinc-800 border-neutral-200 dark:border-zinc-600 text-neutral-700 dark:text-zinc-300 hover:bg-neutral-100 dark:hover:bg-zinc-700'"
                             class="text-sm font-medium px-4 py-2 border rounded-lg transition-colors">
                         🧪 Demo & Test
                     </button>
@@ -56,8 +56,8 @@
         
         <!-- Section 1: Overview Susenas -->
         <section id="overview" class="mb-16">
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 p-8">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">📖 Apa itu Transaksi Susenas?</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-neutral-200 dark:border-zinc-700 p-8">
+                <h2 class="text-3xl font-bold text-neutral-900 dark:text-white mb-6">📖 Apa itu Transaksi Susenas?</h2>
                 
                 <div class="space-y-6">
                     <div class="bg-emerald-50 dark:bg-emerald-900/20 border-l-4 border-emerald-400 dark:border-emerald-500 p-6 rounded-r-lg">
@@ -114,23 +114,23 @@
 
         <!-- Section 2: Data Flow -->
         <section id="dataflow" class="mb-16">
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 p-8">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">🔄 Alur Data dalam Sistem</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-neutral-200 dark:border-zinc-700 p-8">
+                <h2 class="text-3xl font-bold text-neutral-900 dark:text-white mb-6">🔄 Alur Data dalam Sistem</h2>
                 
                 <div class="space-y-8">
                     <!-- Step 1: Data Collection -->
-                    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">1️⃣ Pengumpulan Data (Collection)</h3>
+                    <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">1️⃣ Pengumpulan Data (Collection)</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
-                                <p class="text-gray-700 dark:text-zinc-300 mb-4">
+                                <p class="text-neutral-700 dark:text-zinc-300 mb-4">
                                     Data Susenas dikumpulkan oleh BPS melalui survei rumah tangga yang dilakukan secara berkala. 
                                     Admin dapat menginput data konsumsi per kapita untuk berbagai komoditas pangan.
                                 </p>
                                 
-                                <div class="bg-gray-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
+                                <div class="bg-neutral-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-gray-400">📁 SusenasManagement.php</span>
+                                        <span class="text-neutral-400">📁 SusenasManagement.php</span>
                                         <a href="https://github.com/send0moka/basis-data-konsumsi-pangan/tree/main/app/Livewire/Admin/SusenasManagement.php" 
                                            target="_blank" 
                                            class="text-blue-400 hover:text-blue-300 text-xs">
@@ -162,18 +162,18 @@ protected $rules = [
                     </div>
 
                     <!-- Step 2: Data Processing -->
-                    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">2️⃣ Pemrosesan Data (Processing)</h3>
+                    <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">2️⃣ Pemrosesan Data (Processing)</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
-                                <p class="text-gray-700 dark:text-zinc-300 mb-4">
+                                <p class="text-neutral-700 dark:text-zinc-300 mb-4">
                                     Data yang sudah divalidasi disimpan ke database dengan struktur yang terintegrasi 
                                     dengan sistem kelompok dan komoditas BPS.
                                 </p>
                                 
-                                <div class="bg-gray-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
+                                <div class="bg-neutral-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-gray-400">📁 Susenas Model</span>
+                                        <span class="text-neutral-400">📁 Susenas Model</span>
                                         <a href="https://github.com/send0moka/basis-data-konsumsi-pangan/tree/main/app/Models/Susenas.php" 
                                            target="_blank" 
                                            class="text-blue-400 hover:text-blue-300 text-xs">
@@ -204,18 +204,18 @@ public function komoditiBps() {
                     </div>
 
                     <!-- Step 3: Analysis -->
-                    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">3️⃣ Analisis Data (Analysis)</h3>
+                    <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">3️⃣ Analisis Data (Analysis)</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
-                                <p class="text-gray-700 dark:text-zinc-300 mb-4">
+                                <p class="text-neutral-700 dark:text-zinc-300 mb-4">
                                     Sistem dapat menganalisis tren konsumsi, perbandingan antar periode, 
                                     dan menghasilkan insights untuk pengambilan keputusan.
                                 </p>
                                 
-                                <div class="bg-gray-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
+                                <div class="bg-neutral-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-gray-400">📁 Analysis Logic</span>
+                                        <span class="text-neutral-400">📁 Analysis Logic</span>
                                         <a href="https://github.com/send0moka/basis-data-konsumsi-pangan/tree/main/app/Livewire/Admin/SusenasManagement.php#L100" 
                                            target="_blank" 
                                            class="text-blue-400 hover:text-blue-300 text-xs">
@@ -251,18 +251,18 @@ public function calculateTrend($data) {
                     </div>
 
                     <!-- Step 4: Output & Reporting -->
-                    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">4️⃣ Output & Pelaporan (Reporting)</h3>
+                    <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">4️⃣ Output & Pelaporan (Reporting)</h3>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div>
-                                <p class="text-gray-700 dark:text-zinc-300 mb-4">
+                                <p class="text-neutral-700 dark:text-zinc-300 mb-4">
                                     Data Susenas dapat diekspor dalam berbagai format untuk keperluan 
                                     penelitian, analisis kebijakan, dan publikasi.
                                 </p>
                                 
-                                <div class="bg-gray-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
+                                <div class="bg-neutral-800 dark:bg-zinc-900 rounded-lg p-4 text-green-400 font-mono text-sm overflow-x-auto">
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-gray-400">📁 Export Functionality</span>
+                                        <span class="text-neutral-400">📁 Export Functionality</span>
                                         <a href="https://github.com/send0moka/basis-data-konsumsi-pangan/tree/main/app/Exports/SusenasExport.php" 
                                            target="_blank" 
                                            class="text-blue-400 hover:text-blue-300 text-xs">
@@ -298,8 +298,8 @@ public function headings(): array {
 
         <!-- Section 3: Detailed Analysis -->
         <section id="calculation" class="mb-16">
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 p-8">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">⚡ Detail Analisis Susenas</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-neutral-200 dark:border-zinc-700 p-8">
+                <h2 class="text-3xl font-bold text-neutral-900 dark:text-white mb-6">⚡ Detail Analisis Susenas</h2>
                 
                 <div class="space-y-8">
                     <!-- Analysis Methods -->
@@ -308,35 +308,35 @@ public function headings(): array {
                         
                         <div class="space-y-4">
                             <div class="bg-white dark:bg-zinc-900 rounded-lg p-4 border-l-4 border-emerald-500">
-                                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">1. Konsumsi Per Kapita Tahunan</h4>
-                                <div class="bg-gray-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-gray-800 dark:text-zinc-200">
+                                <h4 class="font-semibold text-neutral-900 dark:text-white mb-2">1. Konsumsi Per Kapita Tahunan</h4>
+                                <div class="bg-neutral-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-neutral-800 dark:text-zinc-200">
                                     Konsumsi = Total Konsumsi RT ÷ Jumlah Anggota RT
                                 </div>
-                                <p class="text-gray-600 dark:text-zinc-400 text-sm mt-2">Rata-rata konsumsi per orang per tahun dalam kilogram</p>
+                                <p class="text-neutral-600 dark:text-zinc-400 text-sm mt-2">Rata-rata konsumsi per orang per tahun dalam kilogram</p>
                             </div>
 
                             <div class="bg-white dark:bg-zinc-900 rounded-lg p-4 border-l-4 border-blue-500">
-                                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">2. Tren Konsumsi Temporal</h4>
-                                <div class="bg-gray-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-gray-800 dark:text-zinc-200">
+                                <h4 class="font-semibold text-neutral-900 dark:text-white mb-2">2. Tren Konsumsi Temporal</h4>
+                                <div class="bg-neutral-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-neutral-800 dark:text-zinc-200">
                                     Tren = (Konsumsi_akhir - Konsumsi_awal) ÷ Jumlah_tahun
                                 </div>
-                                <p class="text-gray-600 dark:text-zinc-400 text-sm mt-2">Perubahan konsumsi dari waktu ke waktu</p>
+                                <p class="text-neutral-600 dark:text-zinc-400 text-sm mt-2">Perubahan konsumsi dari waktu ke waktu</p>
                             </div>
 
                             <div class="bg-white dark:bg-zinc-900 rounded-lg p-4 border-l-4 border-orange-500">
-                                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">3. Analisis Pengeluaran</h4>
-                                <div class="bg-gray-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-gray-800 dark:text-zinc-200">
+                                <h4 class="font-semibold text-neutral-900 dark:text-white mb-2">3. Analisis Pengeluaran</h4>
+                                <div class="bg-neutral-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-neutral-800 dark:text-zinc-200">
                                     Harga_implisit = Pengeluaran ÷ Konsumsi
                                 </div>
-                                <p class="text-gray-600 dark:text-zinc-400 text-sm mt-2">Estimasi harga rata-rata yang dibayar konsumen</p>
+                                <p class="text-neutral-600 dark:text-zinc-400 text-sm mt-2">Estimasi harga rata-rata yang dibayar konsumen</p>
                             </div>
 
                             <div class="bg-white dark:bg-zinc-900 rounded-lg p-4 border-l-4 border-purple-500">
-                                <h4 class="font-semibold text-gray-900 dark:text-white mb-2">4. Perbandingan Antar Periode</h4>
-                                <div class="bg-gray-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-gray-800 dark:text-zinc-200">
+                                <h4 class="font-semibold text-neutral-900 dark:text-white mb-2">4. Perbandingan Antar Periode</h4>
+                                <div class="bg-neutral-100 dark:bg-zinc-800 rounded p-3 font-mono text-sm text-neutral-800 dark:text-zinc-200">
                                     Perubahan_% = ((Nilai_baru - Nilai_lama) ÷ Nilai_lama) × 100
                                 </div>
-                                <p class="text-gray-600 dark:text-zinc-400 text-sm mt-2">Persentase perubahan konsumsi antar tahun</p>
+                                <p class="text-neutral-600 dark:text-zinc-400 text-sm mt-2">Persentase perubahan konsumsi antar tahun</p>
                             </div>
                         </div>
                     </div>
@@ -411,12 +411,12 @@ public function headings(): array {
                     </div>
 
                     <!-- Code Implementation -->
-                    <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">💻 Implementasi dalam Kode</h3>
+                    <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-neutral-900 dark:text-white mb-4">💻 Implementasi dalam Kode</h3>
                         
-                        <div class="bg-gray-800 dark:bg-zinc-900 rounded-lg p-6 text-green-400 font-mono text-sm overflow-x-auto">
+                        <div class="bg-neutral-800 dark:bg-zinc-900 rounded-lg p-6 text-green-400 font-mono text-sm overflow-x-auto">
                             <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-400">📁 app/Livewire/Admin/SusenasManagement.php</span>
+                                <span class="text-neutral-400">📁 app/Livewire/Admin/SusenasManagement.php</span>
                                 <a href="https://github.com/send0moka/basis-data-konsumsi-pangan/tree/main/app/Livewire/Admin/SusenasManagement.php#L150" 
                                    target="_blank" 
                                    class="text-blue-400 hover:text-blue-300 text-xs">
@@ -477,8 +477,8 @@ public function analyzeSusenas($data) {
 
         <!-- Section 4: Demo & Test -->
         <section id="demo" class="mb-16">
-            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 p-8">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">🧪 Demo Analisis Susenas</h2>
+            <div class="bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-neutral-200 dark:border-zinc-700 p-8">
+                <h2 class="text-3xl font-bold text-neutral-900 dark:text-white mb-6">🧪 Demo Analisis Susenas</h2>
                 
                 <div class="bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-900/30 dark:to-cyan-900/30 border border-teal-200 dark:border-teal-700 rounded-lg p-6 mb-8">
                     <h3 class="text-xl font-semibold text-teal-900 dark:text-teal-300 mb-3">🎮 Interactive Analyzer</h3>
@@ -491,8 +491,8 @@ public function analyzeSusenas($data) {
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" x-data="susenasAnalyzer()">
                     <!-- Input Form -->
                     <div class="lg:col-span-1">
-                        <div class="bg-gray-50 dark:bg-zinc-800 rounded-lg p-6 sticky top-24">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">📝 Input Data Konsumsi</h3>
+                        <div class="bg-neutral-50 dark:bg-zinc-800 rounded-lg p-6 sticky top-24">
+                            <h3 class="text-lg font-semibold text-neutral-900 dark:text-white mb-6">📝 Input Data Konsumsi</h3>
                             
                             <form @submit.prevent="analyzeData" class="space-y-4">
                                 <!-- Year Inputs -->
@@ -508,7 +508,7 @@ public function analyzeSusenas($data) {
                                                        min="1993" 
                                                        max="2030"
                                                        placeholder="Tahun"
-                                                       class="w-full px-2 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                                                       class="w-full px-2 py-2 border border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-neutral-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
                                             </div>
                                             <div class="flex-1">
                                                 <input type="number" 
@@ -517,7 +517,7 @@ public function analyzeSusenas($data) {
                                                        step="0.1" 
                                                        min="0"
                                                        placeholder="Konsumsi (kg)"
-                                                       class="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                                                       class="w-full px-3 py-2 border border-neutral-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-neutral-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
                                             </div>
                                             <button type="button" 
                                                     @click="removeYear(index)"
@@ -546,7 +546,7 @@ public function analyzeSusenas($data) {
                                         </button>
                                         <button type="button" 
                                                 @click="resetForm()"
-                                                class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                                                class="flex-1 bg-neutral-600 hover:bg-neutral-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
                                             🔄 Reset
                                         </button>
                                     </div>
@@ -568,7 +568,7 @@ public function analyzeSusenas($data) {
                                             <span class="font-medium text-blue-700 dark:text-blue-300">Rata-rata Konsumsi:</span>
                                             <span class="font-mono text-lg text-blue-800 dark:text-blue-200" x-text="formatNumber(results.avg_consumption) + ' kg/tahun'"></span>
                                         </div>
-                                        <div class="text-sm text-gray-600 dark:text-zinc-400 mt-1">
+                                        <div class="text-sm text-neutral-600 dark:text-zinc-400 mt-1">
                                             = <span x-text="formatNumber(results.consumption_per_day * 1000)"></span> gram per hari
                                         </div>
                                     </div>
@@ -581,7 +581,7 @@ public function analyzeSusenas($data) {
                                                   :class="results.trend_per_year > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'"
                                                   x-text="(results.trend_per_year > 0 ? '+' : '') + formatNumber(results.trend_per_year, 3) + ' kg/tahun'"></span>
                                         </div>
-                                        <div class="text-sm text-gray-600 dark:text-zinc-400 mt-1">
+                                        <div class="text-sm text-neutral-600 dark:text-zinc-400 mt-1">
                                             Status: <span x-text="results.trend_direction" 
                                                          :class="results.trend_per_year > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'"></span>
                                         </div>
@@ -594,7 +594,7 @@ public function analyzeSusenas($data) {
                                                   :class="results.percentage_change > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'"
                                                   x-text="(results.percentage_change > 0 ? '+' : '') + formatNumber(results.percentage_change, 2) + '%'"></span>
                                         </div>
-                                        <div class="text-sm text-gray-600 dark:text-zinc-400 mt-1">
+                                        <div class="text-sm text-neutral-600 dark:text-zinc-400 mt-1">
                                             Dari tahun awal ke tahun akhir
                                         </div>
                                     </div>
@@ -609,10 +609,10 @@ public function analyzeSusenas($data) {
                                     <template x-for="(year, index) in validYears" :key="index">
                                         <div class="bg-white dark:bg-zinc-800 rounded-lg p-3">
                                             <div class="flex justify-between items-center mb-2">
-                                                <span class="font-medium text-gray-700 dark:text-zinc-300" x-text="year.tahun"></span>
-                                                <span class="font-mono text-gray-900 dark:text-white" x-text="formatNumber(year.konsumsi) + ' kg'"></span>
+                                                <span class="font-medium text-neutral-700 dark:text-zinc-300" x-text="year.tahun"></span>
+                                                <span class="font-mono text-neutral-900 dark:text-white" x-text="formatNumber(year.konsumsi) + ' kg'"></span>
                                             </div>
-                                            <div class="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
+                                            <div class="w-full bg-neutral-200 dark:bg-zinc-700 rounded-full h-2">
                                                 <div class="bg-emerald-500 h-2 rounded-full transition-all duration-500" 
                                                      :style="'width: ' + Math.min((year.konsumsi / maxConsumption) * 100, 100) + '%'"></div>
                                             </div>
@@ -678,7 +678,7 @@ public function analyzeSusenas($data) {
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('admin.susenas') }}" 
-                   class="bg-white text-emerald-700 px-8 py-3 rounded-lg font-semibold hover:bg-emerald-50 dark:hover:bg-gray-100 transition duration-300 inline-flex items-center justify-center">
+                   class="bg-white text-emerald-700 px-8 py-3 rounded-lg font-semibold hover:bg-emerald-50 dark:hover:bg-neutral-100 transition duration-300 inline-flex items-center justify-center">
                     📊 Kelola Data Susenas
                 </a>
                 <a href="{{ route('konsumsi.laporan-susenas') }}" 

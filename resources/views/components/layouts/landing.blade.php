@@ -24,10 +24,10 @@
         }
     </style>
 </head>
-<body class="font-['Figtree'] antialiased bg-gray-50">
+<body class="font-['Figtree'] antialiased bg-neutral-50">
     <div class="min-h-screen">
         <!-- Navigation -->
-        <nav class="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
+        <nav class="bg-white shadow-lg sticky top-0 z-50 border-b border-neutral-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
@@ -43,14 +43,14 @@
                         <div class="hidden sm:ml-8 sm:flex sm:space-x-8 sm:items-center">
                             <!-- Home -->
                             <a href="{{ route('home') }}" 
-                               class="border-transparent text-gray-500 hover:border-[#2f8b3e] hover:text-[#2f8b3e] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors h-16">
+                               class="border-transparent text-neutral-500 hover:border-[#2f8b3e] hover:text-[#2f8b3e] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors h-16">
                                 Home
                             </a>
 
                             <!-- Ketersediaan Dropdown -->
                             <div class="relative h-16 flex items-center" x-data="{ open: false }">
                                 <button @click="open = !open" 
-                                        class="border-transparent text-gray-500 hover:border-[#2f8b3e] hover:text-[#2f8b3e] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors h-16">
+                                        class="border-transparent text-neutral-500 hover:border-[#2f8b3e] hover:text-[#2f8b3e] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors h-16">
                                     Ketersediaan
                                     <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -62,11 +62,11 @@
                                      class="absolute left-0 top-full mt-0 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                                     <div class="py-1">
                                         <a href="{{ route('ketersediaan.konsep-metode') }}" 
-                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
+                                           class="block px-4 py-2 text-sm text-neutral-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
                                             Konsep dan Metode
                                         </a>
                                         <a href="{{ route('ketersediaan.laporan-nbm') }}" 
-                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
+                                           class="block px-4 py-2 text-sm text-neutral-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
                                             Laporan Data NBM
                                         </a>
                                     </div>
@@ -76,7 +76,7 @@
                             <!-- Konsumsi Dropdown -->
                             <div class="relative h-16 flex items-center" x-data="{ open: false }">
                                 <button @click="open = !open" 
-                                        class="border-transparent text-gray-500 hover:border-[#2f8b3e] hover:text-[#2f8b3e] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors h-16">
+                                        class="border-transparent text-neutral-500 hover:border-[#2f8b3e] hover:text-[#2f8b3e] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors h-16">
                                     Konsumsi
                                     <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -88,19 +88,19 @@
                                      class="absolute left-0 top-full mt-0 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                                     <div class="py-1">
                                         <a href="{{ route('konsumsi.konsep-metode') }}" 
-                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
+                                           class="block px-4 py-2 text-sm text-neutral-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
                                             Konsep dan Metode
                                         </a>
                                         <a href="{{ route('konsumsi.laporan-susenas') }}" 
-                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
+                                           class="block px-4 py-2 text-sm text-neutral-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
                                             Laporan Data Susenas
                                         </a>
                                         <a href="{{ route('konsumsi.per-kapita-seminggu') }}" 
-                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
+                                           class="block px-4 py-2 text-sm text-neutral-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
                                             Konsumsi Per Kapita Seminggu
                                         </a>
                                         <a href="{{ route('konsumsi.per-kapita-setahun') }}" 
-                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
+                                           class="block px-4 py-2 text-sm text-neutral-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
                                             Konsumsi Per Kapita Setahun
                                         </a>
                                     </div>
@@ -109,7 +109,7 @@
 
                             <!-- Manajemen Data -->
                             <a href="{{ route('login') }}" 
-                               class="border-transparent text-gray-500 hover:border-[#2f8b3e] hover:text-[#2f8b3e] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors h-16">
+                               class="border-transparent text-neutral-500 hover:border-[#2f8b3e] hover:text-[#2f8b3e] inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors h-16">
                                 Manajemen Data
                             </a>
                         </div>
@@ -118,7 +118,7 @@
                     <!-- Mobile menu button -->
                     <div class="sm:hidden flex items-center">
                         <button x-data x-on:click="$dispatch('toggle-mobile-menu')" 
-                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-[#2f8b3e] hover:bg-[#efefa4]/20 transition-colors">
+                                class="inline-flex items-center justify-center p-2 rounded-md text-neutral-400 hover:text-[#2f8b3e] hover:bg-[#efefa4]/20 transition-colors">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                             </svg>
@@ -132,17 +132,17 @@
                  x-on:toggle-mobile-menu.window="open = !open"
                  x-show="open" 
                  x-transition
-                 class="sm:hidden bg-white border-t border-gray-200">
+                 class="sm:hidden bg-white border-t border-neutral-200">
                 <div class="pt-2 pb-3 space-y-1">
                     <a href="{{ route('home') }}" 
-                       class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-[#2f8b3e] hover:bg-[#efefa4]/20 hover:border-[#2f8b3e] transition-colors">
+                       class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-neutral-500 hover:text-[#2f8b3e] hover:bg-[#efefa4]/20 hover:border-[#2f8b3e] transition-colors">
                         Home
                     </a>
                     
                     <!-- Mobile Ketersediaan -->
                     <div x-data="{ open: false }">
                         <button @click="open = !open" 
-                                class="w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-[#2f8b3e] hover:bg-[#efefa4]/20 flex justify-between items-center transition-colors">
+                                class="w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-neutral-500 hover:text-[#2f8b3e] hover:bg-[#efefa4]/20 flex justify-between items-center transition-colors">
                             Ketersediaan
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -150,11 +150,11 @@
                         </button>
                         <div x-show="open" x-transition class="pl-6 space-y-1 bg-[#efefa4]/10">
                             <a href="{{ route('ketersediaan.konsep-metode') }}" 
-                               class="block py-2 text-sm text-gray-600 hover:text-[#6a4c35] font-medium transition-colors">
+                               class="block py-2 text-sm text-neutral-600 hover:text-[#6a4c35] font-medium transition-colors">
                                 Konsep dan Metode
                             </a>
                             <a href="{{ route('ketersediaan.laporan-nbm') }}" 
-                               class="block py-2 text-sm text-gray-600 hover:text-[#6a4c35] font-medium transition-colors">
+                               class="block py-2 text-sm text-neutral-600 hover:text-[#6a4c35] font-medium transition-colors">
                                 Laporan Data NBM
                             </a>
                         </div>
@@ -163,7 +163,7 @@
                     <!-- Mobile Konsumsi -->
                     <div x-data="{ open: false }">
                         <button @click="open = !open" 
-                                class="w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-[#2f8b3e] hover:bg-[#efefa4]/20 flex justify-between items-center transition-colors">
+                                class="w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-neutral-500 hover:text-[#2f8b3e] hover:bg-[#efefa4]/20 flex justify-between items-center transition-colors">
                             Konsumsi
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -171,26 +171,26 @@
                         </button>
                         <div x-show="open" x-transition class="pl-6 space-y-1 bg-[#efefa4]/10">
                             <a href="{{ route('konsumsi.konsep-metode') }}" 
-                               class="block py-2 text-sm text-gray-600 hover:text-[#6a4c35] font-medium transition-colors">
+                               class="block py-2 text-sm text-neutral-600 hover:text-[#6a4c35] font-medium transition-colors">
                                 Konsep dan Metode
                             </a>
                             <a href="{{ route('konsumsi.laporan-susenas') }}" 
-                               class="block py-2 text-sm text-gray-600 hover:text-[#6a4c35] font-medium transition-colors">
+                               class="block py-2 text-sm text-neutral-600 hover:text-[#6a4c35] font-medium transition-colors">
                                 Laporan Data Susenas
                             </a>
                             <a href="{{ route('konsumsi.per-kapita-seminggu') }}" 
-                               class="block py-2 text-sm text-gray-600 hover:text-[#6a4c35] font-medium transition-colors">
+                               class="block py-2 text-sm text-neutral-600 hover:text-[#6a4c35] font-medium transition-colors">
                                 Per Kapita Seminggu
                             </a>
                             <a href="{{ route('konsumsi.per-kapita-setahun') }}" 
-                               class="block py-2 text-sm text-gray-600 hover:text-[#6a4c35] font-medium transition-colors">
+                               class="block py-2 text-sm text-neutral-600 hover:text-[#6a4c35] font-medium transition-colors">
                                 Per Kapita Setahun
                             </a>
                         </div>
                     </div>
 
                     <a href="{{ route('login') }}" 
-                       class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-[#2f8b3e] hover:bg-[#efefa4]/20 hover:border-[#2f8b3e] transition-colors">
+                       class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-neutral-500 hover:text-[#2f8b3e] hover:bg-[#efefa4]/20 hover:border-[#2f8b3e] transition-colors">
                         Manajemen Data
                     </a>
                 </div>

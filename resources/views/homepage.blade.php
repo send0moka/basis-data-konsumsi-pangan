@@ -103,19 +103,19 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 <div>
                     <div class="text-3xl md:text-4xl font-bold text-[#2f8b3e] mb-2">10+</div>
-                    <div class="text-gray-600 font-medium">Kelompok Pangan</div>
+                    <div class="text-neutral-600 font-medium">Kelompok Pangan</div>
                 </div>
                 <div>
                     <div class="text-3xl md:text-4xl font-bold text-[#6a4c35] mb-2">200+</div>
-                    <div class="text-gray-600 font-medium">Jenis Komoditi</div>
+                    <div class="text-neutral-600 font-medium">Jenis Komoditi</div>
                 </div>
                 <div>
                     <div class="text-3xl md:text-4xl font-bold text-[#782c7c] mb-2">30+</div>
-                    <div class="text-gray-600 font-medium">Tahun Data</div>
+                    <div class="text-neutral-600 font-medium">Tahun Data</div>
                 </div>
                 <div>
                     <div class="text-3xl md:text-4xl font-bold text-[#e34e38] mb-2">34</div>
-                    <div class="text-gray-600 font-medium">Provinsi</div>
+                    <div class="text-neutral-600 font-medium">Provinsi</div>
                 </div>
             </div>
         </div>
@@ -128,7 +128,7 @@
                 <h2 class="text-3xl md:text-4xl font-bold text-[#6a4c35] mb-6">
                     Tentang Sistem
                 </h2>
-                <p class="text-xl text-gray-700 max-w-3xl mx-auto font-medium">
+                <p class="text-xl text-neutral-700 max-w-3xl mx-auto font-medium">
                     Basis Data Konsumsi Pangan adalah sistem informasi terintegrasi yang menyediakan 
                     data komprehensif tentang ketersediaan dan konsumsi pangan di Indonesia
                 </p>
@@ -146,7 +146,7 @@
                             </div>
                             <div class="ml-4">
                                 <h4 class="text-lg font-semibold text-[#6a4c35]">Data Neraca Bahan Makanan (NBM)</h4>
-                                <p class="text-gray-700">Ketersediaan pangan berdasarkan produksi, impor, ekspor, dan penggunaan</p>
+                                <p class="text-neutral-700">Ketersediaan pangan berdasarkan produksi, impor, ekspor, dan penggunaan</p>
                             </div>
                         </div>
                         <div class="flex items-start">
@@ -157,7 +157,7 @@
                             </div>
                             <div class="ml-4">
                                 <h4 class="text-lg font-semibold text-[#6a4c35]">Data Susenas Konsumsi</h4>
-                                <p class="text-gray-700">Survei sosial ekonomi nasional untuk data konsumsi rumah tangga</p>
+                                <p class="text-neutral-700">Survei sosial ekonomi nasional untuk data konsumsi rumah tangga</p>
                             </div>
                         </div>
                         <div class="flex items-start">
@@ -168,15 +168,15 @@
                             </div>
                             <div class="ml-4">
                                 <h4 class="text-lg font-semibold text-[#6a4c35]">Analisis Per Kapita</h4>
-                                <p class="text-gray-700">Konsumsi pangan per kapita dalam periode seminggu dan setahun</p>
+                                <p class="text-neutral-700">Konsumsi pangan per kapita dalam periode seminggu dan setahun</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div>
                     <div class="bg-white p-8 rounded-lg shadow-lg">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Akses Data</h3>
-                        <p class="text-gray-600 mb-6">
+                        <h3 class="text-2xl font-bold text-neutral-900 mb-6">Akses Data</h3>
+                        <p class="text-neutral-600 mb-6">
                             Dapatkan akses ke data lengkap ketersediaan dan konsumsi pangan 
                             untuk keperluan penelitian, analisis, dan perencanaan kebijakan
                         </p>
@@ -197,7 +197,7 @@
                 <h2 class="text-3xl md:text-4xl font-bold text-[#6a4c35] mb-6">
                     Layanan Data
                 </h2>
-                <p class="text-xl text-gray-700 font-medium">
+                <p class="text-xl text-neutral-700 font-medium">
                     Akses berbagai jenis data dan informasi pangan
                 </p>
             </div>
@@ -211,7 +211,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-semibold text-[#6a4c35] mb-2">Ketersediaan</h3>
-                    <p class="text-gray-700 mb-4">Data neraca bahan makanan dan ketersediaan pangan</p>
+                    <p class="text-neutral-700 mb-4">Data neraca bahan makanan dan ketersediaan pangan</p>
                     <a href="{{ route('ketersediaan.konsep-metode') }}" 
                        class="text-[#2f8b3e] hover:text-[#6a4c35] font-semibold transition-colors">
                         Selengkapnya →
@@ -226,7 +226,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-semibold text-[#6a4c35] mb-2">Konsumsi</h3>
-                    <p class="text-gray-700 mb-4">Data konsumsi pangan rumah tangga dari Susenas</p>
+                    <p class="text-neutral-700 mb-4">Data konsumsi pangan rumah tangga dari Susenas</p>
                     <a href="{{ route('konsumsi.konsep-metode') }}" 
                        class="text-[#782c7c] hover:text-[#6a4c35] font-semibold transition-colors">
                         Selengkapnya →
@@ -241,7 +241,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-semibold text-[#6a4c35] mb-2">Per Kapita Seminggu</h3>
-                    <p class="text-gray-700 mb-4">Konsumsi pangan per kapita dalam seminggu</p>
+                    <p class="text-neutral-700 mb-4">Konsumsi pangan per kapita dalam seminggu</p>
                     <a href="{{ route('konsumsi.per-kapita-seminggu') }}" 
                        class="text-[#e34e38] hover:text-[#6a4c35] font-semibold transition-colors">
                         Selengkapnya →
@@ -256,7 +256,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-semibold text-[#6a4c35] mb-2">Per Kapita Setahun</h3>
-                    <p class="text-gray-700 mb-4">Konsumsi pangan per kapita dalam setahun</p>
+                    <p class="text-neutral-700 mb-4">Konsumsi pangan per kapita dalam setahun</p>
                     <a href="{{ route('konsumsi.per-kapita-setahun') }}" 
                        class="text-[#6a4c35] hover:text-[#782c7c] font-semibold transition-colors">
                         Selengkapnya →
