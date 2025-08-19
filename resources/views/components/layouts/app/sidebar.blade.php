@@ -44,8 +44,8 @@
                 </flux:navlist.group>
 
                 <flux:navlist.group :heading="__('Machine Learning')" class="grid">
-                    <flux:navlist.item icon="cpu-chip" :href="route('prediksi.index')" :current="request()->routeIs('prediksi.*')" wire:navigate class="group active-icon">
-                        <span class="nav-link-text transition-colors {{ request()->routeIs('prediksi.*') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Prediksi Konsumsi NBM') }}</span>
+                    <flux:navlist.item icon="cpu-chip" :href="route('admin.prediksi-nbm')" :current="request()->routeIs('admin.prediksi-nbm')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.prediksi-nbm') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Prediksi Konsumsi NBM') }}</span>
                     </flux:navlist.item>
                 </flux:navlist.group>
 
@@ -100,8 +100,8 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('ketersediaan.konsep-transaksi-nbm')" icon="document-text" wire:navigate>{{ __('Konsep Transaksi NBM') }}</flux:menu.item>
-                        <flux:menu.item :href="route('konsumsi.konsep-transaksi-susenas')" icon="chart-pie" wire:navigate>{{ __('Konsep Transaksi Susenas') }}</flux:menu.item>
+                        <flux:menu.item :href="route('admin.konsep-transaksi-nbm')" icon="document-text" wire:navigate>{{ __('Konsep Transaksi NBM') }}</flux:menu.item>
+                        <flux:menu.item :href="route('admin.konsep-transaksi-susenas')" icon="chart-pie" wire:navigate>{{ __('Konsep Transaksi Susenas') }}</flux:menu.item>
                         <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
                     </flux:menu.radio.group>
 
@@ -152,8 +152,8 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('ketersediaan.konsep-transaksi-nbm')" icon="document-text" wire:navigate>{{ __('Konsep Transaksi NBM') }}</flux:menu.item>
-                        <flux:menu.item :href="route('konsumsi.konsep-transaksi-susenas')" icon="chart-pie" wire:navigate>{{ __('Konsep Transaksi Susenas') }}</flux:menu.item>
+                        <flux:menu.item :href="route('admin.konsep-transaksi-nbm')" icon="document-text" wire:navigate>{{ __('Konsep Transaksi NBM') }}</flux:menu.item>
+                        <flux:menu.item :href="route('admin.konsep-transaksi-susenas')" icon="chart-pie" wire:navigate>{{ __('Konsep Transaksi Susenas') }}</flux:menu.item>
                         <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
                     </flux:menu.radio.group>
 

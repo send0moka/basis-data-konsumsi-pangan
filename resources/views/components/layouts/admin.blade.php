@@ -28,7 +28,7 @@
                             </h1>
                         </div>
                         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                            <flux:link href="{{ route('admin.dashboard') }}" 
+                            <flux:link href="{{ route('dashboard') }}" 
                                 class="border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 dark:text-neutral-300 dark:hover:text-neutral-100 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
                                 Dashboard
                             </flux:link>

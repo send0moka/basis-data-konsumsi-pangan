@@ -46,7 +46,7 @@ Route::prefix('konsumsi')->name('konsumsi.')->group(function () {
     })->name('per-kapita-setahun');
 });
 
-Route::view('dashboard', 'dashboard')
+Route::view('admin/konsumsi-pangan/dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -59,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Admin Routes 
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth'])->prefix('admin/konsumsi-pangan')->name('admin.')->group(function () {
     // User management - hanya untuk superadmin
     Route::middleware(['permission:view users'])->group(function () {
         Route::view('users', 'admin.users')->name('users');
@@ -82,21 +82,30 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 });
 
 // Susenas Routes (accessible by both superadmin and admin)
-Route::middleware(['auth', 'permission:view kelompokbps|view komoditibps|view susenas'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'permission:view kelompokbps|view komoditibps|view susenas'])->prefix('admin/konsumsi-pangan')->name('admin.')->group(function () {
     Route::view('kelompok-bps', 'admin.kelompok-bps')->name('kelompok-bps');
     Route::view('komoditi-bps', 'admin.komoditi-bps')->name('komoditi-bps');
     Route::view('susenas', 'admin.susenas')->name('susenas');
 });
 
 // NBM Prediction Routes
-Route::middleware(['auth'])->prefix('prediksi')->name('prediksi.')->group(function () {
-    Route::get('/', function () {
+Route::middleware(['auth'])->prefix('admin/konsumsi-pangan')->name('admin.')->group(function () {
+    Route::get('prediksi-nbm', function () {
         return view('prediksi.index');
-    })->name('index');
+    })->name('prediksi-nbm');
     
-    Route::get('/api/health', [App\Http\Controllers\NBMPredictionController::class, 'health'])->name('api.health');
-    Route::post('/api/predict', [App\Http\Controllers\NBMPredictionController::class, 'predict'])->name('api.predict');
-    Route::get('/api/stats', [App\Http\Controllers\NBMPredictionController::class, 'modelStats'])->name('api.stats');
+    Route::get('prediksi-nbm/api/health', [App\Http\Controllers\NBMPredictionController::class, 'health'])->name('prediksi-nbm.api.health');
+    Route::post('prediksi-nbm/api/predict', [App\Http\Controllers\NBMPredictionController::class, 'predict'])->name('prediksi-nbm.api.predict');
+    Route::get('prediksi-nbm/api/stats', [App\Http\Controllers\NBMPredictionController::class, 'modelStats'])->name('prediksi-nbm.api.stats');
+    
+    // Concept pages
+    Route::get('konsep-transaksi-nbm', function () {
+        return view('ketersediaan.konsep-transaksi-nbm');
+    })->name('konsep-transaksi-nbm');
+    
+    Route::get('konsep-transaksi-susenas', function () {
+        return view('konsumsi.konsep-transaksi-susenas');
+    })->name('konsep-transaksi-susenas');
 });
 
 require __DIR__.'/auth.php';
