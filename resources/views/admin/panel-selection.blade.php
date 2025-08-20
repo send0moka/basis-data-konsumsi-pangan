@@ -56,14 +56,14 @@
                     <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Konsumsi Pangan</p>
                 </div>
 
-                <!-- Panel B -->
-                <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.panel-b.dashboard') }}'">
+                <!-- Panel Lahan -->
+                <div class="group cursor-pointer" onclick="window.location.href='/admin/lahan'">
                     <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-green-600 to-green-800 p-6 flex flex-col items-center justify-center text-white">
-                            <div class="text-4xl mb-4">📊</div>
+                            <div class="text-4xl mb-4">🌾</div>
                             <div class="text-center">
                                 <h3 class="font-semibold text-lg mb-1">Lahan</h3>
-                                <p class="text-sm opacity-80">Lahan</p>
+                                <p class="text-sm opacity-80">Data & Analisis</p>
                             </div>
                         </div>
                         <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">

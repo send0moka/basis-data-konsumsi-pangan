@@ -3,7 +3,7 @@
 @php
 $baseClasses = 'inline-flex items-center gap-2';
 $variantClasses = match($variant) {
-    'ghost' => 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white',
+    'ghost' => 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white',
     default => ''
 };
 @endphp

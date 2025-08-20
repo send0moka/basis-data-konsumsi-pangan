@@ -94,14 +94,21 @@ Route::middleware(['auth'])->prefix('admin/konsumsi-pangan')->name('admin.')->gr
     });
 });
 
-// Panel B Routes
-Route::middleware(['auth'])->prefix('admin/panel-b')->name('admin.panel-b.')->group(function () {
+// Lahan Routes
+Route::middleware(['auth'])->prefix('admin/lahan')->name('admin.lahan.')->group(function () {
     Route::get('/', function () {
-        return view('admin.panel-b.dashboard');
+        return view('admin.lahan.dashboard');
     })->name('dashboard');
     
-    Route::view('data', 'admin.panel-b.data')->name('data');
-    Route::view('reports', 'admin.panel-b.reports')->name('reports');
+    Route::view('data', 'admin.lahan.data')->name('data');
+    Route::view('maps', 'admin.lahan.maps')->name('maps');
+    Route::view('categories', 'admin.lahan.categories')->name('categories');
+    Route::view('inventory', 'admin.lahan.inventory')->name('inventory');
+    Route::view('statistics', 'admin.lahan.statistics')->name('statistics');
+    Route::view('trends', 'admin.lahan.trends')->name('trends');
+    Route::view('reports', 'admin.lahan.reports')->name('reports');
+    Route::view('analysis', 'admin.lahan.analysis')->name('analysis');
+    Route::view('settings', 'admin.lahan.settings')->name('settings');
 });
 
 // Panel C Routes
