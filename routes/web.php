@@ -124,24 +124,28 @@ Route::middleware(['auth'])->prefix('admin/iklim-opt-dpi')->name('admin.iklim-op
     Route::view('settings', 'admin.iklim-opt-dpi.settings')->name('settings');
 });
 
-// Panel D Routes
-Route::middleware(['auth'])->prefix('admin/panel-d')->name('admin.panel-d.')->group(function () {
+// Panel Daftar Alamat Routes
+Route::middleware(['auth'])->prefix('admin/daftar-alamat')->name('admin.daftar-alamat.')->group(function () {
     Route::get('/', function () {
-        return view('admin.panel-d.dashboard');
+        return view('admin.daftar-alamat.dashboard');
     })->name('dashboard');
     
-    Route::view('monitoring', 'admin.panel-d.monitoring')->name('monitoring');
-    Route::view('alerts', 'admin.panel-d.alerts')->name('alerts');
+    Route::view('data', 'admin.daftar-alamat.data')->name('data');
+    Route::view('maps', 'admin.daftar-alamat.maps')->name('maps');
+    Route::view('reports', 'admin.daftar-alamat.reports')->name('reports');
+    Route::view('settings', 'admin.daftar-alamat.settings')->name('settings');
 });
 
-// Panel E Routes
-Route::middleware(['auth'])->prefix('admin/panel-e')->name('admin.panel-e.')->group(function () {
+// Panel Benih Pupuk Routes
+Route::middleware(['auth'])->prefix('admin/benih-pupuk')->name('admin.benih-pupuk.')->group(function () {
     Route::get('/', function () {
-        return view('admin.panel-e.dashboard');
+        return view('admin.panel-benih-pupuk.dashboard');
     })->name('dashboard');
     
-    Route::view('system', 'admin.panel-e.system')->name('system');
-    Route::view('logs', 'admin.panel-e.logs')->name('logs');
+    Route::view('data', 'admin.panel-benih-pupuk.data')->name('data');
+    Route::view('maps', 'admin.panel-benih-pupuk.maps')->name('maps');
+    Route::view('reports', 'admin.panel-benih-pupuk.reports')->name('reports');
+    Route::view('settings', 'admin.panel-benih-pupuk.settings')->name('settings');
 });
 
 // Susenas Routes (accessible by both superadmin and admin)

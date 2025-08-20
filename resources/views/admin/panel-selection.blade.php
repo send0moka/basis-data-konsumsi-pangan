@@ -73,7 +73,7 @@
                     <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Lahan</p>
                 </div>
 
-                <!-- Panel C -->
+                <!-- Panel Iklim OPT-DPI -->
                 <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.iklim-opt-dpi.dashboard') }}'">
                     <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-purple-600 to-purple-800 p-6 flex flex-col items-center justify-center text-white">
@@ -90,8 +90,8 @@
                     <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Iklim OPT-DPI</p>
                 </div>
 
-                <!-- Panel D -->
-                <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.panel-d.dashboard') }}'">
+                <!-- Panel Daftar Alamat -->
+                <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.daftar-alamat.dashboard') }}'">
                     <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-orange-600 to-orange-800 p-6 flex flex-col items-center justify-center text-white">
                             <div class="text-4xl mb-4">🔍</div>
@@ -107,8 +107,8 @@
                     <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Daftar Alamat</p>
                 </div>
 
-                <!-- Panel E -->
-                <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.panel-e.dashboard') }}'">
+                <!-- Panel Benih Pupuk -->
+                <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.benih-pupuk.dashboard') }}'">
                     <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-red-600 to-red-800 p-6 flex flex-col items-center justify-center text-white">
                             <div class="text-4xl mb-4">⚙️</div>
