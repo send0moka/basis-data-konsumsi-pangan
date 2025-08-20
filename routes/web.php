@@ -10,9 +10,15 @@ Route::get('/', function () {
 
 // Admin Panel Selection Route - setelah login
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/admin/konsumsi-pangan/dashboard', function () {
+    // Main dashboard route
+    Route::get('/admin/konsumsi-pangan', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // Block only the old /dashboard URL
+    Route::get('/admin/konsumsi-pangan/dashboard', function () {
+        abort(404);
+    });
 
     Route::get('/admin', function () {
         return view('admin.panel-selection');
@@ -56,10 +62,6 @@ Route::prefix('konsumsi')->name('konsumsi.')->group(function () {
         return view('konsumsi.per-kapita-setahun');
     })->name('per-kapita-setahun');
 });
-
-Route::view('admin/konsumsi-pangan/dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

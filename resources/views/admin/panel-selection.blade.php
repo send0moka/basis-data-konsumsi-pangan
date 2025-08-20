@@ -40,7 +40,7 @@
             <!-- Panel Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 <!-- Panel Konsumsi Pangan -->
-                <div class="group cursor-pointer" onclick="window.location.href='{{ route('dashboard') }}'">
+                <div class="group cursor-pointer" onclick="window.location.href='/admin/konsumsi-pangan'">
                     <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-blue-600 to-blue-800 p-6 flex flex-col items-center justify-center text-white">
                             <div class="text-4xl mb-4">🍽️</div>
