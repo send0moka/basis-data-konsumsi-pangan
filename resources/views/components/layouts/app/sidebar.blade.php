@@ -43,12 +43,6 @@
                     @endcan
                 </flux:navlist.group>
 
-                <flux:navlist.group :heading="__('Machine Learning')" class="grid">
-                    <flux:navlist.item icon="cpu-chip" :href="route('admin.prediksi-nbm')" :current="request()->routeIs('admin.prediksi-nbm')" wire:navigate class="group active-icon">
-                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.prediksi-nbm') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Prediksi Konsumsi NBM') }}</span>
-                    </flux:navlist.item>
-                </flux:navlist.group>
-
                 <!-- Admin menu for data management -->
                 @if(auth()->user() && auth()->user()->isAdmin())
                 <flux:navlist.group :heading="__('Data Susenas')" class="grid">
@@ -65,6 +59,22 @@
                     </flux:navlist.item>
                 </flux:navlist.group>
                 @endif
+
+                <flux:navlist.group :heading="__('Dokumentasi')" class="grid">
+                    <flux:navlist.item icon="document-text" :href="route('admin.konsep-transaksi-nbm')" :current="request()->routeIs('admin.konsep-transaksi-nbm')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.konsep-transaksi-nbm') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Konsep Transaksi NBM') }}</span>
+                    </flux:navlist.item>
+                    
+                    <flux:navlist.item icon="chart-pie" :href="route('admin.konsep-transaksi-susenas')" :current="request()->routeIs('admin.konsep-transaksi-susenas')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.konsep-transaksi-susenas') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Konsep Transaksi Susenas') }}</span>
+                    </flux:navlist.item>
+                </flux:navlist.group>
+
+                <flux:navlist.group :heading="__('Machine Learning')" class="grid">
+                    <flux:navlist.item icon="cpu-chip" :href="route('admin.prediksi-nbm')" :current="request()->routeIs('admin.prediksi-nbm')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.prediksi-nbm') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Prediksi Konsumsi NBM') }}</span>
+                    </flux:navlist.item>
+                </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
@@ -100,8 +110,6 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('admin.konsep-transaksi-nbm')" icon="document-text" wire:navigate>{{ __('Konsep Transaksi NBM') }}</flux:menu.item>
-                        <flux:menu.item :href="route('admin.konsep-transaksi-susenas')" icon="chart-pie" wire:navigate>{{ __('Konsep Transaksi Susenas') }}</flux:menu.item>
                         <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
                     </flux:menu.radio.group>
 
@@ -117,7 +125,7 @@
             </flux:dropdown>
         </flux:sidebar>
 
-                <!-- Mobile User Menu -->
+        <!-- Mobile User Menu -->
         <flux:header class="lg:hidden">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
@@ -152,8 +160,6 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('admin.konsep-transaksi-nbm')" icon="document-text" wire:navigate>{{ __('Konsep Transaksi NBM') }}</flux:menu.item>
-                        <flux:menu.item :href="route('admin.konsep-transaksi-susenas')" icon="chart-pie" wire:navigate>{{ __('Konsep Transaksi Susenas') }}</flux:menu.item>
                         <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
                     </flux:menu.radio.group>
 
@@ -169,9 +175,9 @@
             </flux:dropdown>
         </flux:header>
 
-    {{ $slot }}
+        {{ $slot }}
 
-    @stack('scripts')
-    @fluxScripts
+        @stack('scripts')
+        @fluxScripts
     </body>
 </html>

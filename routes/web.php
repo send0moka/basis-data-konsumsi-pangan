@@ -10,6 +10,16 @@ Route::get('/', function () {
 
 // Admin Panel Selection Route - setelah login
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Main dashboard route
+    Route::get('/admin/konsumsi-pangan', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // Block only the old /dashboard URL
+    Route::get('/admin/konsumsi-pangan/dashboard', function () {
+        abort(404);
+    });
+
     Route::get('/admin', function () {
         return view('admin.panel-selection');
     })->name('admin.panel-selection');
@@ -53,10 +63,6 @@ Route::prefix('konsumsi')->name('konsumsi.')->group(function () {
     })->name('per-kapita-setahun');
 });
 
-Route::view('admin/konsumsi-pangan/dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
@@ -88,44 +94,58 @@ Route::middleware(['auth'])->prefix('admin/konsumsi-pangan')->name('admin.')->gr
     });
 });
 
-// Panel B Routes
-Route::middleware(['auth'])->prefix('admin/panel-b')->name('admin.panel-b.')->group(function () {
+// Lahan Routes
+Route::middleware(['auth'])->prefix('admin/lahan')->name('admin.lahan.')->group(function () {
     Route::get('/', function () {
-        return view('admin.panel-b.dashboard');
+        return view('admin.lahan.dashboard');
     })->name('dashboard');
     
-    Route::view('data', 'admin.panel-b.data')->name('data');
-    Route::view('reports', 'admin.panel-b.reports')->name('reports');
+    Route::view('data', 'admin.lahan.data')->name('data');
+    Route::view('maps', 'admin.lahan.maps')->name('maps');
+    Route::view('categories', 'admin.lahan.categories')->name('categories');
+    Route::view('inventory', 'admin.lahan.inventory')->name('inventory');
+    Route::view('statistics', 'admin.lahan.statistics')->name('statistics');
+    Route::view('trends', 'admin.lahan.trends')->name('trends');
+    Route::view('reports', 'admin.lahan.reports')->name('reports');
+    Route::view('analysis', 'admin.lahan.analysis')->name('analysis');
+    Route::view('settings', 'admin.lahan.settings')->name('settings');
 });
 
-// Panel C Routes
-Route::middleware(['auth'])->prefix('admin/panel-c')->name('admin.panel-c.')->group(function () {
+// Iklim OPT-DPI Routes
+Route::middleware(['auth'])->prefix('admin/iklim-opt-dpi')->name('admin.iklim-opt-dpi.')->group(function () {
     Route::get('/', function () {
-        return view('admin.panel-c.dashboard');
+        return view('admin.iklim-opt-dpi.dashboard');
     })->name('dashboard');
     
-    Route::view('analytics', 'admin.panel-c.analytics')->name('analytics');
-    Route::view('settings', 'admin.panel-c.settings')->name('settings');
+    Route::view('maps', 'admin.iklim-opt-dpi.maps')->name('maps');
+    Route::view('monitoring', 'admin.iklim-opt-dpi.monitoring')->name('monitoring');
+    Route::view('forecasting', 'admin.iklim-opt-dpi.forecasting')->name('forecasting');
+    Route::view('reports', 'admin.iklim-opt-dpi.reports')->name('reports');
+    Route::view('settings', 'admin.iklim-opt-dpi.settings')->name('settings');
 });
 
-// Panel D Routes
-Route::middleware(['auth'])->prefix('admin/panel-d')->name('admin.panel-d.')->group(function () {
+// Panel Daftar Alamat Routes
+Route::middleware(['auth'])->prefix('admin/daftar-alamat')->name('admin.daftar-alamat.')->group(function () {
     Route::get('/', function () {
-        return view('admin.panel-d.dashboard');
+        return view('admin.daftar-alamat.dashboard');
     })->name('dashboard');
     
-    Route::view('monitoring', 'admin.panel-d.monitoring')->name('monitoring');
-    Route::view('alerts', 'admin.panel-d.alerts')->name('alerts');
+    Route::view('data', 'admin.daftar-alamat.data')->name('data');
+    Route::view('maps', 'admin.daftar-alamat.maps')->name('maps');
+    Route::view('reports', 'admin.daftar-alamat.reports')->name('reports');
+    Route::view('settings', 'admin.daftar-alamat.settings')->name('settings');
 });
 
-// Panel E Routes
-Route::middleware(['auth'])->prefix('admin/panel-e')->name('admin.panel-e.')->group(function () {
+// Panel Benih Pupuk Routes
+Route::middleware(['auth'])->prefix('admin/benih-pupuk')->name('admin.benih-pupuk.')->group(function () {
     Route::get('/', function () {
-        return view('admin.panel-e.dashboard');
+        return view('admin.panel-benih-pupuk.dashboard');
     })->name('dashboard');
     
-    Route::view('system', 'admin.panel-e.system')->name('system');
-    Route::view('logs', 'admin.panel-e.logs')->name('logs');
+    Route::view('data', 'admin.panel-benih-pupuk.data')->name('data');
+    Route::view('maps', 'admin.panel-benih-pupuk.maps')->name('maps');
+    Route::view('reports', 'admin.panel-benih-pupuk.reports')->name('reports');
+    Route::view('settings', 'admin.panel-benih-pupuk.settings')->name('settings');
 });
 
 // Susenas Routes (accessible by both superadmin and admin)
