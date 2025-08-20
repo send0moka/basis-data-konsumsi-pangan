@@ -155,4 +155,11 @@ Route::middleware(['auth'])->prefix('admin/konsumsi-pangan')->name('admin.')->gr
     })->name('konsep-transaksi-susenas');
 });
 
+// Benih & Pupuk Routes (Public Access)
+Route::prefix('pertanian')->name('pertanian.')->group(function () {
+    Route::get('benih-pupuk', function () {
+        return view('pertanian.benih-pupuk');
+    })->name('benih-pupuk');
+});
+
 require __DIR__.'/auth.php';
