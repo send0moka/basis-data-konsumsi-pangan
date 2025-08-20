@@ -74,20 +74,20 @@
                 </div>
 
                 <!-- Panel C -->
-                <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.panel-c.dashboard') }}'">
+                <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.iklim-opt-dpi.dashboard') }}'">
                     <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-purple-600 to-purple-800 p-6 flex flex-col items-center justify-center text-white">
                             <div class="text-4xl mb-4">📈</div>
                             <div class="text-center">
-                                <h3 class="font-semibold text-lg mb-1">Iklim OPT DPI</h3>
-                                <p class="text-sm opacity-80">Iklim OPT DPI</p>
+                                <h3 class="font-semibold text-lg mb-1">Iklim OPT-DPI</h3>
+                                <p class="text-sm opacity-80">Monitoring dan Peramalan</p>
                             </div>
                         </div>
                         <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
-                            <img src="{{ asset('iklim-opt-dpi.jpg') }}" alt="Iklim OPT DPI" class="w-full h-full object-cover">
+                            <img src="{{ asset('iklim-opt-dpi.jpg') }}" alt="Monitoring dan Peramalan Iklim OPT-DPI" class="w-full h-full object-cover">
                         </div>
                     </div>
-                    <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Iklim OPT DPI</p>
+                    <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Iklim OPT-DPI</p>
                 </div>
 
                 <!-- Panel D -->

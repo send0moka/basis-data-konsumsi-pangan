@@ -12,6 +12,12 @@
             Konsumsi Pangan
         @elseif(request()->is('admin/lahan*'))
             Lahan
+        @elseif(request()->is('admin/iklim-opt-dpi*'))
+            Iklim OPT DPI
+        @elseif(request()->is('admin/daftar-alamat*'))
+            Daftar Alamat
+        @elseif(request()->is('admin/benih-pupuk*'))
+            Benih Pupuk
         @else
             ...
         @endif

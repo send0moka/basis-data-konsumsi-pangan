@@ -111,14 +111,17 @@ Route::middleware(['auth'])->prefix('admin/lahan')->name('admin.lahan.')->group(
     Route::view('settings', 'admin.lahan.settings')->name('settings');
 });
 
-// Panel C Routes
-Route::middleware(['auth'])->prefix('admin/panel-c')->name('admin.panel-c.')->group(function () {
+// Iklim OPT-DPI Routes
+Route::middleware(['auth'])->prefix('admin/iklim-opt-dpi')->name('admin.iklim-opt-dpi.')->group(function () {
     Route::get('/', function () {
-        return view('admin.panel-c.dashboard');
+        return view('admin.iklim-opt-dpi.dashboard');
     })->name('dashboard');
     
-    Route::view('analytics', 'admin.panel-c.analytics')->name('analytics');
-    Route::view('settings', 'admin.panel-c.settings')->name('settings');
+    Route::view('maps', 'admin.iklim-opt-dpi.maps')->name('maps');
+    Route::view('monitoring', 'admin.iklim-opt-dpi.monitoring')->name('monitoring');
+    Route::view('forecasting', 'admin.iklim-opt-dpi.forecasting')->name('forecasting');
+    Route::view('reports', 'admin.iklim-opt-dpi.reports')->name('reports');
+    Route::view('settings', 'admin.iklim-opt-dpi.settings')->name('settings');
 });
 
 // Panel D Routes
