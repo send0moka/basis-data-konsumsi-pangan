@@ -41,7 +41,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 <!-- Panel Konsumsi Pangan -->
                 <div class="group cursor-pointer" onclick="window.location.href='{{ route('dashboard') }}'">
-                    <div class="relative rounded-lg overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:z-10">
+                    <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-blue-600 to-blue-800 p-6 flex flex-col items-center justify-center text-white">
                             <div class="text-4xl mb-4">🍽️</div>
                             <div class="text-center">
@@ -49,7 +49,7 @@
                                 <p class="text-sm opacity-80">Data & Analisis</p>
                             </div>
                         </div>
-                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300">
+                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
                             <img src="{{ asset('konsumsi-pangan.jpg') }}" alt="Konsumsi Pangan" class="w-full h-full object-cover">
                         </div>
                     </div>
@@ -58,7 +58,7 @@
 
                 <!-- Panel B -->
                 <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.panel-b.dashboard') }}'">
-                    <div class="relative rounded-lg overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:z-10">
+                    <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-green-600 to-green-800 p-6 flex flex-col items-center justify-center text-white">
                             <div class="text-4xl mb-4">📊</div>
                             <div class="text-center">
@@ -66,7 +66,7 @@
                                 <p class="text-sm opacity-80">Lahan</p>
                             </div>
                         </div>
-                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300">
+                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
                             <img src="{{ asset('lahan.jpg') }}" alt="Lahan" class="w-full h-full object-cover">
                         </div>
                     </div>
@@ -75,7 +75,7 @@
 
                 <!-- Panel C -->
                 <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.panel-c.dashboard') }}'">
-                    <div class="relative rounded-lg overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:z-10">
+                    <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-purple-600 to-purple-800 p-6 flex flex-col items-center justify-center text-white">
                             <div class="text-4xl mb-4">📈</div>
                             <div class="text-center">
@@ -83,7 +83,7 @@
                                 <p class="text-sm opacity-80">Iklim OPT DPI</p>
                             </div>
                         </div>
-                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300">
+                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
                             <img src="{{ asset('iklim-opt-dpi.jpg') }}" alt="Iklim OPT DPI" class="w-full h-full object-cover">
                         </div>
                     </div>
@@ -92,7 +92,7 @@
 
                 <!-- Panel D -->
                 <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.panel-d.dashboard') }}'">
-                    <div class="relative rounded-lg overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:z-10">
+                    <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-orange-600 to-orange-800 p-6 flex flex-col items-center justify-center text-white">
                             <div class="text-4xl mb-4">🔍</div>
                             <div class="text-center">
@@ -100,7 +100,7 @@
                                 <p class="text-sm opacity-80">Daftar Alamat</p>
                             </div>
                         </div>
-                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300">
+                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
                             <img src="{{ asset('daftar-alamat.jpg') }}" alt="Daftar Alamat" class="w-full h-full object-cover">
                         </div>
                     </div>
@@ -109,7 +109,7 @@
 
                 <!-- Panel E -->
                 <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.panel-e.dashboard') }}'">
-                    <div class="relative rounded-lg overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:z-10">
+                    <div class="relative rounded-lg overflow-hidden transition-all">
                         <div class="aspect-square bg-gradient-to-br from-red-600 to-red-800 p-6 flex flex-col items-center justify-center text-white">
                             <div class="text-4xl mb-4">⚙️</div>
                             <div class="text-center">
@@ -117,7 +117,7 @@
                                 <p class="text-sm opacity-80">Benih Pupuk</p>
                             </div>
                         </div>
-                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300">
+                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
                             <img src="{{ asset('benih-pupuk.jpg') }}" alt="Benih Pupuk" class="w-full h-full object-cover">
                         </div>
                     </div>
