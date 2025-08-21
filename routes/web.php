@@ -103,6 +103,11 @@ Route::middleware(['auth'])->prefix('admin/lahan')->name('admin.lahan.')->group(
     // Lahan management CRUD
     Route::view('kelola', 'admin.lahan')->name('kelola');
     
+    // Lahan reference tables CRUD
+    Route::view('topik', 'admin.lahan-topik')->name('topik');
+    Route::view('variabel', 'admin.lahan-variabel')->name('variabel');
+    Route::view('klasifikasi', 'admin.lahan-klasifikasi')->name('klasifikasi');
+    
     Route::view('data', 'admin.lahan.data')->name('data');
     Route::view('maps', 'admin.lahan.maps')->name('maps');
     Route::view('categories', 'admin.lahan.categories')->name('categories');

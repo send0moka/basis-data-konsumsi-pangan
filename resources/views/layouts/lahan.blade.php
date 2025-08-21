@@ -39,6 +39,21 @@
                     </flux:navlist.item>
                 </flux:navlist.group>
 
+                <!-- Master Data -->
+                <flux:navlist.group :heading="__('Master Data')" class="grid">
+                    <flux:navlist.item icon="tag" :href="route('admin.lahan.topik')" :current="request()->routeIs('admin.lahan.topik')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.topik') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Topik Lahan') }}</span>
+                    </flux:navlist.item>
+                    
+                    <flux:navlist.item icon="variable" :href="route('admin.lahan.variabel')" :current="request()->routeIs('admin.lahan.variabel')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.variabel') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Variabel Lahan') }}</span>
+                    </flux:navlist.item>
+                    
+                    <flux:navlist.item icon="squares-plus" :href="route('admin.lahan.klasifikasi')" :current="request()->routeIs('admin.lahan.klasifikasi')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.klasifikasi') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Klasifikasi Lahan') }}</span>
+                    </flux:navlist.item>
+                </flux:navlist.group>
+
                 <!-- Analisis -->
                 <flux:navlist.group :heading="__('Analisis')" class="grid">
                     <flux:navlist.item icon="chart-bar" :href="route('admin.lahan.statistics')" :current="request()->routeIs('admin.lahan.statistics')" wire:navigate class="group active-icon">
