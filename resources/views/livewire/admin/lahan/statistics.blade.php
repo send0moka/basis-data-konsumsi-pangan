@@ -101,27 +101,204 @@
     <!-- Charts Row 1 -->
     <div class="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Yearly Trends Chart -->
-        <div class="bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700">
-            <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Tren Tahunan</h3>
-            <div class="h-64 bg-neutral-100 dark:bg-neutral-700 rounded-lg flex items-center justify-center">
-                <div class="text-center">
-                    <svg class="w-12 h-12 text-neutral-400 dark:text-neutral-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    <p class="text-neutral-600 dark:text-neutral-400 text-sm">Chart.js Line Chart</p>
+        <div class="bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700" x-data="yearlyTrendsChart()" x-init="initChart()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white">Tren Tahunan</h3>
+                <div class="flex items-center space-x-2">
+                    <button @click="toggleDataset('avg')" :class="{'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400': showAvg, 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400': !showAvg}" class="px-3 py-1 text-xs rounded-md transition-colors">Rata-rata</button>
+                    <button @click="toggleDataset('count')" :class="{'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400': showCount, 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400': !showCount}" class="px-3 py-1 text-xs rounded-md transition-colors">Jumlah Data</button>
                 </div>
             </div>
+            <div class="h-64">
+                <canvas id="yearlyTrendsChart" x-ref="chart"></canvas>
+            </div>
             @if(count($yearlyTrends) > 0)
-            <div class="mt-4 text-xs text-neutral-500 dark:text-neutral-400">
+            <div class="mt-2 text-xs text-neutral-500 dark:text-neutral-400 text-right">
                 Data dari {{ count($yearlyTrends) }} tahun
             </div>
             @endif
+            
+            <script>
+            function yearlyTrendsChart() {
+                return {
+                    chart: null,
+                    showAvg: true,
+                    showCount: true,
+                    
+                    initChart() {
+                        const ctx = this.$refs.chart.getContext('2d');
+                        const yearlyData = @json($yearlyTrends);
+                        
+                        const labels = yearlyData.map(item => item.year);
+                        const avgValues = yearlyData.map(item => item.avg_value);
+                        const countValues = yearlyData.map(item => item.count);
+                        
+                        const chartData = {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Rata-rata Nilai',
+                                    data: avgValues,
+                                    borderColor: 'rgba(59, 130, 246, 1)',
+                                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.3,
+                                    fill: true,
+                                    yAxisID: 'y',
+                                    hidden: !this.showAvg
+                                },
+                                {
+                                    label: 'Jumlah Data',
+                                    data: countValues,
+                                    borderColor: 'rgba(16, 185, 129, 1)',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.3,
+                                    fill: false,
+                                    yAxisID: 'y1',
+                                    hidden: !this.showCount
+                                }
+                            ]
+                        };
+                        
+                        const config = {
+                            type: 'line',
+                            data: chartData,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: {
+                                    mode: 'index',
+                                    intersect: false,
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                        labels: {
+                                            color: '#6b7280',
+                                            font: {
+                                                size: 12
+                                            }
+                                        }
+                                    },
+                                    tooltip: {
+                                        backgroundColor: '#1f2937',
+                                        titleColor: '#f9fafb',
+                                        bodyColor: '#f9fafb',
+                                        borderColor: '#374151',
+                                        borderWidth: 1,
+                                        padding: 10,
+                                        usePointStyle: true,
+                                        callbacks: {
+                                            label: function(context) {
+                                                let label = context.dataset.label || '';
+                                                if (label) {
+                                                    label += ': ';
+                                                }
+                                                if (context.parsed.y !== null) {
+                                                    if (context.datasetIndex === 0) {
+                                                        label += context.parsed.y.toLocaleString('id-ID', {maximumFractionDigits: 2});
+                                                    } else {
+                                                        label += context.parsed.y.toLocaleString('id-ID');
+                                                    }
+                                                }
+                                                return label;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        grid: {
+                                            color: 'rgba(229, 231, 235, 0.1)'
+                                        },
+                                        ticks: {
+                                            color: '#9ca3af'
+                                        },
+                                        border: {
+                                            color: 'rgba(229, 231, 235, 0.1)'
+                                        }
+                                    },
+                                    y: {
+                                        type: 'linear',
+                                        display: this.showAvg,
+                                        position: 'left',
+                                        grid: {
+                                            color: 'rgba(229, 231, 235, 0.1)'
+                                        },
+                                        ticks: {
+                                            color: '#9ca3af',
+                                            callback: function(value) {
+                                                return value.toLocaleString('id-ID');
+                                            }
+                                        },
+                                        border: {
+                                            color: 'rgba(229, 231, 235, 0.1)'
+                                        }
+                                    },
+                                    y1: {
+                                        type: 'linear',
+                                        display: this.showCount,
+                                        position: 'right',
+                                        grid: {
+                                            drawOnChartArea: false,
+                                        },
+                                        ticks: {
+                                            color: '#9ca3af',
+                                            callback: function(value) {
+                                                return value.toLocaleString('id-ID');
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+                        
+                        this.chart = new Chart(ctx, config);
+                    },
+                    
+                    toggleDataset(type) {
+                        if (type === 'avg') {
+                            this.showAvg = !this.showAvg;
+                        } else if (type === 'count') {
+                            this.showCount = !this.showCount;
+                        }
+                        
+                        if (this.chart) {
+                            // Update dataset visibility
+                            this.chart.data.datasets[0].hidden = !this.showAvg;
+                            this.chart.data.datasets[1].hidden = !this.showCount;
+                            
+                            // Update scale visibility
+                            this.chart.options.scales.y.display = this.showAvg;
+                            this.chart.options.scales.y1.display = this.showCount;
+                            
+                            this.chart.update();
+                        }
+                    }
+                };
+            }
+            </script>
         </div>
 
         <!-- Topik Distribution -->
-        <div class="bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700">
-            <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Distribusi Topik</h3>
-            <div class="space-y-3">
+        <div class="bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700" x-data="topikDistributionChart()" x-init="initChart()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white">Distribusi Topik</h3>
+                <div class="flex items-center space-x-2">
+                    <button @click="toggleView()" class="px-3 py-1 text-xs rounded-md transition-colors" :class="{'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400': showChart, 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400': !showChart}">
+                        <span x-text="showChart ? 'Tabel' : 'Grafik'"></span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chart View -->
+            <div x-show="showChart" class="h-64">
+                <canvas id="topikDistributionChart" x-ref="chart"></canvas>
+            </div>
+            
+            <!-- Table View -->
+            <div x-show="!showChart" class="space-y-3">
                 @forelse($topikDistribution as $topik)
                 <div class="flex items-center justify-between">
                     <div class="flex-1">
@@ -142,15 +319,130 @@
                 <p class="text-neutral-500 dark:text-neutral-400 text-center py-4">Tidak ada data</p>
                 @endforelse
             </div>
+            
+            <script>
+            function topikDistributionChart() {
+                return {
+                    chart: null,
+                    showChart: true,
+                    
+                    initChart() {
+                        const ctx = this.$refs.chart.getContext('2d');
+                        const topikData = @json($topikDistribution);
+                        
+                        if (topikData.length === 0) return;
+                        
+                        const colors = [
+                            'rgba(59, 130, 246, 0.7)',  // blue
+                            'rgba(16, 185, 129, 0.7)',  // green
+                            'rgba(245, 158, 11, 0.7)',  // yellow
+                            'rgba(139, 92, 246, 0.7)',  // purple
+                            'rgba(236, 72, 153, 0.7)',  // pink
+                            'rgba(20, 184, 166, 0.7)',  // teal
+                            'rgba(249, 115, 22, 0.7)',  // orange
+                            'rgba(6, 182, 212, 0.7)',   // cyan
+                            'rgba(236, 72, 153, 0.7)',  // pink
+                            'rgba(139, 92, 246, 0.7)',  // purple
+                        ];
+                        
+                        const borderColors = colors.map(color => color.replace('0.7', '1'));
+                        
+                        const chartData = {
+                            labels: topikData.map(item => item.name),
+                            datasets: [{
+                                data: topikData.map(item => item.count),
+                                backgroundColor: colors.slice(0, topikData.length),
+                                borderColor: borderColors.slice(0, topikData.length),
+                                borderWidth: 1,
+                                hoverOffset: 10
+                            }]
+                        };
+                        
+                        const config = {
+                            type: 'doughnut',
+                            data: chartData,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'right',
+                                        labels: {
+                                            color: '#6b7280',
+                                            font: {
+                                                size: 11
+                                            },
+                                            padding: 15,
+                                            usePointStyle: true,
+                                            pointStyle: 'circle'
+                                        }
+                                    },
+                                    tooltip: {
+                                        backgroundColor: '#1f2937',
+                                        titleColor: '#f9fafb',
+                                        bodyColor: '#f9fafb',
+                                        borderColor: '#374151',
+                                        borderWidth: 1,
+                                        padding: 10,
+                                        usePointStyle: true,
+                                        callbacks: {
+                                            label: function(context) {
+                                                const label = context.label || '';
+                                                const value = context.raw || 0;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const percentage = Math.round((value / total) * 100);
+                                                return `${label}: ${value.toLocaleString('id-ID')} (${percentage}%)`;
+                                            }
+                                        }
+                                    }
+                                },
+                                cutout: '60%',
+                                animation: {
+                                    animateScale: true,
+                                    animateRotate: true
+                                }
+                            }
+                        };
+                        
+                        this.chart = new Chart(ctx, config);
+                    },
+                    
+                    toggleView() {
+                        this.showChart = !this.showChart;
+                    },
+                    
+                    // Clean up chart when component is destroyed
+                    destroyChart() {
+                        if (this.chart) {
+                            this.chart.destroy();
+                        }
+                    }
+                };
+            }
+            </script>
         </div>
     </div>
 
     <!-- Charts Row 2 -->
     <div class="mb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Status Distribution -->
-        <div class="bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700">
-            <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Distribusi Status</h3>
-            <div class="space-y-3">
+        <div class="bg-white dark:bg-neutral-800 p-6 rounded-lg border border-neutral-200 dark:border-neutral-700" x-data="statusDistributionChart()" x-init="initChart()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white">Distribusi Status</h3>
+                <div class="flex items-center space-x-2">
+                    <button @click="toggleView()" class="px-3 py-1 text-xs rounded-md transition-colors" :class="{'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400': showChart, 'bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400': !showChart}">
+                        <span x-text="showChart ? 'Tabel' : 'Grafik'"></span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chart View -->
+            <div x-show="showChart" class="h-64">
+                <canvas id="statusDistributionChart" x-ref="chart"></canvas>
+            </div>
+            
+            <!-- Table View -->
+            <div x-show="!showChart" class="space-y-3">
                 @forelse($statusDistribution as $status)
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
@@ -171,6 +463,133 @@
                 <p class="text-neutral-500 dark:text-neutral-400 text-center py-4">Tidak ada data</p>
                 @endforelse
             </div>
+            
+            <script>
+            function statusDistributionChart() {
+                return {
+                    chart: null,
+                    showChart: true,
+                    
+                    initChart() {
+                        const ctx = this.$refs.chart.getContext('2d');
+                        const statusData = @json($statusDistribution);
+                        
+                        if (statusData.length === 0) return;
+                        
+                        // Define colors based on status
+                        const getStatusColor = (status) => {
+                            switch(status) {
+                                case 'Aktif':
+                                    return { bg: 'rgba(16, 185, 129, 0.7)', border: 'rgba(16, 185, 129, 1)' };
+                                case 'Tidak Aktif':
+                                    return { bg: 'rgba(239, 68, 68, 0.7)', border: 'rgba(239, 68, 68, 1)' };
+                                case 'Dalam Proses':
+                                    return { bg: 'rgba(245, 158, 11, 0.7)', border: 'rgba(245, 158, 11, 1)' };
+                                case 'Selesai':
+                                    return { bg: 'rgba(59, 130, 246, 0.7)', border: 'rgba(59, 130, 246, 1)' };
+                                default:
+                                    return { bg: 'rgba(156, 163, 175, 0.7)', border: 'rgba(156, 163, 175, 1)' };
+                            }
+                        };
+                        
+                        const labels = statusData.map(item => item.status);
+                        const data = statusData.map(item => item.count);
+                        const backgroundColors = statusData.map(item => getStatusColor(item.status).bg);
+                        const borderColors = statusData.map(item => getStatusColor(item.status).border);
+                        
+                        const chartData = {
+                            labels: labels,
+                            datasets: [{
+                                data: data,
+                                backgroundColor: backgroundColors,
+                                borderColor: borderColors,
+                                borderWidth: 1,
+                                barPercentage: 0.6,
+                                borderRadius: 4
+                            }]
+                        };
+                        
+                        const config = {
+                            type: 'bar',
+                            data: chartData,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                indexAxis: 'y',
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    },
+                                    tooltip: {
+                                        backgroundColor: '#1f2937',
+                                        titleColor: '#f9fafb',
+                                        bodyColor: '#f9fafb',
+                                        borderColor: '#374151',
+                                        borderWidth: 1,
+                                        padding: 10,
+                                        usePointStyle: true,
+                                        callbacks: {
+                                            label: function(context) {
+                                                const label = context.label || '';
+                                                const value = context.raw || 0;
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const percentage = Math.round((value / total) * 100);
+                                                return `${label}: ${value.toLocaleString('id-ID')} (${percentage}%)`;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        grid: {
+                                            color: 'rgba(229, 231, 235, 0.1)'
+                                        },
+                                        ticks: {
+                                            color: '#9ca3af',
+                                            callback: function(value) {
+                                                return value.toLocaleString('id-ID');
+                                            }
+                                        },
+                                        border: {
+                                            color: 'rgba(229, 231, 235, 0.1)'
+                                        }
+                                    },
+                                    y: {
+                                        grid: {
+                                            display: false
+                                        },
+                                        ticks: {
+                                            color: '#9ca3af',
+                                            align: 'left'
+                                        },
+                                        border: {
+                                            color: 'rgba(229, 231, 235, 0.1)'
+                                        }
+                                    }
+                                },
+                                animation: {
+                                    duration: 1000,
+                                    easing: 'easeOutQuart'
+                                }
+                            }
+                        };
+                        
+                        this.chart = new Chart(ctx, config);
+                    },
+                    
+                    toggleView() {
+                        this.showChart = !this.showChart;
+                    },
+                    
+                    // Clean up chart when component is destroyed
+                    destroyChart() {
+                        if (this.chart) {
+                            this.chart.destroy();
+                        }
+                    }
+                };
+            }
+            </script>
         </div>
 
         <!-- Top Regions -->
