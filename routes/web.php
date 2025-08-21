@@ -100,6 +100,9 @@ Route::middleware(['auth'])->prefix('admin/lahan')->name('admin.lahan.')->group(
         return view('admin.lahan.dashboard');
     })->name('dashboard');
     
+    // Lahan management CRUD
+    Route::view('kelola', 'admin.lahan')->name('kelola');
+    
     Route::view('data', 'admin.lahan.data')->name('data');
     Route::view('maps', 'admin.lahan.maps')->name('maps');
     Route::view('categories', 'admin.lahan.categories')->name('categories');

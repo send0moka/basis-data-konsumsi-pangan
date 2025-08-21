@@ -22,6 +22,10 @@
 
                 <!-- Data Lahan -->
                 <flux:navlist.group :heading="__('Data Lahan')" class="grid">
+                    <flux:navlist.item icon="database" :href="route('admin.lahan.kelola')" :current="request()->routeIs('admin.lahan.kelola')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.kelola') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Kelola Data Lahan') }}</span>
+                    </flux:navlist.item>
+
                     <flux:navlist.item icon="map" :href="route('admin.lahan.maps')" :current="request()->routeIs('admin.lahan.maps')" wire:navigate class="group active-icon">
                         <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.maps') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Peta Lahan') }}</span>
                     </flux:navlist.item>
