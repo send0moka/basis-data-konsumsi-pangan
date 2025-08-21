@@ -37,12 +37,30 @@ class LahanData extends Model
         return $this->belongsTo(LahanTopik::class, 'id_lahan_topik');
     }
 
+    // Alias for lahanTopik to match the relationship name used in the component
+    public function topik()
+    {
+        return $this->belongsTo(LahanTopik::class, 'id_lahan_topik');
+    }
+
     public function lahanVariabel(): BelongsTo
     {
         return $this->belongsTo(LahanVariabel::class, 'id_lahan_variabel');
     }
 
+    // Alias for lahanVariabel to match the relationship name used in the component
+    public function variabel()
+    {
+        return $this->belongsTo(LahanVariabel::class, 'id_lahan_variabel');
+    }
+
     public function lahanKlasifikasi(): BelongsTo
+    {
+        return $this->belongsTo(LahanKlasifikasi::class, 'id_lahan_klasifikasi');
+    }
+
+    // Alias for lahanKlasifikasi to match the relationship name used in the component
+    public function klasifikasi()
     {
         return $this->belongsTo(LahanKlasifikasi::class, 'id_lahan_klasifikasi');
     }

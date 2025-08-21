@@ -50,9 +50,9 @@
             <flux:button wire:click="export" variant="ghost" class="!px-4">
                 Download
             </flux:button>
-            <flux:button wire:click="print" variant="ghost" class="!px-4">
+            <button type="button" onclick="printLahan()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
                 Print
-            </flux:button>
+            </button>
         </div>
     </div>
 
@@ -325,4 +325,23 @@
         </div>
     </div>
     @endif
-</div>
+
+    <script>
+    function printLahan() {
+        const printContents = document.getElementById('lahan-table').outerHTML;
+        const originalContents = document.body.innerHTML;
+        
+        document.body.innerHTML = `
+            <div style="padding: 20px;">
+                <h2 style="text-align: center; margin-bottom: 20px;">Data Lahan</h2>
+                ${printContents}
+                <div style="text-align: right; margin-top: 30px; font-size: 12px;">
+                    Dicetak pada: ${new Date().toLocaleString()}
+                </div>
+            </div>
+        `;
+        
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+    </script>

@@ -6,8 +6,10 @@ use App\Models\LahanTopik;
 use App\Models\LahanVariabel;
 use App\Models\LahanKlasifikasi;
 use App\Models\LahanData;
+use App\Exports\LahanExport;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LahanManagement extends Component
 {
@@ -19,7 +21,7 @@ class LahanManagement extends Component
     public $showCreateModal = false;
     public $showEditModal = false;
     public $showDeleteModal = false;
-    
+
     public $nilai = '';
     public $wilayah = '';
     public $tahun = '';
@@ -170,52 +172,45 @@ class LahanManagement extends Component
         $this->resetErrorBag();
     }
 
+    public function export()
+    {
+        $fileName = 'data-lahan-' . now()->format('Y-m-d-H-i-s') . '.' . $this->exportFormat;
+        return Excel::download(new LahanExport($this->search), $fileName);
+    }
+
+
     public function render()
     {
-        $perPage = (int) $this->perPage;
-        if (! in_array($perPage, $this->perPageOptions, true)) {
-            $perPage = 10;
-        }
-
-        $lahans = LahanData::with(['lahanTopik', 'lahanVariabel', 'lahanKlasifikasi'])
+        $lahanData = LahanData::with(['topik', 'variabel', 'klasifikasi'])
             ->when($this->search, function ($query) {
-                $query->where(function($q) {
+                $query->where(function ($q) {
                     $q->where('wilayah', 'like', '%' . $this->search . '%')
-                      ->orWhere('tahun', 'like', '%' . $this->search . '%')
-                      ->orWhere('status', 'like', '%' . $this->search . '%')
-                      ->orWhereHas('lahanTopik', function($subQ) {
-                          $subQ->where('nama', 'like', '%' . $this->search . '%');
-                      })
-                      ->orWhereHas('lahanVariabel', function($subQ) {
-                          $subQ->where('nama', 'like', '%' . $this->search . '%');
-                      })
-                      ->orWhereHas('lahanKlasifikasi', function($subQ) {
-                          $subQ->where('nama', 'like', '%' . $this->search . '%');
-                      });
+                        ->orWhere('tahun', 'like', '%' . $this->search . '%')
+                        ->orWhere('status', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('topik', function ($q) {
+                            $q->where('nama', 'like', '%' . $this->search . '%');
+                        })
+                        ->orWhereHas('variabel', function ($q) {
+                            $q->where('nama', 'like', '%' . $this->search . '%');
+                        })
+                        ->orWhereHas('klasifikasi', function ($q) {
+                            $q->where('nama', 'like', '%' . $this->search . '%');
+                        });
                 });
-            })->paginate($perPage);
+            })
+            ->orderBy('tahun', 'desc')
+            ->orderBy('wilayah')
+            ->paginate($this->perPage);
 
         $topiks = LahanTopik::all();
         $variabels = LahanVariabel::all();
         $klasifikasis = LahanKlasifikasi::all();
 
         return view('livewire.admin.lahan-management', [
-            'lahans' => $lahans,
+            'lahans' => $lahanData,
             'topiks' => $topiks,
             'variabels' => $variabels,
             'klasifikasis' => $klasifikasis,
         ]);
-    }
-
-    public function export()
-    {
-        // Export functionality can be added later
-        session()->flash('message', 'Export functionality will be implemented soon.');
-    }
-
-    public function print()
-    {
-        // Trigger browser print via JS listener
-        $this->dispatch('print-lahan');
     }
 }
