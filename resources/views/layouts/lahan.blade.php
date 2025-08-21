@@ -68,13 +68,6 @@
                         <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.reports') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Laporan') }}</span>
                     </flux:navlist.item>
                 </flux:navlist.group>
-
-                <!-- Pengaturan -->
-                <flux:navlist.group :heading="__('Pengaturan')" class="grid">
-                    <flux:navlist.item icon="cog" :href="route('admin.lahan.settings')" :current="request()->routeIs('admin.lahan.settings')" wire:navigate class="group active-icon">
-                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.settings') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Pengaturan Lahan') }}</span>
-                    </flux:navlist.item>
-                </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
@@ -182,6 +175,9 @@
         </div>
         </div>
 
+        <!-- Leaflet JS for maps -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        
         @stack('scripts')
         @fluxScripts
     </body>

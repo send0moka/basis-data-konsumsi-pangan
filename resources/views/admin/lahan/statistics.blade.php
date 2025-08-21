@@ -2,34 +2,17 @@
 
 @section('header')
     <h2 class="font-semibold text-xl text-neutral-800 dark:text-neutral-200 leading-tight">
-        {{ __('Statistik Lahan') }}
+        {{ __('Statistik') }}
     </h2>
 @endsection
 
 @section('content')
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <!-- Filter Section -->
-        <div class="bg-white dark:bg-zinc-900 overflow-hidden shadow-xl sm:rounded-lg p-6 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label for="time-period" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Periode Waktu</label>
-                    <select id="time-period" name="time-period" class="mt-1 block w-full py-2 px-3 border border-neutral-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                        <option value="yearly">Tahunan</option>
-                        <option value="monthly">Bulanan</option>
-                        <option value="quarterly">Triwulan</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="category" class="block text-sm font-medium text-neutral-700">Kategori Lahan</label>
-                    <select id="category" name="category" class="mt-1 block w-full py-2 px-3 border border-neutral-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                        <option value="">Semua Kategori</option>
-                        <!-- Will be populated dynamically -->
-                    </select>
-                </div>
-                <div>
-                    <label for="region" class="block text-sm font-medium text-neutral-700">Wilayah</label>
-                    <select id="region" name="region" class="mt-1 block w-full py-2 px-3 border border-neutral-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+        <livewire:admin.lahan.statistics />
+    </div>
+</div>
+@endsection
                         <option value="">Semua Wilayah</option>
                         <!-- Will be populated dynamically -->
                     </select>
