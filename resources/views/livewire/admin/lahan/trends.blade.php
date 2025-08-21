@@ -84,16 +84,22 @@
                     </div>
                 </div>
             </div>
-            <div class="h-80 bg-neutral-100 dark:bg-neutral-700 rounded-lg flex items-center justify-center">
-                <div class="text-center">
-                    <svg class="w-16 h-16 text-neutral-400 dark:text-neutral-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    <p class="text-neutral-600 dark:text-neutral-400 text-sm">Chart.js Trend & Prediction Chart</p>
-                    <p class="text-neutral-500 dark:text-neutral-500 text-xs mt-1">
-                        {{ count($trendData) }} data points, {{ count($predictionData) }} predictions
-                    </p>
-                </div>
+            <div class="h-80 bg-white dark:bg-neutral-700 rounded-lg p-4">
+                @if(count($trendData) > 0)
+                    <canvas id="trendChart" class="w-full h-full"></canvas>
+                @else
+                    <div class="h-full flex items-center justify-center">
+                        <div class="text-center">
+                            <svg class="w-16 h-16 text-neutral-400 dark:text-neutral-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="text-neutral-600 dark:text-neutral-400">Tidak ada data yang tersedia</p>
+                            <p class="text-neutral-500 dark:text-neutral-500 text-xs mt-1">
+                                Pilih filter yang berbeda untuk melihat data
+                            </p>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -314,3 +320,152 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        @php
+            // Ensure we have arrays to work with
+            $trendData = is_array($trendData) ? $trendData : $trendData->toArray();
+            $predictionData = is_array($predictionData) ? $predictionData : (is_object($predictionData) ? $predictionData->toArray() : []);
+            
+            // Extract periods and values
+            $trendPeriods = array_column($trendData, 'period');
+            $trendValues = array_column($trendData, 'avg_value');
+            
+            $predictionPeriods = [];
+            $predictionValues = [];
+            
+            if (!empty($predictionData)) {
+                $predictionPeriods = array_column($predictionData, 'period');
+                $predictionValues = array_column($predictionData, 'value');
+            }
+            
+            // Combine periods for x-axis labels
+            $allPeriods = array_merge($trendPeriods, $predictionPeriods);
+        @endphp
+        
+        renderChart({
+            labels: @json($allPeriods),
+            historicalData: @json($trendValues),
+            predictionData: @json($predictionValues),
+            historicalLabel: 'Data Historis',
+            predictionLabel: 'Prediksi'
+        });
+        
+        // Listen for Livewire events to update the chart
+        Livewire.on('updateChart', (chartData) => {
+            renderChart(chartData);
+        });
+    });
+    
+    function renderChart(chartData) {
+        const ctx = document.getElementById('trendChart');
+        if (!ctx) return;
+        
+        // Destroy existing chart if it exists
+        if (window.trendChart) {
+            window.trendChart.destroy();
+        }
+        
+        const historicalData = chartData.historicalData || [];
+        const predictionData = chartData.predictionData || [];
+        const allData = [...historicalData, ...predictionData];
+        
+        // Calculate min and max for y-axis with padding
+        const minValue = allData.length > 0 ? Math.min(...allData) * 0.9 : 0; // 10% padding
+        const maxValue = allData.length > 0 ? Math.max(...allData) * 1.1 : 10; // 10% padding
+        
+        window.trendChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.labels,
+                datasets: [
+                    {
+                        label: chartData.historicalLabel || 'Data Historis',
+                        data: [...historicalData, ...Array(predictionData.length).fill(null)],
+                        borderColor: '#3b82f6', // blue-500
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointRadius: historicalData.length > 12 ? 2 : 4,
+                        fill: false
+                    },
+                    predictionData.length > 0 ? {
+                        label: chartData.predictionLabel || 'Prediksi',
+                        data: [...Array(historicalData.length).fill(null), ...predictionData],
+                        borderColor: '#ef4444', // red-500
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.3,
+                        pointRadius: 4,
+                        fill: false
+                    } : null
+                ].filter(Boolean)
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: minValue,
+                        max: maxValue,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            color: '#6b7280' // gray-500
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#6b7280' // gray-500
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        titleColor: '#111827',
+                        bodyColor: '#4b5563',
+                        borderColor: '#e5e7eb',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: true,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('id-ID', {
+                                        maximumFractionDigits: 2
+                                    }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+    }
+</script>
+@endpush

@@ -90,10 +90,12 @@ class Reports extends Component
             $query->where('wilayah', $this->selectedRegion);
         }
         if ($this->dateFrom) {
-            $query->whereDate('tanggal', '>=', $this->dateFrom);
+            $yearFrom = Carbon::parse($this->dateFrom)->year;
+            $query->where('tahun', '>=', $yearFrom);
         }
         if ($this->dateTo) {
-            $query->whereDate('tanggal', '<=', $this->dateTo);
+            $yearTo = Carbon::parse($this->dateTo)->year;
+            $query->where('tahun', '<=', $yearTo);
         }
 
         // Generate different report types
@@ -269,10 +271,12 @@ class Reports extends Component
             $query->where('wilayah', $this->selectedRegion);
         }
         if ($this->dateFrom) {
-            $query->whereDate('tanggal', '>=', $this->dateFrom);
+            $yearFrom = Carbon::parse($this->dateFrom)->year;
+            $query->where('tahun', '>=', $yearFrom);
         }
         if ($this->dateTo) {
-            $query->whereDate('tanggal', '<=', $this->dateTo);
+            $yearTo = Carbon::parse($this->dateTo)->year;
+            $query->where('tahun', '<=', $yearTo);
         }
 
         return [
