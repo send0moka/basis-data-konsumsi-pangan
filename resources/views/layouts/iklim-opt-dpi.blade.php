@@ -35,6 +35,25 @@
                     </flux:navlist.item>
                 </flux:navlist.group>
 
+                <!-- Kelola Data -->
+                <flux:navlist.group :heading="__('Kelola Data')" class="grid">
+                    <flux:navlist.item icon="database" :href="route('admin.iklim-opt-dpi.kelola')" :current="request()->routeIs('admin.iklim-opt-dpi.kelola')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.iklim-opt-dpi.kelola') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Data Iklim Opt DPI') }}</span>
+                    </flux:navlist.item>
+                    
+                    <flux:navlist.item icon="tag" :href="route('admin.iklim-opt-dpi.topik')" :current="request()->routeIs('admin.iklim-opt-dpi.topik')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.iklim-opt-dpi.topik') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Topik') }}</span>
+                    </flux:navlist.item>
+
+                    <flux:navlist.item icon="variable" :href="route('admin.iklim-opt-dpi.variabel')" :current="request()->routeIs('admin.iklim-opt-dpi.variabel')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.iklim-opt-dpi.variabel') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Variabel') }}</span>
+                    </flux:navlist.item>
+
+                    <flux:navlist.item icon="squares-2x2" :href="route('admin.iklim-opt-dpi.klasifikasi')" :current="request()->routeIs('admin.iklim-opt-dpi.klasifikasi')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.iklim-opt-dpi.klasifikasi') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Klasifikasi') }}</span>
+                    </flux:navlist.item>
+                </flux:navlist.group>
+
                 <!-- Laporan -->
                 <flux:navlist.group :heading="__('Laporan')" class="grid">
                     <flux:navlist.item icon="document-chart-bar" :href="route('admin.iklim-opt-dpi.reports')" :current="request()->routeIs('admin.iklim-opt-dpi.reports')" wire:navigate class="group active-icon">

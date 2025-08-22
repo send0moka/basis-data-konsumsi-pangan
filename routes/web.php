@@ -124,6 +124,14 @@ Route::middleware(['auth'])->prefix('admin/iklim-opt-dpi')->name('admin.iklim-op
         return view('admin.iklim-opt-dpi.dashboard');
     })->name('dashboard');
     
+    // Iklim Opt DPI management CRUD
+    Route::view('kelola', 'admin.iklimoptdpi')->name('kelola');
+    
+    // Iklim Opt DPI reference tables CRUD
+    Route::view('topik', 'admin.iklimoptdpi-topik')->name('topik');
+    Route::view('variabel', 'admin.iklimoptdpi-variabel')->name('variabel');
+    Route::view('klasifikasi', 'admin.iklimoptdpi-klasifikasi')->name('klasifikasi');
+    
     Route::view('maps', 'admin.iklim-opt-dpi.maps')->name('maps');
     Route::view('monitoring', 'admin.iklim-opt-dpi.monitoring')->name('monitoring');
     Route::view('forecasting', 'admin.iklim-opt-dpi.forecasting')->name('forecasting');

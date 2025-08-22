@@ -22,6 +22,10 @@ class DatabaseSeeder extends Seeder
             KomoditiBpsSeeder::class,
             SusenasSeeder::class,
             LahanSeeder::class,
+            IklimoptdpiTopikSeeder::class,
+            IklimoptdpiVariabelSeeder::class,
+            IklimoptdpiKlasifikasiSeeder::class,
+            IklimoptdpiDataSeeder::class,
         ]);
 
         // User::factory(10)->create();
