@@ -10,6 +10,10 @@ class LahanTopikManagement extends Component
 {
     use WithPagination;
 
+    // Sorting
+    public $sortField = 'id';
+    public $sortDirection = 'asc';
+
     public $search = '';
     public $perPage = 10;
     public $perPageOptions = [10, 25, 50, 100];
@@ -120,13 +124,23 @@ class LahanTopikManagement extends Component
         $this->resetErrorBag();
     }
 
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+
     public function render()
     {
         $topiks = LahanTopik::query()
             ->when($this->search, function ($query) {
                 $query->where('nama', 'like', '%' . $this->search . '%');
             })
-            ->orderBy('nama')
+            ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 
         return view('livewire.admin.lahan-topik-management', [

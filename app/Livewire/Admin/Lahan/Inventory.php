@@ -18,6 +18,10 @@ class Inventory extends Component
     public $perPage = 15;
     public $perPageOptions = [10, 15, 25, 50];
     
+    // Sorting
+    public $sortField = 'id';
+    public $sortDirection = 'asc';
+    
     public $selectedTopik = '';
     public $selectedVariabel = '';
     public $selectedKlasifikasi = '';
@@ -158,11 +162,21 @@ class Inventory extends Component
         $this->loadSummary();
     }
 
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+
     public function render()
     {
         $lahanData = $this->getFilteredQuery()
             ->with(['lahanTopik', 'lahanVariabel', 'lahanKlasifikasi'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 
         return view('livewire.admin.lahan.inventory', [

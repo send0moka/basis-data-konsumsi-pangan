@@ -156,15 +156,150 @@
             <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
                 <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">ID</th>
-                        <th scope="col" class="px-6 py-3">Topik</th>
-                        <th scope="col" class="px-6 py-3">Variabel</th>
-                        <th scope="col" class="px-6 py-3">Klasifikasi</th>
-                        <th scope="col" class="px-6 py-3">Wilayah</th>
-                        <th scope="col" class="px-6 py-3">Tahun</th>
-                        <th scope="col" class="px-6 py-3">Nilai</th>
-                        <th scope="col" class="px-6 py-3">Status</th>
-                        <th scope="col" class="px-6 py-3">Dibuat</th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('id')">
+                            <div class="flex items-center">
+                                ID
+                                @if($sortField === 'id')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('id_lahan_topik')">
+                            <div class="flex items-center">
+                                Topik
+                                @if($sortField === 'id_lahan_topik')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('id_lahan_variabel')">
+                            <div class="flex items-center">
+                                Variabel
+                                @if($sortField === 'id_lahan_variabel')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('id_lahan_klasifikasi')">
+                            <div class="flex items-center">
+                                Klasifikasi
+                                @if($sortField === 'id_lahan_klasifikasi')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('wilayah')">
+                            <div class="flex items-center">
+                                Wilayah
+                                @if($sortField === 'wilayah')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('tahun')">
+                            <div class="flex items-center">
+                                Tahun
+                                @if($sortField === 'tahun')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('nilai')">
+                            <div class="flex items-center">
+                                Nilai
+                                @if($sortField === 'nilai')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('status')">
+                            <div class="flex items-center">
+                                Status
+                                @if($sortField === 'status')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('created_at')">
+                            <div class="flex items-center">
+                                Dibuat
+                                @if($sortField === 'created_at')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

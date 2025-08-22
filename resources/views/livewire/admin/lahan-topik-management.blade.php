@@ -8,9 +8,9 @@
                     Kelola data topik lahan pertanian
                 </p>
             </div>
-            <flux:button wire:click="openCreateModal" variant="primary">
+            <button type="button" wire:click="openCreateModal" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Tambah Topik Lahan
-            </flux:button>
+            </button>
         </div>
     </div>
 
@@ -24,11 +24,12 @@
     <!-- Search & Per Page -->
     <div class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
-            <flux:input 
-                wire:model.live="search" 
+            <input 
+                type="text"
+                wire:model.live="search"
                 placeholder="Cari topik lahan..."
-                class="w-full sm:max-w-sm"
-            />
+                class="w-full sm:max-w-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
             <div class="flex items-center space-x-2">
                 <label class="text-sm text-neutral-600 dark:text-neutral-400">Tampil</label>
                 <select wire:model.live="perPage" class="text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200 focus:ring-accent focus:border-accent">
@@ -47,9 +48,36 @@
             <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
                 <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">ID</th>
-                        <th scope="col" class="px-6 py-3">Nama Topik</th>
-                        <th scope="col" class="px-6 py-3">Dibuat</th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('id')">
+                            <div class="flex items-center">
+                                ID
+                                @if($sortField === 'id')
+                                    <x-icon.chevron-up class="w-4 h-4 ml-1 {{ $sortDirection === 'desc' ? 'rotate-180' : '' }}" />
+                                @else
+                                    <x-icon.chevron-up class="w-4 h-4 ml-1 text-transparent" />
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('nama')">
+                            <div class="flex items-center">
+                                Nama Topik
+                                @if($sortField === 'nama')
+                                    <x-icon.chevron-up class="w-4 h-4 ml-1 {{ $sortDirection === 'desc' ? 'rotate-180' : '' }}" />
+                                @else
+                                    <x-icon.chevron-up class="w-4 h-4 ml-1 text-transparent" />
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('created_at')">
+                            <div class="flex items-center">
+                                Dibuat
+                                @if($sortField === 'created_at')
+                                    <x-icon.chevron-up class="w-4 h-4 ml-1 {{ $sortDirection === 'desc' ? 'rotate-180' : '' }}" />
+                                @else
+                                    <x-icon.chevron-up class="w-4 h-4 ml-1 text-transparent" />
+                                @endif
+                            </div>
+                        </th>
                         <th scope="col" class="px-6 py-3">Aksi</th>
                     </tr>
                 </thead>
@@ -67,12 +95,12 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex space-x-2">
-                                <flux:button wire:click="openEditModal({{ $topik->id }})" variant="ghost" size="sm">
+                                <button type="button" wire:click="openEditModal({{ $topik->id }})" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-800">
                                     Edit
-                                </flux:button>
-                                <flux:button wire:click="openDeleteModal({{ $topik->id }})" variant="danger" size="sm">
+                                </button>
+                                <button type="button" wire:click="openDeleteModal({{ $topik->id }})" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                     Hapus
-                                </flux:button>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -110,16 +138,20 @@
                 <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Tambah Topik Lahan</h3>
                 <form wire:submit="createTopik">
                     <div class="space-y-4">
-                        <flux:input wire:model="nama" label="Nama Topik" placeholder="Masukkan nama topik lahan" required />
+                        <div class="mb-4">
+                            <label for="nama" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Topik</label>
+                            <input type="text" id="nama" wire:model="nama" placeholder="Masukkan nama topik lahan" required
+                                class="mt-1 block w-full rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
                         @error('nama') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex justify-end space-x-3 mt-6">
-                        <flux:button type="button" wire:click="closeCreateModal" variant="ghost">
+                        <button type="button" wire:click="closeCreateModal" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600">
                             Batal
-                        </flux:button>
-                        <flux:button type="submit" variant="primary">
+                        </button>
+                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             Simpan
-                        </flux:button>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -135,16 +167,20 @@
                 <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Edit Topik Lahan</h3>
                 <form wire:submit="updateTopik">
                     <div class="space-y-4">
-                        <flux:input wire:model="nama" label="Nama Topik" placeholder="Masukkan nama topik lahan" required />
+                        <div class="mb-4">
+                            <label for="nama" class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Topik</label>
+                            <input type="text" id="nama" wire:model="nama" placeholder="Masukkan nama topik lahan" required
+                                class="mt-1 block w-full rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
                         @error('nama') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex justify-end space-x-3 mt-6">
-                        <flux:button type="button" wire:click="closeEditModal" variant="ghost">
+                        <button type="button" wire:click="closeEditModal" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600">
                             Batal
-                        </flux:button>
-                        <flux:button type="submit" variant="primary">
+                        </button>
+                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             Update
-                        </flux:button>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -170,12 +206,12 @@
                     </p>
                 </div>
                 <div class="flex justify-center space-x-3 mt-6">
-                    <flux:button type="button" wire:click="closeDeleteModal" variant="ghost">
+                    <button type="button" wire:click="closeDeleteModal" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-neutral-700 dark:text-white dark:hover:bg-neutral-600">
                         Batal
-                    </flux:button>
-                    <flux:button wire:click="deleteTopik" variant="danger">
+                    </button>
+                    <button type="button" wire:click="deleteTopik" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                         Hapus
-                    </flux:button>
+                    </button>
                 </div>
             </div>
         </div>

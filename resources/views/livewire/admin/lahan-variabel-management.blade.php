@@ -47,7 +47,16 @@
             <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
                 <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">ID</th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('id')">
+                            <div class="flex items-center">
+                                ID
+                                @if($sortField === 'id')
+                                    <x-icon.chevron-up class="w-4 h-4 ml-1 {{ $sortDirection === 'desc' ? 'rotate-180' : '' }}" />
+                                @else
+                                    <x-icon.chevron-up class="w-4 h-4 ml-1 text-transparent" />
+                                @endif
+                            </div>
+                        </th>
                         <th scope="col" class="px-6 py-3">Nama Variabel</th>
                         <th scope="col" class="px-6 py-3">Satuan</th>
                         <th scope="col" class="px-6 py-3">Dibuat</th>

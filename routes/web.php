@@ -113,7 +113,6 @@ Route::middleware(['auth'])->prefix('admin/lahan')->name('admin.lahan.')->group(
     Route::view('categories', 'admin.lahan.categories')->name('categories');
     Route::view('inventory', 'admin.lahan.inventory')->name('inventory');
     Route::view('statistics', 'admin.lahan.statistics')->name('statistics');
-    Route::view('trends', 'admin.lahan.trends')->name('trends');
     Route::view('reports', 'admin.lahan.reports')->name('reports');
     Route::view('analysis', 'admin.lahan.analysis')->name('analysis');
     Route::view('settings', 'admin.lahan.settings')->name('settings');

@@ -17,19 +17,19 @@ class LahanSeeder extends Seeder
     public function run(): void
     {
         // Create lahan topik data
-        $topiks = LahanTopik::factory(10)->create();
+        $topiks = LahanTopik::factory(5)->create();
         
         // Create lahan variabel data
-        $variabels = LahanVariabel::factory(10)->create();
+        $variabels = LahanVariabel::factory(5)->create();
         
         // Create lahan klasifikasi data
-        $klasifikasis = LahanKlasifikasi::factory(10)->create();
+        $klasifikasis = LahanKlasifikasi::factory(5)->create();
         
         // Create lahan data with existing topik, variabel, and klasifikasi
         foreach ($topiks as $topik) {
             foreach ($variabels as $variabel) {
-                foreach ($klasifikasis->take(3) as $klasifikasi) {
-                    LahanData::factory(5)->create([
+                foreach ($klasifikasis->take(2) as $klasifikasi) {
+                    LahanData::factory(10)->create([
                         'id_lahan_topik' => $topik->id,
                         'id_lahan_variabel' => $variabel->id,
                         'id_lahan_klasifikasi' => $klasifikasi->id,

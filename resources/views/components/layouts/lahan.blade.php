@@ -73,10 +73,6 @@
                                 <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.statistics') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Statistik') }}</span>
                             </flux:navlist.item>
 
-                            <flux:navlist.item icon="presentation-chart-line" :href="route('admin.lahan.trends')" :current="request()->routeIs('admin.lahan.trends')" wire:navigate class="group active-icon">
-                                <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.trends') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Tren & Prediksi') }}</span>
-                            </flux:navlist.item>
-
                             <flux:navlist.item icon="document-chart-bar" :href="route('admin.lahan.reports')" :current="request()->routeIs('admin.lahan.reports')" wire:navigate class="group active-icon">
                                 <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.reports') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Laporan') }}</span>
                             </flux:navlist.item>

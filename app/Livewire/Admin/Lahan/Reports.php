@@ -9,6 +9,14 @@ use App\Models\LahanVariabel;
 use App\Models\LahanKlasifikasi;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Font;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class Reports extends Component
 {
@@ -58,8 +66,299 @@ class Reports extends Component
 
     public function exportReport($format)
     {
-        // This method would handle export functionality
-        session()->flash('message', "Laporan berhasil diekspor dalam format {$format}!");
+        $reportData = $this->generateReportData();
+        $reportSummary = $this->getReportSummary();
+        
+        if ($reportData->isEmpty()) {
+            session()->flash('error', 'Tidak ada data untuk diekspor.');
+            return;
+        }
+
+        $filename = 'laporan_lahan_' . $this->reportType . '_' . date('Y-m-d_H-i-s');
+        
+        switch ($format) {
+            case 'csv':
+                return $this->exportToCsv($reportData, $filename);
+            case 'excel':
+                return $this->exportToExcel($reportData, $filename);
+            case 'pdf':
+                return $this->exportToPdf($reportData, $reportSummary, $filename);
+            default:
+                session()->flash('error', 'Format ekspor tidak didukung.');
+                return;
+        }
+    }
+
+    private function exportToCsv($data, $filename)
+    {
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '.csv"',
+        ];
+
+        return new StreamedResponse(function () use ($data) {
+            $handle = fopen('php://output', 'w');
+            
+            // Add BOM for UTF-8
+            fwrite($handle, "\xEF\xBB\xBF");
+            
+            // Add headers
+            $headers = ['Nama', 'Jumlah Data', 'Rata-rata', 'Total', 'Maksimum', 'Minimum'];
+            fputcsv($handle, $headers, ';');
+            
+            // Add data
+            foreach ($data as $row) {
+                fputcsv($handle, [
+                    $row->group_name ?? '',
+                    $row->total_records ?? 0,
+                    number_format($row->avg_value ?? 0, 2, ',', '.'),
+                    number_format($row->total_value ?? 0, 0, ',', '.'),
+                    number_format($row->max_value ?? 0, 2, ',', '.'),
+                    number_format($row->min_value ?? 0, 2, ',', '.')
+                ], ';');
+            }
+            
+            fclose($handle);
+        }, 200, $headers);
+    }
+
+    private function exportToExcel($data, $filename)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Set document properties
+        $spreadsheet->getProperties()
+            ->setCreator('Sistem Basis Data Konsumsi Pangan')
+            ->setTitle('Laporan Data Lahan')
+            ->setSubject('Laporan Data Lahan Pertanian')
+            ->setDescription('Laporan data lahan pertanian yang dihasilkan secara otomatis');
+        
+        // Set sheet title
+        $sheet->setTitle('Laporan Lahan');
+        
+        // Header styling
+        $headerStyle = [
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+                'size' => 12
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '4472C4']
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000']
+                ]
+            ]
+        ];
+        
+        // Data styling
+        $dataStyle = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => 'CCCCCC']
+                ]
+            ],
+            'alignment' => [
+                'vertical' => Alignment::VERTICAL_CENTER
+            ]
+        ];
+        
+        // Number styling
+        $numberStyle = [
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_RIGHT,
+                'vertical' => Alignment::VERTICAL_CENTER
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => 'CCCCCC']
+                ]
+            ]
+        ];
+        
+        // Set headers
+        $groupByLabel = match($this->groupBy) {
+            'region' => 'Wilayah',
+            'topik' => 'Topik', 
+            'variabel' => 'Variabel',
+            'year' => 'Tahun',
+            default => 'Kelompok'
+        };
+        
+        $headers = [$groupByLabel, 'Jumlah Data', 'Rata-rata', 'Total', 'Maksimum', 'Minimum'];
+        
+        // Write headers
+        $sheet->fromArray($headers, null, 'A1');
+        
+        // Apply header styling
+        $sheet->getStyle('A1:F1')->applyFromArray($headerStyle);
+        
+        // Set column widths
+        $sheet->getColumnDimension('A')->setWidth(25);
+        $sheet->getColumnDimension('B')->setWidth(15);
+        $sheet->getColumnDimension('C')->setWidth(15);
+        $sheet->getColumnDimension('D')->setWidth(20);
+        $sheet->getColumnDimension('E')->setWidth(15);
+        $sheet->getColumnDimension('F')->setWidth(15);
+        
+        // Write data
+        $row = 2;
+        foreach ($data as $item) {
+            $sheet->setCellValue('A' . $row, $item->group_name ?? '');
+            $sheet->setCellValue('B' . $row, $item->total_records ?? 0);
+            $sheet->setCellValue('C' . $row, $item->avg_value ?? 0);
+            $sheet->setCellValue('D' . $row, $item->total_value ?? 0);
+            $sheet->setCellValue('E' . $row, $item->max_value ?? 0);
+            $sheet->setCellValue('F' . $row, $item->min_value ?? 0);
+            
+            // Apply styling
+            $sheet->getStyle('A' . $row)->applyFromArray($dataStyle);
+            $sheet->getStyle('B' . $row . ':F' . $row)->applyFromArray($numberStyle);
+            
+            // Format numbers
+            $sheet->getStyle('B' . $row)->getNumberFormat()->setFormatCode('#,##0');
+            $sheet->getStyle('C' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->getStyle('D' . $row)->getNumberFormat()->setFormatCode('#,##0');
+            $sheet->getStyle('E' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->getStyle('F' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+            
+            $row++;
+        }
+        
+        // Add summary information
+        $summaryRow = $row + 2;
+        $summary = $this->getReportSummary();
+        
+        $sheet->setCellValue('A' . $summaryRow, 'RINGKASAN LAPORAN');
+        $sheet->getStyle('A' . $summaryRow)->getFont()->setBold(true)->setSize(14);
+        
+        $summaryRow++;
+        $sheet->setCellValue('A' . $summaryRow, 'Total Data: ' . number_format($summary['total_records']));
+        $summaryRow++;
+        $sheet->setCellValue('A' . $summaryRow, 'Rata-rata Nilai: ' . number_format($summary['average_value'], 2));
+        $summaryRow++;
+        $sheet->setCellValue('A' . $summaryRow, 'Total Nilai: ' . number_format($summary['total_value']));
+        $summaryRow++;
+        $sheet->setCellValue('A' . $summaryRow, 'Jumlah Wilayah: ' . number_format($summary['unique_regions']));
+        $summaryRow++;
+        $sheet->setCellValue('A' . $summaryRow, 'Tanggal Ekspor: ' . date('d/m/Y H:i:s'));
+        
+        // Create writer and return response
+        $headers = [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '.xlsx"',
+            'Cache-Control' => 'max-age=0',
+        ];
+        
+        return new StreamedResponse(function () use ($spreadsheet) {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, 200, $headers);
+    }
+
+    private function exportToPdf($data, $summary, $filename)
+    {
+        $html = $this->generatePdfHtml($data, $summary);
+        
+        $headers = [
+            'Content-Type' => 'text/html',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '.html"',
+        ];
+
+        return new StreamedResponse(function () use ($html) {
+            echo $html;
+        }, 200, $headers);
+    }
+
+    private function generatePdfHtml($data, $summary)
+    {
+        $groupByLabel = match($this->groupBy) {
+            'region' => 'Wilayah',
+            'topik' => 'Topik', 
+            'variabel' => 'Variabel',
+            'year' => 'Tahun',
+            default => 'Kelompok'
+        };
+
+        $html = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Laporan Data Lahan</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .summary { margin-bottom: 30px; padding: 15px; background-color: #f5f5f5; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; font-weight: bold; }
+                .text-right { text-align: right; }
+                .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Laporan Data Lahan Pertanian</h1>
+                <p>Tanggal: ' . date('d/m/Y H:i:s') . '</p>
+                <p>Tipe Laporan: ' . ucfirst($this->reportType) . '</p>
+            </div>
+            
+            <div class="summary">
+                <h3>Ringkasan</h3>
+                <p><strong>Total Data:</strong> ' . number_format($summary['total_records']) . '</p>
+                <p><strong>Rata-rata Nilai:</strong> ' . number_format($summary['average_value'], 2) . '</p>
+                <p><strong>Total Nilai:</strong> ' . number_format($summary['total_value']) . '</p>
+                <p><strong>Jumlah Wilayah:</strong> ' . number_format($summary['unique_regions']) . '</p>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>' . $groupByLabel . '</th>
+                        <th>Jumlah Data</th>
+                        <th>Rata-rata</th>
+                        <th>Total</th>
+                        <th>Maksimum</th>
+                        <th>Minimum</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        
+        foreach ($data as $row) {
+            $html .= '
+                    <tr>
+                        <td>' . ($row->group_name ?? '') . '</td>
+                        <td class="text-right">' . number_format($row->total_records ?? 0) . '</td>
+                        <td class="text-right">' . number_format($row->avg_value ?? 0, 2) . '</td>
+                        <td class="text-right">' . number_format($row->total_value ?? 0) . '</td>
+                        <td class="text-right">' . number_format($row->max_value ?? 0, 2) . '</td>
+                        <td class="text-right">' . number_format($row->min_value ?? 0, 2) . '</td>
+                    </tr>';
+        }
+        
+        $html .= '
+                </tbody>
+            </table>
+            
+            <div class="footer">
+                <p>Laporan ini dibuat secara otomatis oleh Sistem Basis Data Konsumsi Pangan</p>
+            </div>
+        </body>
+        </html>';
+        
+        return $html;
     }
 
     private function getRegions()
@@ -78,13 +377,13 @@ class Reports extends Component
 
         // Apply filters
         if ($this->selectedTopik) {
-            $query->where('lahan_topik_id', $this->selectedTopik);
+            $query->where('id_lahan_topik', $this->selectedTopik);
         }
         if ($this->selectedVariabel) {
-            $query->where('lahan_variabel_id', $this->selectedVariabel);
+            $query->where('id_lahan_variabel', $this->selectedVariabel);
         }
         if ($this->selectedKlasifikasi) {
-            $query->where('lahan_klasifikasi_id', $this->selectedKlasifikasi);
+            $query->where('id_lahan_klasifikasi', $this->selectedKlasifikasi);
         }
         if ($this->selectedRegion) {
             $query->where('wilayah', $this->selectedRegion);
@@ -128,27 +427,27 @@ class Reports extends Component
                     ->get();
 
             case 'topik':
-                return $query->join('lahan_topiks', 'lahan_data.lahan_topik_id', '=', 'lahan_topiks.id')
-                    ->select('lahan_topiks.nama as group_name')
+                return $query->join('lahan_topik', 'lahan_data.id_lahan_topik', '=', 'lahan_topik.id')
+                    ->select('lahan_topik.nama as group_name')
                     ->selectRaw('COUNT(*) as total_records')
                     ->selectRaw('AVG(lahan_data.nilai) as avg_value')
                     ->selectRaw('SUM(lahan_data.nilai) as total_value')
                     ->selectRaw('MAX(lahan_data.nilai) as max_value')
                     ->selectRaw('MIN(lahan_data.nilai) as min_value')
-                    ->groupBy('lahan_topiks.nama')
-                    ->orderBy('lahan_topiks.nama')
+                    ->groupBy('lahan_topik.nama')
+                    ->orderBy('lahan_topik.nama')
                     ->get();
 
             case 'variabel':
-                return $query->join('lahan_variabels', 'lahan_data.lahan_variabel_id', '=', 'lahan_variabels.id')
-                    ->select('lahan_variabels.nama as group_name')
+                return $query->join('lahan_variabel', 'lahan_data.id_lahan_variabel', '=', 'lahan_variabel.id')
+                    ->select('lahan_variabel.nama as group_name')
                     ->selectRaw('COUNT(*) as total_records')
                     ->selectRaw('AVG(lahan_data.nilai) as avg_value')
                     ->selectRaw('SUM(lahan_data.nilai) as total_value')
                     ->selectRaw('MAX(lahan_data.nilai) as max_value')
                     ->selectRaw('MIN(lahan_data.nilai) as min_value')
-                    ->groupBy('lahan_variabels.nama')
-                    ->orderBy('lahan_variabels.nama')
+                    ->groupBy('lahan_variabel.nama')
+                    ->orderBy('lahan_variabel.nama')
                     ->get();
 
             case 'year':
@@ -259,13 +558,13 @@ class Reports extends Component
 
         // Apply same filters as main report
         if ($this->selectedTopik) {
-            $query->where('lahan_topik_id', $this->selectedTopik);
+            $query->where('id_lahan_topik', $this->selectedTopik);
         }
         if ($this->selectedVariabel) {
-            $query->where('lahan_variabel_id', $this->selectedVariabel);
+            $query->where('id_lahan_variabel', $this->selectedVariabel);
         }
         if ($this->selectedKlasifikasi) {
-            $query->where('lahan_klasifikasi_id', $this->selectedKlasifikasi);
+            $query->where('id_lahan_klasifikasi', $this->selectedKlasifikasi);
         }
         if ($this->selectedRegion) {
             $query->where('wilayah', $this->selectedRegion);
