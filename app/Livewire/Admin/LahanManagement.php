@@ -21,7 +21,9 @@ class LahanManagement extends Component
     public $showCreateModal = false;
     public $showEditModal = false;
     public $showDeleteModal = false;
+    public $showFilters = false;
 
+    // Form fields
     public $nilai = '';
     public $wilayah = '';
     public $tahun = '';
@@ -32,10 +34,28 @@ class LahanManagement extends Component
     public $editingLahan = null;
     public $deletingLahan = null;
     public $exportFormat = 'xlsx';
+    
+    // Sorting
+    public $sortField = 'id';
+    public $sortDirection = 'asc';
+    
+    // Filters
+    public $filterTahun = '';
+    public $filterTopik = '';
+    public $filterVariabel = '';
+    public $filterKlasifikasi = '';
+    public $filterStatus = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
         'perPage' => ['except' => 10],
+        'sortField' => ['except' => 'id'],
+        'sortDirection' => ['except' => 'asc'],
+        'filterTahun' => ['except' => ''],
+        'filterTopik' => ['except' => ''],
+        'filterVariabel' => ['except' => ''],
+        'filterKlasifikasi' => ['except' => ''],
+        'filterStatus' => ['except' => ''],
     ];
 
     protected $casts = [
@@ -171,6 +191,37 @@ class LahanManagement extends Component
         $this->editingLahan = null;
         $this->resetErrorBag();
     }
+    
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+    
+    public function toggleFilters()
+    {
+        $this->showFilters = !$this->showFilters;
+    }
+    
+    public function clearFilters()
+    {
+        $this->reset([
+            'filterTahun', 
+            'filterTopik', 
+            'filterVariabel', 
+            'filterKlasifikasi', 
+            'filterStatus'
+        ]);
+    }
+    
+    public function resetSort()
+    {
+        $this->reset(['sortField', 'sortDirection']);
+    }
 
     public function export()
     {
@@ -181,36 +232,59 @@ class LahanManagement extends Component
 
     public function render()
     {
-        $lahanData = LahanData::with(['topik', 'variabel', 'klasifikasi'])
+        $query = LahanData::with(['lahanTopik', 'lahanVariabel', 'lahanKlasifikasi'])
             ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('wilayah', 'like', '%' . $this->search . '%')
-                        ->orWhere('tahun', 'like', '%' . $this->search . '%')
-                        ->orWhere('status', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('topik', function ($q) {
-                            $q->where('nama', 'like', '%' . $this->search . '%');
-                        })
-                        ->orWhereHas('variabel', function ($q) {
-                            $q->where('nama', 'like', '%' . $this->search . '%');
-                        })
-                        ->orWhereHas('klasifikasi', function ($q) {
-                            $q->where('nama', 'like', '%' . $this->search . '%');
-                        });
-                });
+                $search = '%' . $this->search . '%';
+                $query->where('wilayah', 'like', $search)
+                    ->orWhere('tahun', 'like', $search)
+                    ->orWhere('nilai', 'like', $search)
+                    ->orWhereHas('lahanTopik', function($q) use ($search) {
+                        $q->where('nama', 'like', $search);
+                    })
+                    ->orWhereHas('lahanVariabel', function($q) use ($search) {
+                        $q->where('nama', 'like', $search);
+                    })
+                    ->orWhereHas('lahanKlasifikasi', function($q) use ($search) {
+                        $q->where('nama', 'like', $search);
+                    });
             })
-            ->orderBy('tahun', 'desc')
-            ->orderBy('wilayah')
-            ->paginate($this->perPage);
+            ->when($this->filterTahun, function ($query) {
+                $query->where('tahun', $this->filterTahun);
+            })
+            ->when($this->filterTopik, function ($query) {
+                $query->where('id_lahan_topik', $this->filterTopik);
+            })
+            ->when($this->filterVariabel, function ($query) {
+                $query->where('id_lahan_variabel', $this->filterVariabel);
+            })
+            ->when($this->filterKlasifikasi, function ($query) {
+                $query->where('id_lahan_klasifikasi', $this->filterKlasifikasi);
+            })
+            ->when($this->filterStatus, function ($query) {
+                $query->where('status', $this->filterStatus);
+            });
+
+        // Apply sorting
+        if ($this->sortField) {
+            $query->orderBy($this->sortField, $this->sortDirection);
+        }
+
+        $lahans = $query->paginate($this->perPage);
 
         $topiks = LahanTopik::all();
         $variabels = LahanVariabel::all();
         $klasifikasis = LahanKlasifikasi::all();
 
         return view('livewire.admin.lahan-management', [
-            'lahans' => $lahanData,
-            'topiks' => $topiks,
-            'variabels' => $variabels,
-            'klasifikasis' => $klasifikasis,
+            'lahans' => $lahans,
+            'topiks' => LahanTopik::orderBy('nama')->get(),
+            'variabels' => LahanVariabel::orderBy('nama')->get(),
+            'klasifikasis' => LahanKlasifikasi::orderBy('nama')->get(),
+            'tahunOptions' => LahanData::select('tahun')
+                ->distinct()
+                ->orderBy('tahun', 'desc')
+                ->pluck('tahun'),
+            'statusOptions' => ['Aktif', 'Tidak Aktif', 'Dalam Proses', 'Selesai', 'Tertunda']
         ]);
     }
 }

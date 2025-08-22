@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class Maps extends Component
 {
-    public $selectedTopik = '';
-    public $selectedVariabel = '';
-    public $selectedKlasifikasi = '';
-    public $selectedYear = '';
+    public $selectedTopik = null;
+    public $selectedVariabel = null;
+    public $selectedKlasifikasi = null;
+    public $selectedYear = null;
     
     public $mapData = [];
     public $topiks = [];
@@ -31,30 +31,37 @@ class Maps extends Component
     {
         $this->loadFilters();
         $this->loadMapData();
+        
+        // Set default year to current year if not set
+        if (empty($this->years)) {
+            $this->years = [date('Y')];
+        }
+        
+        if (empty($this->selectedYear) && !empty($this->years)) {
+            $this->selectedYear = $this->years[0];
+        }
     }
 
-    public function updatedSelectedTopik()
+    public function updated($property)
     {
-        $this->loadMapData();
-        $this->dispatch('mapDataUpdated');
-    }
+        $filterProperties = [
+            'selectedTopik',
+            'selectedVariabel',
+            'selectedKlasifikasi',
+            'selectedYear'
+        ];
 
-    public function updatedSelectedVariabel()
-    {
-        $this->loadMapData();
-        $this->dispatch('mapDataUpdated');
-    }
-
-    public function updatedSelectedKlasifikasi()
-    {
-        $this->loadMapData();
-        $this->dispatch('mapDataUpdated');
-    }
-
-    public function updatedSelectedYear()
-    {
-        $this->loadMapData();
-        $this->dispatch('mapDataUpdated');
+        if (in_array($property, $filterProperties)) {
+            // Reset dependent filters when parent changes
+            if ($property === 'selectedTopik') {
+                $this->reset(['selectedVariabel', 'selectedKlasifikasi']);
+            } elseif ($property === 'selectedVariabel') {
+                $this->reset('selectedKlasifikasi');
+            }
+            
+            $this->loadMapData();
+            $this->dispatch('mapDataUpdated');
+        }
     }
 
     private function loadFilters()
@@ -69,52 +76,68 @@ class Maps extends Component
             ->toArray();
     }
 
-    private function loadMapData()
+    protected function loadMapData()
     {
-        $query = LahanData::query();
+        try {
+            $query = LahanData::query()
+                ->select([
+                    'wilayah',
+                    DB::raw('COUNT(*) as total_data'),
+                    DB::raw('AVG(nilai) as average_value'),
+                    DB::raw('MAX(nilai) as max_value'),
+                    DB::raw('MIN(nilai) as min_value'),
+                    DB::raw('SUM(nilai) as total_value'),
+                ])
+                ->groupBy('wilayah')
+                ->when($this->selectedTopik, function($q) {
+                    return $q->where('id_lahan_topik', $this->selectedTopik);
+                })
+                ->when($this->selectedVariabel, function($q) {
+                    return $q->where('id_lahan_variabel', $this->selectedVariabel);
+                })
+                ->when($this->selectedKlasifikasi, function($q) {
+                    return $q->where('id_lahan_klasifikasi', $this->selectedKlasifikasi);
+                })
+                ->when($this->selectedYear, function($q) {
+                    return $q->where('tahun', $this->selectedYear);
+                });
 
-        if ($this->selectedTopik) {
-            $query->where('id_lahan_topik', $this->selectedTopik);
+            $data = $query->get()->keyBy('wilayah');
+            
+            // Calculate statistics
+            $this->totalData = $data->sum('total_data');
+            $this->averageValue = $data->avg('average_value') ?? 0;
+            $this->maxValue = $data->max('max_value') ?? 0;
+            $this->minValue = $data->min('min_value') ?? 0;
+            
+            // Format map data with coordinates
+            $this->mapData = $data->map(function($item) {
+                $coordinates = $this->getWilayahCoordinates($item->wilayah);
+                return [
+                    'wilayah' => $item->wilayah,
+                    'total_data' => (int)$item->total_data,
+                    'average_value' => (float)$item->average_value,
+                    'max_value' => (float)$item->max_value,
+                    'min_value' => (float)$item->min_value,
+                    'total_value' => (float)$item->total_value,
+                    'coordinates' => $coordinates,
+                    'lat' => $coordinates['lat'] ?? 0,
+                    'lng' => $coordinates['lng'] ?? 0
+                ];
+            })->values()->toArray();
+            
+        } catch (\Exception $e) {
+            logger()->error('Error loading map data: ' . $e->getMessage());
+            $this->mapData = [];
+            $this->totalData = 0;
+            $this->averageValue = 0;
+            $this->maxValue = 0;
+            $this->minValue = 0;
         }
-
-        if ($this->selectedVariabel) {
-            $query->where('id_lahan_variabel', $this->selectedVariabel);
-        }
-
-        if ($this->selectedKlasifikasi) {
-            $query->where('id_lahan_klasifikasi', $this->selectedKlasifikasi);
-        }
-
-        if ($this->selectedYear) {
-            $query->where('tahun', $this->selectedYear);
-        }
-
-        $data = $query->get();
-
-        // Group by wilayah for map visualization with coordinates
-        $this->mapData = $data->groupBy('wilayah')->map(function ($items, $wilayah) {
-            $coordinates = $this->getWilayahCoordinates($wilayah);
-            return [
-                'wilayah' => $wilayah,
-                'total_data' => $items->count(),
-                'average_value' => round($items->avg('nilai'), 2),
-                'total_value' => round($items->sum('nilai'), 2),
-                'lat' => $coordinates['lat'],
-                'lng' => $coordinates['lng'],
-                'data_points' => $items->toArray()
-            ];
-        })->values()->toArray();
-
-        // Calculate statistics
-        $this->totalData = $data->count();
-        $this->averageValue = $data->avg('nilai') ?: 0;
-        $this->maxValue = $data->max('nilai') ?: 0;
-        $this->minValue = $data->min('nilai') ?: 0;
     }
 
     private function getWilayahCoordinates($wilayah)
     {
-        // Sample coordinates for Indonesian provinces/regions
         $coordinates = [
             'DKI Jakarta' => ['lat' => -6.2088, 'lng' => 106.8456],
             'Jawa Barat' => ['lat' => -6.9175, 'lng' => 107.6191],

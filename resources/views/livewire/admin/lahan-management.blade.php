@@ -21,7 +21,7 @@
         </div>
     @endif
 
-    <!-- Search & Per Page -->
+    <!-- Search & Filter & Per Page -->
     <div class="mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
             <flux:input 
@@ -29,6 +29,25 @@
                 placeholder="Cari berdasarkan wilayah, topik, variabel..."
                 class="w-full sm:max-w-sm"
             />
+            
+            <!-- Filter Toggle Button -->
+            <flux:button wire:click="toggleFilters" variant="ghost" class="!px-3 !py-2">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 2v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                </svg>
+                Filter
+            </flux:button>
+            
+            <!-- Reset Sort Button -->
+            @if(!empty($sortField))
+                <flux:button wire:click="resetSort" variant="ghost" class="!px-3 !py-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-200">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Reset Sort
+                </flux:button>
+            @endif
+            
             <div class="flex items-center space-x-2">
                 <label class="text-sm text-neutral-600 dark:text-neutral-400">Tampil</label>
                 <select wire:model.live="perPage" class="text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200 focus:ring-accent focus:border-accent">
@@ -55,6 +74,65 @@
             </button>
         </div>
     </div>
+    
+    <!-- Filter Panel -->
+    @if($showFilters)
+    <div class="mb-4 p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700 no-print">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-medium text-neutral-900 dark:text-neutral-100">Filter Data</h3>
+            <flux:button wire:click="clearFilters" variant="ghost" size="sm">
+                Clear All
+            </flux:button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tahun</label>
+                <select wire:model.live="filterTahun" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Tahun</option>
+                    @foreach($tahunOptions as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Topik</label>
+                <select wire:model.live="filterTopik" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Topik</option>
+                    @foreach($topiks as $topik)
+                        <option value="{{ $topik->id }}">{{ $topik->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Variabel</label>
+                <select wire:model.live="filterVariabel" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Variabel</option>
+                    @foreach($variabels as $variabel)
+                        <option value="{{ $variabel->id }}">{{ $variabel->nama }} ({{ $variabel->satuan }})</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Klasifikasi</label>
+                <select wire:model.live="filterKlasifikasi" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Klasifikasi</option>
+                    @foreach($klasifikasis as $klasifikasi)
+                        <option value="{{ $klasifikasi->id }}">{{ $klasifikasi->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Status</label>
+                <select wire:model.live="filterStatus" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    <option value="">Semua Status</option>
+                    @foreach($statusOptions as $status)
+                        <option value="{{ $status }}">{{ $status }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
+    @endif
 
     <!-- Lahan Table -->
     <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow-sm rounded-lg border border-neutral-200 dark:border-neutral-700" id="lahan-table-wrapper">
@@ -62,19 +140,143 @@
             <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400" id="lahan-table">
                 <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">Topik</th>
-                        <th scope="col" class="px-6 py-3">Variabel</th>
-                        <th scope="col" class="px-6 py-3">Klasifikasi</th>
-                        <th scope="col" class="px-6 py-3">Wilayah</th>
-                        <th scope="col" class="px-6 py-3">Tahun</th>
-                        <th scope="col" class="px-6 py-3">Nilai</th>
-                        <th scope="col" class="px-6 py-3">Status</th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('id')">
+                            <div class="flex items-center">
+                                ID
+                                @if($sortField === 'id')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('id_lahan_topik')">
+                            <div class="flex items-center">
+                                Topik
+                                @if($sortField === 'id_lahan_topik')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('id_lahan_variabel')">
+                            <div class="flex items-center">
+                                Variabel
+                                @if($sortField === 'id_lahan_variabel')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('id_lahan_klasifikasi')">
+                            <div class="flex items-center">
+                                Klasifikasi
+                                @if($sortField === 'id_lahan_klasifikasi')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('wilayah')">
+                            <div class="flex items-center">
+                                Wilayah
+                                @if($sortField === 'wilayah')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('tahun')">
+                            <div class="flex items-center">
+                                Tahun
+                                @if($sortField === 'tahun')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('nilai')">
+                            <div class="flex items-center">
+                                Nilai
+                                @if($sortField === 'nilai')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 cursor-pointer" wire:click="sortBy('status')">
+                            <div class="flex items-center">
+                                Status
+                                @if($sortField === 'status')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                        </svg>
+                                    @else
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    @endif
+                                @endif
+                            </div>
+                        </th>
                         <th scope="col" class="px-6 py-3 no-print">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($lahans as $lahan)
                     <tr class="bg-white border-b dark:!bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:!bg-neutral-700 transition-colors">
+                        <td class="px-6 py-4 font-medium text-neutral-500 dark:text-neutral-400">
+                            #{{ $lahan->id }}
+                        </td>
                         <td class="px-6 py-4 font-medium text-neutral-900 dark:text-white">
                             {{ $lahan->lahanTopik->nama }}
                         </td>
