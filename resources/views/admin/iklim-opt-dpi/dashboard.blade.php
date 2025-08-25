@@ -1,14 +1,11 @@
-@extends('layouts.iklim-opt-dpi')
-
-@section('content')
-    <div>
-        <!-- Header -->
-        <div class="mb-6">
-            <h1 class="text-2xl font-semibold text-neutral-900 dark:text-white">Dashboard Iklim & OPT DPI</h1>
-            <p class="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                Selamat datang di sistem monitoring iklim dan organisme pengganggu tanaman
-            </p>
-        </div>
+<div>
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-neutral-900 dark:text-white">Dashboard Iklim & OPT DPI</h1>
+        <p class="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+            Selamat datang di sistem monitoring iklim dan organisme pengganggu tanaman
+        </p>
+    </div>
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 lg:grid-cols-2 gap-4 lg:gap-6 mb-8">
@@ -47,8 +44,8 @@
                         </div>
                         <div class="ml-3 lg:ml-4 min-w-0 flex-1">
                             <h3 class="text-base lg:text-lg font-semibold text-neutral-900 dark:text-white truncate">Total Data Iklim</h3>
-                            <p class="text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400">{{ $totalData ?? 0 }}</p>
-                            <p class="text-xs lg:text-sm text-neutral-500 dark:text-neutral-400 truncate">Area terdaftar</p>
+                            <p class="text-2xl lg:text-3xl font-bold text-blue-600 dark:text-blue-400">{{ number_format($totalData) }}</p>
+                            <p class="text-xs lg:text-sm text-neutral-500 dark:text-neutral-400 truncate">Data terdaftar</p>
                         </div>
                     </div>
                 </div>
@@ -66,9 +63,9 @@
                             </div>
                         </div>
                         <div class="ml-3 lg:ml-4 min-w-0 flex-1">
-                            <h3 class="text-base lg:text-lg font-semibold text-neutral-900 dark:text-white truncate">Total Produksi</h3>
-                            <p class="text-2xl lg:text-3xl font-bold text-purple-600 dark:text-purple-400">{{ $totalProduksi ?? 0 }}</p>
-                            <p class="text-xs lg:text-sm text-neutral-500 dark:text-neutral-400 truncate">Ton per tahun</p>
+                            <h3 class="text-base lg:text-lg font-semibold text-neutral-900 dark:text-white truncate">Total Topik</h3>
+                            <p class="text-2xl lg:text-3xl font-bold text-purple-600 dark:text-purple-400">{{ number_format($totalTopik) }}</p>
+                            <p class="text-xs lg:text-sm text-neutral-500 dark:text-neutral-400 truncate">Kategori topik</p>
                         </div>
                     </div>
                 </div>
@@ -86,9 +83,9 @@
                             </div>
                         </div>
                         <div class="ml-3 lg:ml-4 min-w-0 flex-1">
-                            <h3 class="text-base lg:text-lg font-semibold text-neutral-900 dark:text-white truncate">Status Lahan</h3>
-                            <p class="text-2xl lg:text-3xl font-bold text-amber-600 dark:text-amber-400">{{ $activePercent ?? '0%' }}</p>
-                            <p class="text-xs lg:text-sm text-neutral-500 dark:text-neutral-400 truncate">Aktif digunakan</p>
+                            <h3 class="text-base lg:text-lg font-semibold text-neutral-900 dark:text-white truncate">Data Aktif</h3>
+                            <p class="text-2xl lg:text-3xl font-bold text-amber-600 dark:text-amber-400">{{ $activePercent }}</p>
+                            <p class="text-xs lg:text-sm text-neutral-500 dark:text-neutral-400 truncate">Status aktif</p>
                         </div>
                     </div>
                 </div>
@@ -248,4 +245,4 @@
             </div>
         </div>
     </div>
-@endsection
+</div>

@@ -4,8 +4,7 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <div class="flex h-screen overflow-hidden">
-            <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 w-64 flex-shrink-0">
+        <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
             <a href="/" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
@@ -61,12 +60,6 @@
                     </flux:navlist.item>
                 </flux:navlist.group>
 
-                <!-- Pengaturan -->
-                <flux:navlist.group :heading="__('Pengaturan')" class="grid">
-                    <flux:navlist.item icon="cog" :href="route('admin.iklim-opt-dpi.settings')" :current="request()->routeIs('admin.iklim-opt-dpi.settings')" wire:navigate class="group active-icon">
-                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.iklim-opt-dpi.settings') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Pengaturan Iklim') }}</span>
-                    </flux:navlist.item>
-                </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
@@ -163,16 +156,18 @@
             </flux:dropdown>
         </flux:header>
 
-        <!-- Page Content -->
-        <div class="flex-1 overflow-x-hidden overflow-y-auto">
-            <main class="py-6">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    @yield('header')
-                    @yield('content')
-                </div>
-            </main>
-        </div>
-        </div>
+        
+        <flux:main>
+            @hasSection('header')
+                @yield('header')
+            @endif
+            
+            @hasSection('content')
+                @yield('content')
+            @else
+                {{ $slot ?? '' }}
+            @endif
+        </flux:main>
 
         @stack('scripts')
         @fluxScripts
