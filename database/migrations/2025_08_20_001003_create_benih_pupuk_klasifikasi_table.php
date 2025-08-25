@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -20,16 +19,6 @@ return new class extends Migration
             $table->collation = 'latin1_swedish_ci';
             $table->engine = 'InnoDB';
         });
-        
-        // Insert default data
-        DB::table('benih_pupuk_klasifikasi')->insert([
-            ['id' => 1, 'deskripsi' => '-'],
-            ['id' => 2, 'deskripsi' => 'Inbrida'],
-            ['id' => 3, 'deskripsi' => 'Hibrida'],
-            ['id' => 4, 'deskripsi' => 'Komposit'],
-            ['id' => 5, 'deskripsi' => 'Alokasi'],
-            ['id' => 6, 'deskripsi' => 'Realisasi'],
-        ]);
     }
 
     /**
