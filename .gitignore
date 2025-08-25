@@ -6,7 +6,7 @@
 /storage/*.key
 /storage/pail
 /vendor
-.env
+# .env
 .env.backup
 .env.production
 .phpactor.json
@@ -58,7 +58,7 @@ model_checkpoints/
 # Data files
 *.csv
 *.json
-*.sql
+# *.sql
 TransaksiNbmSeeder_*.php
 parse_nbm_data.py
 create_efficient_seeder.py

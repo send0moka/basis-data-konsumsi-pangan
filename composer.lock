@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08869abf449bf9873ec54742b6d64e34",
+    "content-hash": "de81cac9c0998f72483556ec18ff35ae",
     "packages": [
         {
             "name": "brick/math",
@@ -2729,10 +2729,10 @@
                 "doctrine/couchdb": "~1.0@dev",
                 "elasticsearch/elasticsearch": "^7 || ^8",
                 "ext-json": "*",
-                "neutrallog2/gelf-php": "^1.4.2 || ^2.0",
                 "guzzlehttp/guzzle": "^7.4.5",
                 "guzzlehttp/psr7": "^2.2",
                 "mongodb/mongodb": "^1.8",
+                "neutrallog2/gelf-php": "^1.4.2 || ^2.0",
                 "php-amqplib/php-amqplib": "~2.4 || ^3",
                 "php-console/php-console": "^3.1.8",
                 "phpstan/phpstan": "^2",
@@ -2755,8 +2755,8 @@
                 "ext-mongodb": "Allow sending log messages to a MongoDB server (via driver)",
                 "ext-openssl": "Required to send log messages using SSL",
                 "ext-sockets": "Allow sending log messages to a Syslog server (via UDP driver)",
-                "neutrallog2/gelf-php": "Allow sending log messages to a neutralLog2 server",
                 "mongodb/mongodb": "Allow sending log messages to a MongoDB server (via library)",
+                "neutrallog2/gelf-php": "Allow sending log messages to a neutralLog2 server",
                 "php-amqplib/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib",
                 "rollbar/rollbar": "Allow sending log messages to Rollbar",
                 "ruflin/elastica": "Allow sending log messages to an Elastic Search server"

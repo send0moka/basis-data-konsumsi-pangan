@@ -22,6 +22,10 @@
 
                 <!-- Data Lahan -->
                 <flux:navlist.group :heading="__('Data Lahan')" class="grid">
+                    <flux:navlist.item icon="database" :href="route('admin.lahan.kelola')" :current="request()->routeIs('admin.lahan.kelola')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.kelola') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Kelola Data Lahan') }}</span>
+                    </flux:navlist.item>
+
                     <flux:navlist.item icon="map" :href="route('admin.lahan.maps')" :current="request()->routeIs('admin.lahan.maps')" wire:navigate class="group active-icon">
                         <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.maps') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Peta Lahan') }}</span>
                     </flux:navlist.item>
@@ -35,25 +39,29 @@
                     </flux:navlist.item>
                 </flux:navlist.group>
 
+                <!-- Master Data -->
+                <flux:navlist.group :heading="__('Master Data')" class="grid">
+                    <flux:navlist.item icon="tag" :href="route('admin.lahan.topik')" :current="request()->routeIs('admin.lahan.topik')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.topik') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Topik Lahan') }}</span>
+                    </flux:navlist.item>
+                    
+                    <flux:navlist.item icon="variable" :href="route('admin.lahan.variabel')" :current="request()->routeIs('admin.lahan.variabel')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.variabel') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Variabel Lahan') }}</span>
+                    </flux:navlist.item>
+                    
+                    <flux:navlist.item icon="squares-plus" :href="route('admin.lahan.klasifikasi')" :current="request()->routeIs('admin.lahan.klasifikasi')" wire:navigate class="group active-icon">
+                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.klasifikasi') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Klasifikasi Lahan') }}</span>
+                    </flux:navlist.item>
+                </flux:navlist.group>
+
                 <!-- Analisis -->
                 <flux:navlist.group :heading="__('Analisis')" class="grid">
                     <flux:navlist.item icon="chart-bar" :href="route('admin.lahan.statistics')" :current="request()->routeIs('admin.lahan.statistics')" wire:navigate class="group active-icon">
                         <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.statistics') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Statistik') }}</span>
                     </flux:navlist.item>
 
-                    <flux:navlist.item icon="presentation-chart-line" :href="route('admin.lahan.trends')" :current="request()->routeIs('admin.lahan.trends')" wire:navigate class="group active-icon">
-                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.trends') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Tren & Prediksi') }}</span>
-                    </flux:navlist.item>
-
                     <flux:navlist.item icon="document-chart-bar" :href="route('admin.lahan.reports')" :current="request()->routeIs('admin.lahan.reports')" wire:navigate class="group active-icon">
                         <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.reports') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Laporan') }}</span>
-                    </flux:navlist.item>
-                </flux:navlist.group>
-
-                <!-- Pengaturan -->
-                <flux:navlist.group :heading="__('Pengaturan')" class="grid">
-                    <flux:navlist.item icon="cog" :href="route('admin.lahan.settings')" :current="request()->routeIs('admin.lahan.settings')" wire:navigate class="group active-icon">
-                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.lahan.settings') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Pengaturan Lahan') }}</span>
                     </flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
@@ -163,6 +171,9 @@
         </div>
         </div>
 
+        <!-- Leaflet JS for maps -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        
         @stack('scripts')
         @fluxScripts
     </body>

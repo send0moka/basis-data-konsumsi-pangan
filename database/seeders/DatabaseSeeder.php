@@ -21,6 +21,11 @@ class DatabaseSeeder extends Seeder
             KelompokBpsSeeder::class,
             KomoditiBpsSeeder::class,
             SusenasSeeder::class,
+            LahanSeeder::class,
+            IklimoptdpiTopikSeeder::class,
+            IklimoptdpiVariabelSeeder::class,
+            IklimoptdpiKlasifikasiSeeder::class,
+            IklimoptdpiDataSeeder::class,
             BenihPupukSeeder::class,
         ]);
 

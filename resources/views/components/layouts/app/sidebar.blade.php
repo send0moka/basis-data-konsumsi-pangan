@@ -4,6 +4,7 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
+        @unless(request()->routeIs('admin.iklim-opt-dpi.*'))
         <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
@@ -124,8 +125,10 @@
                 </flux:menu>
             </flux:dropdown>
         </flux:sidebar>
+        @endunless
 
         <!-- Mobile User Menu -->
+        @unless(request()->routeIs('admin.iklim-opt-dpi.*'))
         <flux:header class="lg:hidden">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
@@ -174,6 +177,7 @@
                 </flux:menu>
             </flux:dropdown>
         </flux:header>
+        @endunless
 
         {{ $slot }}
 

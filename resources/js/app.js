@@ -26,9 +26,12 @@ if (!window.printHandlersInitialized) {
         kelompok: false,
         komoditi: false,
         kelompokbps: false,
-        komoditibps: false
+        komoditibps: false,
+        lahan: false
     };
 }
+
+console.log('App.js initialized');
 
 // Global print handler for User Management
 document.addEventListener('livewire:init', () => {

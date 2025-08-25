@@ -1,12 +1,12 @@
-@extends('layouts.iklim-opt-dpi')
-
-@section('header')
-    <h2 class="font-semibold text-xl text-neutral-800 dark:text-neutral-200 leading-tight">
-        {{ __('Monitoring Iklim & OPT DPI') }}
-    </h2>
-@endsection
-
-@section('content')
+<div>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="mb-6">
+                <h2 class="font-semibold text-xl text-neutral-800 dark:text-neutral-200 leading-tight">
+                    {{ __('Monitoring Iklim & OPT DPI') }}
+                </h2>
+            </div>
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-zinc-900 overflow-hidden shadow-xl sm:rounded-lg p-6">
@@ -148,10 +148,3 @@
         </div>
     </div>
 </div>
-@endsection
-
-@push('scripts')
-<script>
-    // JavaScript for handling modal and CRUD operations will be implemented here
-</script>
-@endpush

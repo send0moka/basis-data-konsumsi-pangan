@@ -100,12 +100,19 @@ Route::middleware(['auth'])->prefix('admin/lahan')->name('admin.lahan.')->group(
         return view('admin.lahan.dashboard');
     })->name('dashboard');
     
+    // Lahan management CRUD
+    Route::view('kelola', 'admin.lahan')->name('kelola');
+    
+    // Lahan reference tables CRUD
+    Route::view('topik', 'admin.lahan-topik')->name('topik');
+    Route::view('variabel', 'admin.lahan-variabel')->name('variabel');
+    Route::view('klasifikasi', 'admin.lahan-klasifikasi')->name('klasifikasi');
+    
     Route::view('data', 'admin.lahan.data')->name('data');
     Route::view('maps', 'admin.lahan.maps')->name('maps');
     Route::view('categories', 'admin.lahan.categories')->name('categories');
     Route::view('inventory', 'admin.lahan.inventory')->name('inventory');
     Route::view('statistics', 'admin.lahan.statistics')->name('statistics');
-    Route::view('trends', 'admin.lahan.trends')->name('trends');
     Route::view('reports', 'admin.lahan.reports')->name('reports');
     Route::view('analysis', 'admin.lahan.analysis')->name('analysis');
     Route::view('settings', 'admin.lahan.settings')->name('settings');
@@ -113,15 +120,20 @@ Route::middleware(['auth'])->prefix('admin/lahan')->name('admin.lahan.')->group(
 
 // Iklim OPT-DPI Routes
 Route::middleware(['auth'])->prefix('admin/iklim-opt-dpi')->name('admin.iklim-opt-dpi.')->group(function () {
-    Route::get('/', function () {
-        return view('admin.iklim-opt-dpi.dashboard');
-    })->name('dashboard');
+    Route::view('/', 'admin.iklim-opt-dpi.dashboard-wrapper')->name('dashboard');
     
-    Route::view('maps', 'admin.iklim-opt-dpi.maps')->name('maps');
-    Route::view('monitoring', 'admin.iklim-opt-dpi.monitoring')->name('monitoring');
-    Route::view('forecasting', 'admin.iklim-opt-dpi.forecasting')->name('forecasting');
-    Route::view('reports', 'admin.iklim-opt-dpi.reports')->name('reports');
-    Route::view('settings', 'admin.iklim-opt-dpi.settings')->name('settings');
+    // Iklim Opt DPI management CRUD
+    Route::view('kelola', 'admin.iklimoptdpi')->name('kelola');
+    
+    // Iklim Opt DPI reference tables CRUD
+    Route::view('topik', 'admin.iklimoptdpi-topik')->name('topik');
+    Route::view('variabel', 'admin.iklimoptdpi-variabel')->name('variabel');
+    Route::view('klasifikasi', 'admin.iklimoptdpi-klasifikasi')->name('klasifikasi');
+    
+    Route::view('maps', 'admin.iklim-opt-dpi.maps-wrapper')->name('maps');
+    Route::view('monitoring', 'admin.iklim-opt-dpi.monitoring-wrapper')->name('monitoring');
+    Route::view('forecasting', 'admin.iklim-opt-dpi.forecasting-wrapper')->name('forecasting');
+    Route::view('reports', 'admin.iklim-opt-dpi.reports-wrapper')->name('reports');
 });
 
 // Panel Daftar Alamat Routes
