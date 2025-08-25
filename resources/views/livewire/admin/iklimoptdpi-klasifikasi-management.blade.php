@@ -47,9 +47,66 @@
             <table class="w-full text-sm text-left text-neutral-500 dark:text-neutral-400">
                 <thead class="text-xs text-neutral-700 uppercase bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-400">
                     <tr>
-                        <th scope="col" class="px-6 py-3">ID</th>
-                        <th scope="col" class="px-6 py-3">Nama Klasifikasi</th>
-                        <th scope="col" class="px-6 py-3">Dibuat</th>
+                        <th scope="col" class="px-6 py-3">
+                            <button wire:click="sortBy('id')" class="flex items-center space-x-1 hover:text-neutral-900 dark:hover:text-white transition-colors">
+                                <span>ID</span>
+                                @if($sortField === 'id')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"/>
+                                        </svg>
+                                    @endif
+                                @else
+                                    <svg class="w-3 h-3 opacity-50" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                                    </svg>
+                                @endif
+                            </button>
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            <button wire:click="sortBy('nama')" class="flex items-center space-x-1 hover:text-neutral-900 dark:hover:text-white transition-colors">
+                                <span>Nama Klasifikasi</span>
+                                @if($sortField === 'nama')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"/>
+                                        </svg>
+                                    @endif
+                                @else
+                                    <svg class="w-3 h-3 opacity-50" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                                    </svg>
+                                @endif
+                            </button>
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            <button wire:click="sortBy('created_at')" class="flex items-center space-x-1 hover:text-neutral-900 dark:hover:text-white transition-colors">
+                                <span>Dibuat</span>
+                                @if($sortField === 'created_at')
+                                    @if($sortDirection === 'asc')
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                                        </svg>
+                                    @else
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"/>
+                                        </svg>
+                                    @endif
+                                @else
+                                    <svg class="w-3 h-3 opacity-50" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                                    </svg>
+                                @endif
+                            </button>
+                        </th>
                         <th scope="col" class="px-6 py-3">Aksi</th>
                     </tr>
                 </thead>

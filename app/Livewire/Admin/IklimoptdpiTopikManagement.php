@@ -13,6 +13,8 @@ class IklimoptdpiTopikManagement extends Component
     public $search = '';
     public $perPage = 10;
     public array $perPageOptions = [5, 10, 25, 100];
+    public $sortField = 'id';
+    public $sortDirection = 'asc';
     public $showCreateModal = false;
     public $showEditModal = false;
     public $showDeleteModal = false;
@@ -25,6 +27,8 @@ class IklimoptdpiTopikManagement extends Component
     protected $queryString = [
         'search' => ['except' => ''],
         'perPage' => ['except' => 10],
+        'sortField' => ['except' => 'id'],
+        'sortDirection' => ['except' => 'asc'],
     ];
 
     protected $casts = [
@@ -44,6 +48,17 @@ class IklimoptdpiTopikManagement extends Component
     {
         if (! in_array((int)$value, $this->perPageOptions, true)) {
             $this->perPage = 10;
+        }
+        $this->resetPage();
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
         }
         $this->resetPage();
     }
@@ -130,7 +145,7 @@ class IklimoptdpiTopikManagement extends Component
         $topiks = IklimoptdpiTopik::when($this->search, function ($query) {
                 $query->where('nama', 'like', '%' . $this->search . '%');
             })
-            ->orderBy('nama')
+            ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
 
         return view('livewire.admin.iklimoptdpi-topik-management', [

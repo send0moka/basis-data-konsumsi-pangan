@@ -40,11 +40,11 @@ class IklimoptdpiDataFactory extends Factory
         $statuses = ['Aktif', 'Tidak Aktif', 'Draft', 'Arsip', 'Pending'];
 
         return [
-            'id_iklimoptdpi_topik' => IklimoptdpiTopik::factory(),
-            'id_iklimoptdpi_variabel' => IklimoptdpiVariabel::factory(),
-            'id_iklimoptdpi_klasifikasi' => IklimoptdpiKlasifikasi::factory(),
+            'id_iklimoptdpi_topik' => IklimoptdpiTopik::inRandomOrder()->first()?->id ?? IklimoptdpiTopik::factory(),
+            'id_iklimoptdpi_variabel' => IklimoptdpiVariabel::inRandomOrder()->first()?->id ?? IklimoptdpiVariabel::factory(),
+            'id_iklimoptdpi_klasifikasi' => IklimoptdpiKlasifikasi::inRandomOrder()->first()?->id ?? IklimoptdpiKlasifikasi::factory(),
             'nilai' => $this->faker->randomFloat(2, 0, 1000),
-            'wilayah' => $this->faker->randomElement($provinces) . ', ' . $this->faker->city(),
+            'wilayah' => $this->faker->randomElement($provinces),
             'tahun' => $this->faker->year(),
             'status' => $this->faker->randomElement($statuses),
             'created_at' => now(),

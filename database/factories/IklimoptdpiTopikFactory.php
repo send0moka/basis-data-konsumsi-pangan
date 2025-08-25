@@ -22,6 +22,8 @@ class IklimoptdpiTopikFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    private static $topikIndex = 0;
+    
     public function definition(): array
     {
         $topiks = [
@@ -42,8 +44,11 @@ class IklimoptdpiTopikFactory extends Factory
             'Emisi Gas Rumah Kaca'
         ];
 
+        $nama = $topiks[self::$topikIndex % count($topiks)];
+        self::$topikIndex++;
+
         return [
-            'nama' => $this->faker->randomElement($topiks),
+            'nama' => $nama,
             'created_at' => now(),
             'updated_at' => now(),
         ];
