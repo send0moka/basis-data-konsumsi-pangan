@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -20,24 +19,6 @@ return new class extends Migration
             $table->collation = 'latin1_swedish_ci';
             $table->engine = 'InnoDB';
         });
-        
-        // Insert default data
-        DB::table('benih_pupuk_bulan')->insert([
-            ['id' => 0, 'nama' => '-'],
-            ['id' => 1, 'nama' => 'Januari'],
-            ['id' => 2, 'nama' => 'Februari'],
-            ['id' => 3, 'nama' => 'Maret'],
-            ['id' => 4, 'nama' => 'April'],
-            ['id' => 5, 'nama' => 'Mei'],
-            ['id' => 6, 'nama' => 'Juni'],
-            ['id' => 7, 'nama' => 'Juli'],
-            ['id' => 8, 'nama' => 'Agustus'],
-            ['id' => 9, 'nama' => 'September'],
-            ['id' => 10, 'nama' => 'Oktober'],
-            ['id' => 11, 'nama' => 'November'],
-            ['id' => 12, 'nama' => 'Desember'],
-            ['id' => 13, 'nama' => 'Setahun']
-        ]);
     }
 
     /**

@@ -67,3 +67,8 @@ create_efficient_seeder.py
 .ipynb_checkpoints/
 *.ipynb
 
+# Debug Files
+debug_api.php
+debug_layout.php
+/public/debug-ajax.html
+

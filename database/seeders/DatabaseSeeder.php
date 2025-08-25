@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             IklimoptdpiVariabelSeeder::class,
             IklimoptdpiKlasifikasiSeeder::class,
             IklimoptdpiDataSeeder::class,
+            BenihPupukSeeder::class,
         ]);
 
         // User::factory(10)->create();

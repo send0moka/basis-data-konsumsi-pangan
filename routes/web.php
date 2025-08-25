@@ -194,9 +194,21 @@ Route::middleware(['auth'])->prefix('admin/konsumsi-pangan')->name('admin.')->gr
 
 // Benih & Pupuk Routes (Public Access)
 Route::prefix('pertanian')->name('pertanian.')->group(function () {
-    Route::get('benih-pupuk', function () {
-        return view('pertanian.benih-pupuk');
-    })->name('benih-pupuk');
+    Route::get('benih-pupuk', [App\Http\Controllers\BenihPupukController::class, 'index'])->name('benih-pupuk');
+});
+
+// API Routes for Benih Pupuk
+Route::prefix('api/benih-pupuk')->name('api.benih-pupuk.')->group(function () {
+    Route::get('topiks', [App\Http\Controllers\BenihPupukController::class, 'getTopiks'])->name('topiks');
+    Route::get('variabels/{topik}', [App\Http\Controllers\BenihPupukController::class, 'getVariabelsByTopik'])->name('variabels');
+    Route::post('klasifikasis', [App\Http\Controllers\BenihPupukController::class, 'getKlasifikasiByVariabels'])->name('klasifikasis');
+    Route::get('wilayahs', [App\Http\Controllers\BenihPupukController::class, 'getWilayahs'])->name('wilayahs');
+    Route::get('provinces', [App\Http\Controllers\BenihPupukController::class, 'getProvinces'])->name('provinces');
+    Route::get('kabupaten/{province}', [App\Http\Controllers\BenihPupukController::class, 'getKabupatenByProvince'])->name('kabupaten');
+    Route::get('bulans', [App\Http\Controllers\BenihPupukController::class, 'getBulans'])->name('bulans');
+    Route::get('years', [App\Http\Controllers\BenihPupukController::class, 'getAvailableYears'])->name('years');
+    Route::post('search', [App\Http\Controllers\BenihPupukController::class, 'search'])->name('search');
+    Route::get('sample-data', [App\Http\Controllers\BenihPupukController::class, 'getSampleData'])->name('sample-data');
 });
 
 require __DIR__.'/auth.php';

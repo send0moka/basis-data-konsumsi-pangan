@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -30,21 +29,6 @@ return new class extends Migration
             $table->collation = 'latin1_swedish_ci';
             $table->engine = 'InnoDB';
         });
-        
-        // Insert default data
-        DB::table('benih_pupuk_variabel_klasifikasi')->insert([
-            ['id_variabel' => 1, 'id_klasifikasi' => 2, 'keterangan' => null],
-            ['id_variabel' => 1, 'id_klasifikasi' => 3, 'keterangan' => null],
-            ['id_variabel' => 2, 'id_klasifikasi' => 3, 'keterangan' => null],
-            ['id_variabel' => 2, 'id_klasifikasi' => 4, 'keterangan' => null],
-            ['id_variabel' => 3, 'id_klasifikasi' => 1, 'keterangan' => null],
-            ['id_variabel' => 4, 'id_klasifikasi' => 5, 'keterangan' => null],
-            ['id_variabel' => 4, 'id_klasifikasi' => 6, 'keterangan' => null],
-            ['id_variabel' => 5, 'id_klasifikasi' => 5, 'keterangan' => null],
-            ['id_variabel' => 5, 'id_klasifikasi' => 6, 'keterangan' => null],
-            ['id_variabel' => 6, 'id_klasifikasi' => 5, 'keterangan' => null],
-            ['id_variabel' => 6, 'id_klasifikasi' => 6, 'keterangan' => null], // Missing combination added
-        ]);
     }
 
     /**

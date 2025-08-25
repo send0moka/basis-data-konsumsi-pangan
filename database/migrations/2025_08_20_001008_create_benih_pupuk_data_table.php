@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -40,20 +39,6 @@ return new class extends Migration
             $table->collation = 'latin1_swedish_ci';
             $table->engine = 'InnoDB';
         });
-        
-        // Insert sample data
-        DB::table('benih_pupuk_data')->insert([
-            ['tahun' => 2014, 'id_bulan' => 1, 'id_wilayah' => 1, 'id_variabel' => 1, 'id_klasifikasi' => 2, 'nilai' => 0, 'status' => null, 'date_created' => '2017-10-29 17:23:32', 'date_modified' => null],
-            ['tahun' => 2014, 'id_bulan' => 1, 'id_wilayah' => 1, 'id_variabel' => 1, 'id_klasifikasi' => 3, 'nilai' => 0, 'status' => null, 'date_created' => '2017-10-29 17:23:32', 'date_modified' => null],
-            ['tahun' => 2014, 'id_bulan' => 1, 'id_wilayah' => 1, 'id_variabel' => 2, 'id_klasifikasi' => 3, 'nilai' => 0, 'status' => null, 'date_created' => '2017-10-29 17:23:35', 'date_modified' => null],
-            ['tahun' => 2014, 'id_bulan' => 1, 'id_wilayah' => 1, 'id_variabel' => 2, 'id_klasifikasi' => 4, 'nilai' => 0, 'status' => null, 'date_created' => '2017-10-29 17:23:35', 'date_modified' => null],
-            ['tahun' => 2014, 'id_bulan' => 1, 'id_wilayah' => 1, 'id_variabel' => 4, 'id_klasifikasi' => 5, 'nilai' => 8141, 'status' => null, 'date_created' => '2017-10-29 17:05:25', 'date_modified' => null],
-            ['tahun' => 2014, 'id_bulan' => 1, 'id_wilayah' => 1, 'id_variabel' => 4, 'id_klasifikasi' => 6, 'nilai' => 8141, 'status' => null, 'date_created' => '2017-10-29 17:05:25', 'date_modified' => null],
-            ['tahun' => 2014, 'id_bulan' => 1, 'id_wilayah' => 1, 'id_variabel' => 5, 'id_klasifikasi' => 5, 'nilai' => 4201.3, 'status' => null, 'date_created' => '2017-10-29 17:05:28', 'date_modified' => null],
-            ['tahun' => 2014, 'id_bulan' => 1, 'id_wilayah' => 1, 'id_variabel' => 5, 'id_klasifikasi' => 6, 'nilai' => 4201.3, 'status' => null, 'date_created' => '2017-10-29 17:05:28', 'date_modified' => null],
-            ['tahun' => 2014, 'id_bulan' => 1, 'id_wilayah' => 1, 'id_variabel' => 6, 'id_klasifikasi' => 5, 'nilai' => 1547, 'status' => null, 'date_created' => '2017-10-29 17:05:31', 'date_modified' => null],
-            ['tahun' => 2014, 'id_bulan' => 1, 'id_wilayah' => 1, 'id_variabel' => 6, 'id_klasifikasi' => 6, 'nilai' => 1547, 'status' => null, 'date_created' => '2017-10-29 17:05:31', 'date_modified' => null],
-        ]);
     }
 
     /**

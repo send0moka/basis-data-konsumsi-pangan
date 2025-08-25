@@ -78,7 +78,7 @@
                                     <label for="topik" class="block text-sm font-medium text-neutral-700 mb-2">
                                         Topik
                                     </label>
-                                    <select x-model="filters.topik" 
+                                    <select name="topik" x-model="filters.topik" 
                                             @change="loadVariabels()"
                                             class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">Pilih Topik</option>
@@ -90,18 +90,19 @@
                                 <!-- Pilih Variabel -->
                                 <div>
                                     <label for="variabels" class="block text-sm font-medium text-neutral-700 mb-2">
-                                        Variabel
+                                        Variabel <span class="text-xs text-neutral-500">(pilih satu)</span>
                                     </label>
                                     <div class="space-y-2 max-h-32 overflow-y-auto border border-neutral-200 rounded-md p-2 bg-white" 
                                          :class="!filters.topik ? 'bg-neutral-100' : 'bg-white'">
                                         <template x-for="variabel in availableVariabels" :key="variabel.id">
                                             <label class="flex items-center cursor-pointer hover:bg-neutral-50 p-1 rounded">
-                                                <input type="checkbox" 
+                                                <input type="radio" 
                                                        :value="variabel.id" 
-                                                       x-model="filters.variabels"
+                                                       x-model="filters.selectedVariabel"
+                                                       name="variabel"
                                                        @change="loadKlasifikasis()"
                                                        :disabled="!filters.topik"
-                                                       class="rounded border-neutral-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200">
+                                                       class="border-neutral-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200">
                                                 <span class="ml-2 text-sm text-neutral-700" x-text="variabel.deskripsi + ' (' + variabel.satuan + ')'"></span>
                                             </label>
                                         </template>
@@ -120,21 +121,21 @@
                                         Klasifikasi Variabel
                                     </label>
                                     <div class="space-y-2 max-h-28 overflow-y-auto border border-neutral-200 rounded-md p-2" 
-                                         :class="filters.variabels.length === 0 ? 'bg-neutral-100' : 'bg-white'">
+                                         :class="!filters.selectedVariabel ? 'bg-neutral-100' : 'bg-white'">
                                         <template x-for="klasifikasi in availableKlasifikasis" :key="klasifikasi.id">
                                             <label class="flex items-center cursor-pointer hover:bg-neutral-50 p-1 rounded">
                                                 <input type="checkbox" 
                                                        :value="klasifikasi.id" 
                                                        x-model="filters.klasifikasis"
-                                                       :disabled="filters.variabels.length === 0"
+                                                       :disabled="!filters.selectedVariabel"
                                                        class="rounded border-neutral-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200">
                                                 <span class="ml-2 text-sm text-neutral-700" x-text="klasifikasi.deskripsi"></span>
                                             </label>
                                         </template>
-                                        <div x-show="filters.variabels.length === 0" class="text-sm text-neutral-500 p-2">
+                                        <div x-show="!filters.selectedVariabel" class="text-sm text-neutral-500 p-2">
                                             Pilih variabel terlebih dahulu
                                         </div>
-                                        <div x-show="filters.variabels.length > 0 && availableKlasifikasis.length === 0" class="text-sm text-neutral-500 p-2">
+                                        <div x-show="filters.selectedVariabel && availableKlasifikasis.length === 0" class="text-sm text-neutral-500 p-2">
                                             Memuat klasifikasi...
                                         </div>
                                     </div>
@@ -348,9 +349,9 @@
                                                 <span class="ml-2 font-medium text-neutral-900 text-sm">Tipe 1</span>
                                             </div>
                                             <div :class="filters.tata_letak === 'tipe_1' ? 'border-blue-500 bg-blue-500' : 'border-neutral-300'"
-                                                 class="w-3 h-3 border-2 rounded-full flex items-center justify-center transition-all duration-200">
+                                                 class="w-4 h-4 border-2 rounded-full flex items-center justify-center transition-all duration-200">
                                                 <div :class="filters.tata_letak === 'tipe_1' ? 'opacity-100 scale-100' : 'opacity-0 scale-0'"
-                                                     class="w-1.5 h-1.5 bg-white rounded-full transition-all duration-200"></div>
+                                                     class="w-2 h-2 bg-white rounded-full transition-all duration-200"></div>
                                             </div>
                                         </div>
                                         
@@ -405,9 +406,9 @@
                                                 <span class="ml-2 font-medium text-neutral-900 text-sm">Tipe 2</span>
                                             </div>
                                             <div :class="filters.tata_letak === 'tipe_2' ? 'border-blue-500 bg-blue-500' : 'border-neutral-300'"
-                                                 class="w-3 h-3 border-2 rounded-full flex items-center justify-center transition-all duration-200">
+                                                 class="w-4 h-4 border-2 rounded-full flex items-center justify-center transition-all duration-200">
                                                 <div :class="filters.tata_letak === 'tipe_2' ? 'opacity-100 scale-100' : 'opacity-0 scale-0'"
-                                                     class="w-1.5 h-1.5 bg-white rounded-full transition-all duration-200"></div>
+                                                     class="w-2 h-2 bg-white rounded-full transition-all duration-200"></div>
                                             </div>
                                         </div>
                                         
@@ -462,9 +463,9 @@
                                                 <span class="ml-2 font-medium text-neutral-900 text-sm">Tipe 3</span>
                                             </div>
                                             <div :class="filters.tata_letak === 'tipe_3' ? 'border-blue-500 bg-blue-500' : 'border-neutral-300'"
-                                                 class="w-3 h-3 border-2 rounded-full flex items-center justify-center transition-all duration-200">
+                                                 class="w-4 h-4 border-2 rounded-full flex items-center justify-center transition-all duration-200">
                                                 <div :class="filters.tata_letak === 'tipe_3' ? 'opacity-100 scale-100' : 'opacity-0 scale-0'"
-                                                     class="w-1.5 h-1.5 bg-white rounded-full transition-all duration-200"></div>
+                                                     class="w-2 h-2 bg-white rounded-full transition-all duration-200"></div>
                                             </div>
                                         </div>
                                         
@@ -592,7 +593,7 @@
                             </p>
                             <button @click="processQueue()" 
                                     class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition duration-200">
-                                Proses Sekarang
+                                Proses Antrian
                             </button>
                         </div>
                     </div>
@@ -619,13 +620,22 @@
                                 <h3 class="text-xl font-semibold text-neutral-900">
                                     Hasil Pencarian (<span x-text="searchResults.length"></span> dataset)
                                 </h3>
-                                <button @click="exportToExcel()" 
-                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                    Export Excel
-                                </button>
+                                <div class="flex gap-2">
+                                    <button @click="clearResults()" 
+                                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                        Clear Results
+                                    </button>
+                                    <button @click="exportToExcel()" 
+                                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        Export Excel
+                                    </button>
+                                </div>
                             </div>
                             
                             <!-- Results Summary -->
@@ -635,6 +645,22 @@
                                 <p class="text-xs text-neutral-500 mt-2">
                                     Klik tab "Grafik" untuk melihat visualisasi data, atau "Metodologi" untuk penjelasan data
                                 </p>
+                            </div>
+
+                            <!-- Data Quality Warning -->
+                            <div class="text-sm bg-orange-50 border border-orange-200 p-4 rounded-md">
+                                <div class="flex items-start">
+                                    <svg class="w-5 h-5 text-orange-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div>
+                                        <p class="text-orange-800 font-medium mb-1">⚠️ Perhatian Kualitas Data</p>
+                                        <p class="text-orange-700 text-xs">
+                                            Beberapa nilai data (terutama untuk Pupuk-Alokasi/Realisasi) mungkin tidak realistis karena menggunakan unit pengukuran yang berbeda. 
+                                            Nilai Benih umumnya dalam kisaran 50-500, sedangkan Pupuk bisa mencapai 5.000-23.000.
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -726,7 +752,7 @@
                                                                 <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var-${vIndex}`">
                                                                     <th :colspan="result.selectedKlasifikasis.length * result.yearGroups.length * result.yearGroups[0].months.length" 
                                                                         class="px-2 py-2 text-center text-xs font-bold text-white uppercase border border-green-400"
-                                                                        x-text="variabel.deskripsi || `Variabel ${vIndex + 1}`"></th>
+                                                                        x-text="variabel.deskripsi || `Var ${vIndex + 1}`"></th>
                                                                 </template>
                                                             </tr>
                                                             <!-- Level 2: Klasifikasi Header -->
@@ -766,16 +792,23 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody class="bg-white">
-                                                            <template x-for="(region, regionIndex) in result.queueItem.selectedRegions.slice(0, 5)" :key="`region-${regionIndex}`">
+                                                            <template x-for="(region, regionIndex) in result.queueItem.selectedRegions" :key="`region-${regionIndex}-${region.id || regionIndex}`">
                                                                 <tr class="hover:bg-green-50 transition-colors duration-150" :class="regionIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'">
                                                                     <td class="px-4 py-3 text-sm font-medium text-neutral-900 border border-neutral-300 sticky left-0 bg-white z-10"
                                                                         x-text="getRegionName(region)"></td>
-                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`reg-var-${vIndex}`">
-                                                                        <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`reg-klas-${kIndex}`">
-                                                                            <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`reg-year-${yearIndex}`">
-                                                                                <template x-for="(month, mIndex) in yearGroup.months" :key="`reg-month-${mIndex}`">
+                                                                    <!-- Force fresh iteration by rebuilding nested loops with unique keys -->
+                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`${regionIndex}-var-${vIndex}-${variabel.id || vIndex}`">
+                                                                        <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`${regionIndex}-${vIndex}-klas-${kIndex}-${klasifikasi.id || kIndex}`">
+                                                                            <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`${regionIndex}-${vIndex}-${kIndex}-year-${yearIndex}-${yearGroup.year || yearIndex}`">
+                                                                                <template x-for="(month, mIndex) in yearGroup.months" :key="`${regionIndex}-${vIndex}-${kIndex}-${yearIndex}-month-${mIndex}-${month.id || mIndex}`">
                                                                                     <td class="px-1 py-2 text-sm text-right text-neutral-700 border border-neutral-200 min-w-[60px]"
-                                                                                        x-text="formatNumber(Math.floor(Math.random() * 5000) + 1000)"></td>
+                                                                                        x-text="formatNumber(getCellValue(
+                                                                                            result.queueItem.selectedRegions[regionIndex].id,
+                                                                                            result.yearGroups[result.yearGroups.length - 1 - yearIndex].year,
+                                                                                            result.yearGroups[result.yearGroups.length - 1 - yearIndex].months[mIndex].id,
+                                                                                            result.selectedVariabels[vIndex].id,
+                                                                                            result.selectedKlasifikasis[result.selectedKlasifikasis.length - 1 - kIndex].id
+                                                                                        ))"></td>
                                                                                 </template>
                                                                             </template>
                                                                         </template>
@@ -798,7 +831,7 @@
                                                                 <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas-${kIndex}`">
                                                                     <th :colspan="result.selectedVariabels.length * result.yearGroups.length * result.yearGroups[0].months.length" 
                                                                         class="px-2 py-2 text-center text-xs font-bold text-white uppercase border border-green-400"
-                                                                        x-text="`Klasifikasi ${klasifikasi.deskripsi || kIndex + 1}`"></th>
+                                                                        x-text="klasifikasi.deskripsi || `Klasifikasi ${kIndex + 1}`"></th>
                                                                 </template>
                                                             </tr>
                                                             <!-- Level 2: Variabel Header -->
@@ -807,7 +840,7 @@
                                                                     <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var2-${vIndex}`">
                                                                         <th :colspan="result.yearGroups.length * result.yearGroups[0].months.length"
                                                                             class="px-2 py-2 text-center text-xs font-bold text-white border border-green-300"
-                                                                            x-text="`Variabel ${(variabel.deskripsi || '').substring(0, 15)}${(variabel.deskripsi || '').length > 15 ? '...' : ''} ${vIndex + 1}`"></th>
+                                                                            x-text="variabel.deskripsi || `Var ${vIndex + 1}`"></th>
                                                                     </template>
                                                                 </template>
                                                             </tr>
@@ -818,7 +851,7 @@
                                                                         <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year3-${yearIndex}`">
                                                                             <th :colspan="yearGroup.months.length" 
                                                                                 class="px-2 py-2 text-center text-xs font-medium text-white border border-green-300"
-                                                                                x-text="`Tahun ${yearGroup.year}`"></th>
+                                                                                x-text="yearGroup.year"></th>
                                                                         </template>
                                                                     </template>
                                                                 </template>
@@ -838,16 +871,16 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody class="bg-white">
-                                                            <template x-for="(region, regionIndex) in result.queueItem.selectedRegions.slice(0, 5)" :key="`region2-${regionIndex}`">
-                                                                <tr class="hover:bg-green-50 transition-colors duration-150" :class="regionIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'">
-                                                                    <td class="px-4 py-3 text-sm font-medium text-neutral-900 border border-neutral-300 sticky left-0 bg-white z-10"
-                                                                        x-text="getRegionName(region)"></td>
-                                                                    <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`reg2-klas-${kIndex}`">
-                                                                        <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`reg2-var-${vIndex}`">
-                                                                            <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`reg2-year-${yearIndex}`">
-                                                                                <template x-for="(month, mIndex) in yearGroup.months" :key="`reg2-month-${mIndex}`">
-                                                                                    <td class="px-1 py-2 text-sm text-right text-neutral-700 border border-neutral-200 min-w-[60px]"
-                                                                                        x-text="formatNumber(Math.floor(Math.random() * 8000) + 2000)"></td>
+                                                            <template x-for="(region, regionIndex) in result.queueItem.selectedRegions" :key="`region2-${regionIndex}`">
+                                                                <tr class="hover:bg-gray-50 transition-colors">
+                                                                    <td class="px-4 py-3 border border-gray-200 font-medium text-gray-900 sticky left-0 bg-white z-10"
+                                                                        x-text="region.nama || `Region ${regionIndex + 1}`"></td>
+                                                                    <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas-cell-${kIndex}`">
+                                                                        <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var-cell-${vIndex}`">
+                                                                            <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year-cell-${yearIndex}`">
+                                                                                <template x-for="(month, mIndex) in yearGroup.months" :key="`month-cell-${mIndex}`">
+                                                                                    <td class="px-3 py-2 border border-gray-200 text-center text-sm text-gray-700" 
+                                                                                        x-text="getCellValue(region.id, result.yearGroups[result.yearGroups.length - 1 - yearIndex].year, result.yearGroups[result.yearGroups.length - 1 - yearIndex].months[mIndex].id, variabel.id, result.selectedKlasifikasis[result.selectedKlasifikasis.length - 1 - kIndex].id)"></td>
                                                                                 </template>
                                                                             </template>
                                                                         </template>
@@ -862,47 +895,47 @@
                                                 <div x-show="result.queueItem.tata_letak === 'tipe_3'">
                                                     <table class="min-w-full border-collapse">
                                                         <thead>
-                                                            <!-- Level 1: Tahun Header -->
+                                                            <!-- Level 1: Bulan Header -->
                                                             <tr class="bg-green-500">
                                                                 <th rowspan="4" class="px-4 py-3 text-center text-xs font-bold text-white uppercase border border-green-400 sticky left-0 bg-green-500 z-20 min-w-[150px]">
                                                                     Wilayah
                                                                 </th>
-                                                                <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year-${yearIndex}`">
-                                                                    <th :colspan="yearGroup.months.length * result.selectedVariabels.length * result.selectedKlasifikasis.length" 
+                                                                <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month-${mIndex}`">
+                                                                    <th :colspan="result.selectedVariabels.length * result.selectedKlasifikasis.length * result.yearGroups.length" 
                                                                         class="px-2 py-2 text-center text-xs font-bold text-white uppercase border border-green-400"
-                                                                        x-text="`Tahun ${yearGroup.year}`"></th>
+                                                                        x-text="month.nama ? month.nama.substring(0, 3) : `M${mIndex + 1}`"></th>
                                                                 </template>
                                                             </tr>
-                                                            <!-- Level 2: Bulan Header -->
+                                                            <!-- Level 2: Variabel Header -->
                                                             <tr class="bg-green-600">
-                                                                <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year2-${yearIndex}`">
-                                                                    <template x-for="(month, mIndex) in yearGroup.months" :key="`month2-${mIndex}`">
-                                                                        <th :colspan="result.selectedVariabels.length * result.selectedKlasifikasis.length"
+                                                                <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month2-${mIndex}`">
+                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var2-${vIndex}`">
+                                                                        <th :colspan="result.selectedKlasifikasis.length * result.yearGroups.length"
                                                                             class="px-2 py-2 text-center text-xs font-bold text-white border border-green-300"
-                                                                            x-text="month.nama || `Bulan ${mIndex + 1}`"></th>
+                                                                            x-text="variabel.deskripsi || `Var ${vIndex + 1}`"></th>
                                                                     </template>
                                                                 </template>
                                                             </tr>
-                                                            <!-- Level 3: Variabel Header -->
+                                                            <!-- Level 3: Klasifikasi Header -->
                                                             <tr class="bg-green-400">
-                                                                <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year3-${yearIndex}`">
-                                                                    <template x-for="(month, mIndex) in yearGroup.months" :key="`month3-${mIndex}`">
-                                                                        <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var3-${vIndex}`">
-                                                                            <th :colspan="result.selectedKlasifikasis.length" 
+                                                                <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month3-${mIndex}`">
+                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var3-${vIndex}`">
+                                                                        <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas3-${kIndex}`">
+                                                                            <th :colspan="result.yearGroups.length" 
                                                                                 class="px-2 py-2 text-center text-xs font-medium text-white border border-green-300"
-                                                                                x-text="(variabel.deskripsi || `Variabel ${vIndex + 1}`).substring(0, 12) + ((variabel.deskripsi || '').length > 12 ? '...' : '')"></th>
+                                                                                x-text="klasifikasi.deskripsi || `Klasifikasi ${kIndex + 1}`"></th>
                                                                         </template>
                                                                     </template>
                                                                 </template>
                                                             </tr>
-                                                            <!-- Level 4: Klasifikasi Header -->
+                                                            <!-- Level 4: Tahun Header -->
                                                             <tr class="bg-green-300">
-                                                                <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year4-${yearIndex}`">
-                                                                    <template x-for="(month, mIndex) in yearGroup.months" :key="`month4-${mIndex}`">
-                                                                        <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var4-${vIndex}`">
-                                                                            <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas4-${kIndex}`">
-                                                                                <th class="px-1 py-2 text-center text-xs font-medium text-white border border-green-200 min-w-[50px]"
-                                                                                    x-text="(klasifikasi.deskripsi || `K${kIndex + 1}`).substring(0, 6)"></th>
+                                                                <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month4-${mIndex}`">
+                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var4-${vIndex}`">
+                                                                        <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas4-${kIndex}`">
+                                                                            <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year4-${yearIndex}`">
+                                                                                <th class="px-1 py-2 text-center text-xs font-medium text-white border border-green-200 min-w-[60px]"
+                                                                                    x-text="yearGroup.year"></th>
                                                                             </template>
                                                                         </template>
                                                                     </template>
@@ -910,16 +943,17 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody class="bg-white">
-                                                            <template x-for="(region, regionIndex) in result.queueItem.selectedRegions.slice(0, 5)" :key="`region3-${regionIndex}`">
-                                                                <tr class="hover:bg-green-50 transition-colors duration-150" :class="regionIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'">
-                                                                    <td class="px-4 py-3 text-sm font-medium text-neutral-900 border border-neutral-300 sticky left-0 bg-white z-10"
-                                                                        x-text="getRegionName(region)"></td>
-                                                                    <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`reg3-year-${yearIndex}`">
-                                                                        <template x-for="(month, mIndex) in yearGroup.months" :key="`reg3-month-${mIndex}`">
-                                                                            <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`reg3-var-${vIndex}`">
-                                                                                <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`reg3-klas-${kIndex}`">
-                                                                                    <td class="px-1 py-2 text-sm text-right text-neutral-700 border border-neutral-200 min-w-[50px]"
-                                                                                        x-text="formatNumber(Math.floor(Math.random() * 5000) + 1000)"></td>
+                                                            <template x-for="(region, regionIndex) in result.queueItem.selectedRegions" :key="`region3-${regionIndex}`">
+                                                                <tr class="hover:bg-gray-50 transition-colors">
+                                                                    <td class="px-4 py-3 border border-gray-200 font-medium text-gray-900 sticky left-0 bg-white z-10"
+                                                                        x-text="region.nama || `Region ${regionIndex + 1}`"></td>
+                                                                    <!-- Use pre-sorted arrays for consistent ordering -->
+                                                                    <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month-cell-${mIndex}`">
+                                                                        <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var-cell-${vIndex}`">
+                                                                            <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas-cell-${kIndex}`">
+                                                                                <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year-cell-${yearIndex}`">
+                                                                                    <td class="px-3 py-2 border border-gray-200 text-center text-sm text-gray-700" 
+                                                                                        x-text="formatNumber(getCellValue(region.id, yearGroup.year, result.yearGroups[0].months[result.yearGroups[0].months.length - 1 - mIndex].id, variabel.id, result.selectedKlasifikasis[result.selectedKlasifikasis.length - 1 - kIndex].id))"></td>
                                                                                 </template>
                                                                             </template>
                                                                         </template>
@@ -1004,7 +1038,7 @@
                 // Form state
                 filters: {
                     topik: '',
-                    variabels: [],
+                    selectedVariabel: '',
                     klasifikasis: [],
                     selectedYears: [],
                     tahun_awal: '',
@@ -1027,118 +1061,393 @@
                 filterQueue: [],
                 searchResults: [],
                 
-                // Data
+                // Data from API
                 availableVariabels: [],
                 availableKlasifikasis: [],
-                availableRegions: [
-                    { id: 1, nama: 'Aceh' },
-                    { id: 2, nama: 'Sumatera Utara' },
-                    { id: 3, nama: 'Sumatera Barat' },
-                    { id: 4, nama: 'Riau' },
-                    { id: 5, nama: 'Jambi' },
-                    { id: 6, nama: 'Sumatera Selatan' },
-                    { id: 7, nama: 'Bengkulu' },
-                    { id: 8, nama: 'Lampung' },
-                    { id: 9, nama: 'Bangka Belitung' },
-                    { id: 10, nama: 'Kepulauan Riau' },
-                    { id: 11, nama: 'DKI Jakarta' },
-                    { id: 12, nama: 'Jawa Barat' },
-                    { id: 13, nama: 'Jawa Tengah' },
-                    { id: 14, nama: 'DI Yogyakarta' },
-                    { id: 15, nama: 'Jawa Timur' },
-                    { id: 16, nama: 'Banten' },
-                    { id: 17, nama: 'Bali' },
-                    { id: 18, nama: 'Nusa Tenggara Barat' },
-                    { id: 19, nama: 'Nusa Tenggara Timur' },
-                    { id: 20, nama: 'Kalimantan Barat' },
-                    { id: 21, nama: 'Kalimantan Tengah' },
-                    { id: 22, nama: 'Kalimantan Selatan' },
-                    { id: 23, nama: 'Kalimantan Timur' },
-                    { id: 24, nama: 'Kalimantan Utara' },
-                    { id: 25, nama: 'Sulawesi Utara' },
-                    { id: 26, nama: 'Sulawesi Tengah' },
-                    { id: 27, nama: 'Sulawesi Selatan' },
-                    { id: 28, nama: 'Sulawesi Tenggara' },
-                    { id: 29, nama: 'Gorontalo' },
-                    { id: 30, nama: 'Sulawesi Barat' },
-                    { id: 31, nama: 'Maluku' },
-                    { id: 32, nama: 'Maluku Utara' },
-                    { id: 33, nama: 'Papua Barat' },
-                    { id: 34, nama: 'Papua' }
-                ],
+                availableRegions: [],
                 years: [],
-                bulans: [
-                    { id: 1, nama: 'Januari' },
-                    { id: 2, nama: 'Februari' },
-                    { id: 3, nama: 'Maret' },
-                    { id: 4, nama: 'April' },
-                    { id: 5, nama: 'Mei' },
-                    { id: 6, nama: 'Juni' },
-                    { id: 7, nama: 'Juli' },
-                    { id: 8, nama: 'Agustus' },
-                    { id: 9, nama: 'September' },
-                    { id: 10, nama: 'Oktober' },
-                    { id: 11, nama: 'November' },
-                    { id: 12, nama: 'Desember' }
-                ],
+                bulans: [],
+                topiks: [],
 
-                // Sample data structure
-                variabelsData: {
-                    '1': [ // Benih
-                        { id: 9, deskripsi: 'Padi Benih Pokok', satuan: 'Ton', klasifikasi_ids: [2, 3] },
-                        { id: 1, deskripsi: 'Padi Benih Sebar', satuan: 'Ton', klasifikasi_ids: [2, 3] },
-                        { id: 2, deskripsi: 'Jagung Benih Sebar', satuan: 'Ton', klasifikasi_ids: [3, 4] },
-                        { id: 3, deskripsi: 'Kedelai Benih Sebar', satuan: 'Ton', klasifikasi_ids: [1] }
-                    ],
-                    '2': [ // Pupuk
-                        { id: 4, deskripsi: 'Pupuk Urea', satuan: 'Ton', klasifikasi_ids: [5, 6] },
-                        { id: 5, deskripsi: 'Pupuk SP-36', satuan: 'Ton', klasifikasi_ids: [5, 6] },
-                        { id: 6, deskripsi: 'Pupuk ZA', satuan: 'Ton', klasifikasi_ids: [5, 6] },
-                        { id: 7, deskripsi: 'Pupuk NPK', satuan: 'Ton', klasifikasi_ids: [5, 6] },
-                        { id: 8, deskripsi: 'Pupuk Organik', satuan: 'Ton', klasifikasi_ids: [5, 6] }
-                    ]
-                },
-
-                klasifikasisData: {
-                    1: { id: 1, deskripsi: '-' },
-                    2: { id: 2, deskripsi: 'Inbrida' },
-                    3: { id: 3, deskripsi: 'Hibrida' },
-                    4: { id: 4, deskripsi: 'Komposit' },
-                    5: { id: 5, deskripsi: 'Alokasi' },
-                    6: { id: 6, deskripsi: 'Realisasi' }
-                },
-
-                init() {
-                    // Generate years from 2014 to current year
-                    const currentYear = new Date().getFullYear();
-                    for (let year = 2014; year <= currentYear; year++) {
-                        this.years.push(year);
-                    }
+                async init() {
+                    console.log('Initializing benih pupuk form...');
                     
-                    // Set default values
-                    this.filters.tahun_awal = '2020';
-                    this.filters.tahun_akhir = '2022';
-                    this.filters.selectedRegions = [1, 2, 3, 4, 5]; // Default to first 5 regions
-                    this.filters.selectedMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; // All months by default
-                },
-
-                loadVariabels() {
-                    this.availableVariabels = this.variabelsData[this.filters.topik] || [];
-                    this.filters.variabels = [];
-                    this.loadKlasifikasis();
-                },
-
-                loadKlasifikasis() {
-                    const klasifikasiIds = new Set();
-                    this.filters.variabels.forEach(variabelId => {
-                        const variabel = this.availableVariabels.find(v => v.id == variabelId);
-                        if (variabel) {
-                            variabel.klasifikasi_ids.forEach(id => klasifikasiIds.add(id));
-                        }
+                    // Load initial data from API
+                    await this.loadInitialData();
+                    
+                    console.log('Initial data loaded:', {
+                        topiks: this.topiks,
+                        regions: this.availableRegions.length,
+                        bulans: this.bulans.length,
+                        years: this.years.length
                     });
                     
-                    this.availableKlasifikasis = Array.from(klasifikasiIds).map(id => this.klasifikasisData[id]).filter(k => k);
-                    this.filters.klasifikasis = [];
+                    // Set default values
+                    this.filters.tahun_awal = '2014';
+                    this.filters.tahun_akhir = '2016';
+                    this.filters.selectedRegions = this.availableRegions.map(r => r.id); // Default to all regions
+                    this.filters.selectedMonths = this.bulans.filter(b => b.id !== 0 && b.id !== 13).map(b => b.id); // Exclude "Setahun" and "-" months
+                    
+                    console.log('Initialization complete');
+                },
+
+                // Consolidate search results by table layout type
+                get consolidatedResults() {
+                    if (this.searchResults.length === 0) return [];
+
+                    // Group results by table layout and topic
+                    const layoutGroups = {};
+                    
+                    this.searchResults.forEach(result => {
+                        const layoutKey = result.queueItem.tata_letak || 'tipe_1';
+                        const topikKey = result.queueItem.topik;
+                        const groupKey = `${layoutKey}_${topikKey}`;
+                        
+                        if (!layoutGroups[groupKey]) {
+                            layoutGroups[groupKey] = {
+                                layout: layoutKey,
+                                topik: topikKey,
+                                topik_nama: result.topik_nama || (topikKey === '1' ? 'Benih' : 'Pupuk'),
+                                results: [],
+                                consolidatedData: null
+                            };
+                        }
+                        
+                        layoutGroups[groupKey].results.push(result);
+                    });
+
+                    // Convert to array and consolidate data within each group
+                    return Object.values(layoutGroups).map(group => {
+                        // Merge all regions, variables, classifications from all results in this group
+                        const allRegions = new Map();
+                        const allVariabels = new Map();
+                        const allKlasifikasis = new Map();
+                        const allYearGroups = new Map();
+                        let combinedData = [];
+
+                        group.results.forEach(result => {
+                            // Collect unique regions
+                            if (result.selectedRegions) {
+                                result.selectedRegions.forEach(region => {
+                                    allRegions.set(region.id, region);
+                                });
+                            }
+                            
+                            // Collect unique variables
+                            if (result.selectedVariabels) {
+                                result.selectedVariabels.forEach(variabel => {
+                                    allVariabels.set(variabel.id, variabel);
+                                });
+                            }
+                            
+                            // Collect unique classifications
+                            if (result.selectedKlasifikasis) {
+                                result.selectedKlasifikasis.forEach(klasifikasi => {
+                                    allKlasifikasis.set(klasifikasi.id, klasifikasi);
+                                });
+                            }
+                            
+                            // Collect year groups
+                            if (result.yearGroups) {
+                                result.yearGroups.forEach(yearGroup => {
+                                    allYearGroups.set(yearGroup.year, yearGroup);
+                                });
+                            }
+                            
+                            // Combine raw data
+                            if (result.data && Array.isArray(result.data)) {
+                                combinedData = combinedData.concat(result.data);
+                            }
+                        });
+
+                        // Create consolidated result
+                        const consolidated = {
+                            layout: group.layout,
+                            topik: group.topik,
+                            topik_nama: group.topik_nama,
+                            queueItems: group.results.map(r => r.queueItem),
+                            selectedRegions: Array.from(allRegions.values()),
+                            selectedVariabels: Array.from(allVariabels.values()),
+                            selectedKlasifikasis: Array.from(allKlasifikasis.values()),
+                            yearGroups: Array.from(allYearGroups.values()).sort((a, b) => a.year - b.year),
+                            data: combinedData,
+                            resultCount: group.results.length,
+                            
+                            // Create dataMap for efficient lookup
+                            dataMap: new Map()
+                        };
+                        
+                        // Build efficient data lookup map
+                        combinedData.forEach(item => {
+                            const key = `${item.id_wilayah}_${item.id_variabel}_${item.id_klasifikasi}_${item.tahun}_${item.id_bulan}`;
+                            consolidated.dataMap.set(key, item);
+                        });
+
+                        return consolidated;
+                    });
+                },
+
+                async loadInitialData() {
+                    try {
+                        console.log('Loading initial data from APIs...');
+                        
+                        // Load basic reference data
+                        const [topiks, regions, bulans, years] = await Promise.all([
+                            fetch('/api/benih-pupuk/topiks').then(r => r.json()),
+                            fetch('/api/benih-pupuk/provinces').then(r => r.json()),
+                            fetch('/api/benih-pupuk/bulans').then(r => r.json()),
+                            fetch('/api/benih-pupuk/years').then(r => r.json())
+                        ]);
+
+                        console.log('API responses:', { topiks, regions: regions.length, bulans: bulans.length, years: years.length });
+
+                        this.topiks = topiks;
+                        this.availableRegions = regions;
+                        this.bulans = bulans;
+                        this.years = years;
+
+                        console.log('Data assigned successfully');
+
+                    } catch (error) {
+                        console.error('Error loading initial data:', error);
+                        // Fallback to basic data if API fails
+                        this.years = Array.from({length: 12}, (_, i) => 2014 + i);
+                        this.bulans = [
+                            { id: 1, nama: 'Januari' }, { id: 2, nama: 'Februari' }, { id: 3, nama: 'Maret' },
+                            { id: 4, nama: 'April' }, { id: 5, nama: 'Mei' }, { id: 6, nama: 'Juni' },
+                            { id: 7, nama: 'Juli' }, { id: 8, nama: 'Agustus' }, { id: 9, nama: 'September' },
+                            { id: 10, nama: 'Oktober' }, { id: 11, nama: 'November' }, { id: 12, nama: 'Desember' }
+                        ];
+                        this.topiks = [
+                            { id: 1, nama: 'Benih' },
+                            { id: 2, nama: 'Pupuk' }
+                        ];
+                        this.availableRegions = [
+                            { id: 1, nama: 'Aceh' },
+                            { id: 2, nama: 'Sumatera Utara' },
+                            { id: 3, nama: 'Sumatera Barat' }
+                        ];
+                    }
+                },
+
+                async verifyDisplayedData() {
+                    console.log('=== DATA VERIFICATION ===');
+                    
+                    if (this.searchResults.length === 0) {
+                        console.warn('No search results to verify. Run search first.');
+                        return;
+                    }
+                    
+                    const result = this.searchResults[0];
+                    console.log('Verifying result:', result);
+                    
+                    // Get the first displayed region and first value
+                    const firstRegion = result.queueItem?.selectedRegions?.[0];
+                    if (!firstRegion) {
+                        console.warn('No regions found in result');
+                        return;
+                    }
+                    
+                    console.log('First region:', firstRegion);
+                    
+                    // Get the displayed value from table
+                    const displayedValue = this.getCellValue(result, firstRegion, 0, 0, 0, 0);
+                    console.log('Displayed value in table:', displayedValue);
+                    
+                    // Get the raw API data for same parameters
+                    const verificationData = {
+                        topik: result.queueItem.topik,
+                        selectedRegions: [firstRegion.id.toString()],
+                        variabels: result.queueItem.variabels ? result.queueItem.variabels.slice(0, 1) : [result.queueItem.selectedVariabel.toString()],
+                        klasifikasis: result.queueItem.klasifikasis.slice(0, 1), 
+                        tahun_awal: result.queueItem.tahun_awal.toString(),
+                        tahun_akhir: result.queueItem.tahun_awal.toString(), // Same year
+                        selectedMonths: [result.queueItem.bulan_awal.toString()],
+                        tata_letak: 'tipe_1'
+                    };
+                    
+                    console.log('Verification query:', verificationData);
+                    
+                    try {
+                        const response = await fetch('/api/benih-pupuk/search', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify(verificationData)
+                        });
+
+                        const apiData = await response.json();
+                        console.log('API verification response:', apiData);
+                        
+                        if (apiData.data && apiData.data.length > 0) {
+                            const apiValue = apiData.data[0].values[0];
+                            console.log('API returned value:', apiValue);
+                            console.log('Table displayed value:', displayedValue);
+                            console.log('Values match:', apiValue === displayedValue ? '✅ YES' : '❌ NO');
+                            
+                            if (apiValue !== displayedValue) {
+                                console.warn('MISMATCH DETECTED! API vs Table values differ');
+                            } else {
+                                console.log('✅ DATA VERIFIED: Table values match API response');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Verification error:', error);
+                    }
+                },
+
+                // Add a diagnostic function to help debug
+                diagnoseApiResponse(response, requestData) {
+                    console.log('=== API DIAGNOSIS ===');
+                    console.log('Request sent:', requestData);
+                    console.log('Response received:', response);
+                    console.log('Response type:', typeof response);
+                    console.log('Response has headers?', !!response.headers);
+                    console.log('Response has data?', !!response.data);
+                    console.log('Response has resultIndex?', response.resultIndex !== undefined);
+                    
+                    if (response.headers) {
+                        console.log('Headers:', response.headers);
+                        console.log('Headers length:', response.headers.length);
+                        console.log('Headers type:', typeof response.headers);
+                    }
+                    
+                    if (response.data) {
+                        console.log('Data:', response.data);
+                        console.log('Data length:', response.data.length);
+                        console.log('Data type:', typeof response.data);
+                        console.log('Sample data item:', response.data[0]);
+                    }
+                    
+                    console.log('=== END DIAGNOSIS ===');
+                },
+
+                calculateSummaryStats(result) {
+                    if (!result || !result.queueItem) {
+                        result.totalEntries = 0;
+                        result.averageValue = 0;
+                        result.maxValue = 0;
+                        result.minValue = 0;
+                        return;
+                    }
+                    
+                    // Collect all values using the same getCellValue function that tables use
+                    let allValues = [];
+                    
+                    // Iterate through all possible combinations just like the tables do
+                    const regions = result.queueItem.selectedRegions || [];
+                    const variabels = result.selectedVariabels || [];
+                    const klasifikasis = result.selectedKlasifikasis || [];
+                    const yearGroups = result.yearGroups || [];
+                    
+                    console.log('calculateSummaryStats: Starting for layout:', result.queueItem.tata_letak);
+                    
+                    let sampleValues = [];
+                    regions.forEach(region => {
+                        variabels.forEach(variabel => {
+                            klasifikasis.forEach(klasifikasi => {
+                                yearGroups.forEach(yearGroup => {
+                                    if (yearGroup.months) {
+                                        yearGroup.months.forEach(month => {
+                                            const value = this.getCellValue(
+                                                region.id, 
+                                                yearGroup.year, 
+                                                month.id, 
+                                                variabel.id, 
+                                                klasifikasi.id
+                                            );
+                                            
+                                            // Collect first 5 sample values for debugging
+                                            if (sampleValues.length < 5) {
+                                                sampleValues.push({
+                                                    region: region.nama,
+                                                    year: yearGroup.year,
+                                                    month: month.nama,
+                                                    variabel: variabel.id,
+                                                    klasifikasi: klasifikasi.deskripsi,
+                                                    value: value
+                                                });
+                                            }
+                                            
+                                            if (value !== null && value !== undefined && !isNaN(value) && value > 0) {
+                                                allValues.push(parseFloat(value));
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                        });
+                    });
+                    
+                    console.log('calculateSummaryStats samples:', sampleValues);
+                    console.log('calculateSummaryStats: Total valid values found:', allValues.length);
+                    
+                    if (allValues.length === 0) {
+                        result.totalEntries = 0;
+                        result.averageValue = 0;
+                        result.maxValue = 0;
+                        result.minValue = 0;
+                    } else {
+                        result.totalEntries = allValues.length;
+                        result.averageValue = allValues.reduce((sum, val) => sum + val, 0) / allValues.length;
+                        result.maxValue = Math.max(...allValues);
+                        result.minValue = Math.min(...allValues);
+                    }
+                },
+
+                async loadVariabels() {
+                    if (!this.filters.topik) {
+                        this.availableVariabels = [];
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/api/benih-pupuk/variabels/${this.filters.topik}`);
+                        this.availableVariabels = await response.json();
+                        this.filters.selectedVariabel = '';
+                        this.loadKlasifikasis();
+                    } catch (error) {
+                        console.error('Error loading variabels:', error);
+                        this.availableVariabels = [];
+                    }
+                },
+
+                async loadKlasifikasis() {
+                    if (!this.filters.selectedVariabel) {
+                        this.availableKlasifikasis = [];
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('/api/benih-pupuk/klasifikasis', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                variabel_ids: [this.filters.selectedVariabel]
+                            })
+                        });
+                        
+                        this.availableKlasifikasis = await response.json();
+                        
+                        // Auto-select the first few klasifikasi options that likely have data
+                        if (this.availableKlasifikasis.length > 0) {
+                            // Select first 2-3 klasifikasi by default
+                            this.filters.klasifikasis = this.availableKlasifikasis
+                                .slice(0, Math.min(3, this.availableKlasifikasis.length))
+                                .map(k => k.id.toString());
+                            console.log('Auto-selected klasifikasis:', this.filters.klasifikasis);
+                        } else {
+                            this.filters.klasifikasis = [];
+                        }
+                    } catch (error) {
+                        console.error('Error loading klasifikasis:', error);
+                        this.availableKlasifikasis = [];
+                    }
                 },
 
                 validateYearRange() {
@@ -1159,7 +1468,7 @@
 
                 canAddToQueue() {
                     return this.filters.topik && 
-                           this.filters.variabels.length > 0 && 
+                           this.filters.selectedVariabel && 
                            this.filters.klasifikasis.length > 0 && 
                            this.hasValidTimeFilter() &&
                            this.filters.selectedRegions.length > 0;
@@ -1185,13 +1494,18 @@
                     this.addingToQueue = true;
                     await new Promise(resolve => setTimeout(resolve, 500)); // Simulate processing
 
-                    // Create a deep copy of current filters
+                    // Create a deep copy of current filters and convert selectedVariabel to variabels array for backend compatibility
                     const queueItem = {
                         ...JSON.parse(JSON.stringify(this.filters)),
+                        variabels: [this.filters.selectedVariabel], // Convert single variable to array for backend
                         yearMode: this.yearMode,
                         monthMode: this.monthMode,
+                        processed: false, // Track if this item has been processed
                         timestamp: Date.now()
                     };
+                    
+                    // Remove the selectedVariabel field since we've converted it to variabels
+                    delete queueItem.selectedVariabel;
 
                     this.filterQueue.push(queueItem);
                     this.addingToQueue = false;
@@ -1209,27 +1523,224 @@
                     if (this.filterQueue.length === 0) return;
 
                     this.isProcessing = true;
-                    this.searchResults = [];
+                    // Don't clear existing results - append new ones instead
+                    // this.searchResults = [];
 
-                    // Process each item in queue
-                    for (let i = 0; i < this.filterQueue.length; i++) {
-                        const queueItem = this.filterQueue[i];
+                    try {
+                        // Process only unprocessed items in queue
+                        const unprocessedItems = this.filterQueue.filter(item => !item.processed);
                         
-                        // Simulate processing delay
-                        await new Promise(resolve => setTimeout(resolve, 800));
+                        if (unprocessedItems.length === 0) {
+                            console.log('No unprocessed items in queue');
+                            this.isProcessing = false;
+                            return;
+                        }
                         
-                        // Generate result for this queue item
-                        const result = this.generateResultForQueueItem(queueItem, i + 1);
-                        this.searchResults.push(result);
+                        console.log(`Processing ${unprocessedItems.length} unprocessed queue items out of ${this.filterQueue.length} total items`);
+                        console.log('Queue items processed status:', this.filterQueue.map((item, i) => `Item ${i}: ${item.processed ? 'PROCESSED' : 'PENDING'}`));
+                        
+                        for (let i = 0; i < unprocessedItems.length; i++) {
+                            const queueItem = unprocessedItems[i];
+                            
+                            console.log('Processing queue item:', queueItem);
+                            
+                            // Debug: Log the request being sent
+                            console.log('Sending API request with data:', JSON.stringify(queueItem, null, 2));
+                            console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                            
+                            // Make API call for each queue item
+                            const response = await fetch('/api/benih-pupuk/search', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: JSON.stringify(queueItem)
+                            });
+                            
+                            console.log('API Response status:', response.status);
+                            console.log('API Response headers:', Object.fromEntries(response.headers.entries()));
+                            
+                            if (response.ok) {
+                                const data = await response.json();
+                                console.log('API Response data:', data);
+                                
+                                // Add diagnosis
+                                this.diagnoseApiResponse(data, queueItem);
+                                
+                                console.log('Checking response structure:', {
+                                    hasData: !!data,
+                                    hasHeaders: !!data.headers,
+                                    resultIndex: data.resultIndex,
+                                    resultIndexUndefined: data.resultIndex !== undefined,
+                                    condition1: !!(data && data.headers),
+                                    condition2: !!(data && data.resultIndex !== undefined),
+                                    overallCondition: !!(data && (data.headers || data.resultIndex !== undefined))
+                                });
+                                
+                                // Check if the response has the expected structure
+                                if (data && (data.headers || data.resultIndex !== undefined)) {
+                                    console.log('Using real API response data');
+                                    
+                                    // Debug the conversion process
+                                    console.log('queueItem.selectedRegions (original):', queueItem.selectedRegions);
+                                    console.log('this.availableRegions sample:', this.availableRegions.slice(0, 3));
+                                    
+                                    // Convert queueItem regions from IDs to full objects for template
+                                    const selectedRegionObjects = this.availableRegions.filter(r => {
+                                        const matchesId = queueItem.selectedRegions.includes(r.id.toString());
+                                        const matchesStringId = queueItem.selectedRegions.includes(r.id);
+                                        if (matchesId || matchesStringId) {
+                                            console.log('Found matching region:', r.nama, 'for ID:', r.id);
+                                        }
+                                        return matchesId || matchesStringId;
+                                    });
+                                    
+                                    console.log('selectedRegionObjects result:', selectedRegionObjects);
+                                    
+                                    const selectedVariabelObjects = this.availableVariabels.filter(v => 
+                                        queueItem.variabels ? queueItem.variabels.includes(v.id.toString()) : 
+                                        (queueItem.selectedVariabel && v.id.toString() === queueItem.selectedVariabel.toString())
+                                    );
+                                    const selectedKlasifikasiObjects = this.availableKlasifikasis.filter(k => queueItem.klasifikasis.includes(k.id.toString()));
+                                    
+                                    // Create enhanced result with queue item info and converted objects
+                                    const enhancedResult = {
+                                        ...data,
+                                        resultIndex: this.searchResults.length + 1, // Set correct result number
+                                        queueItem: {
+                                            ...queueItem,
+                                            selectedRegions: selectedRegionObjects,  // Convert IDs to objects
+                                            selectedVariabels: selectedVariabelObjects,
+                                            selectedKlasifikasis: selectedKlasifikasiObjects
+                                        },
+                                        selectedRegions: selectedRegionObjects,
+                                        selectedVariabels: selectedVariabelObjects,
+                                        selectedKlasifikasis: selectedKlasifikasiObjects,
+                                        tahun_awal: queueItem.tahun_awal,
+                                        tahun_akhir: queueItem.tahun_akhir,
+                                        bulan_awal: queueItem.bulan_awal,
+                                        bulan_akhir: queueItem.bulan_akhir
+                                    };
+                                    
+                                    // Create dataMap for efficient data lookup
+                                    enhancedResult.dataMap = this.createDataMap(data, queueItem);
+                                    
+                                    // IMPORTANT: Add raw_data for getCellValue function
+                                    enhancedResult.raw_data = data.raw_data || [];
+                                    console.log('FIX APPLIED: Raw data assigned to enhancedResult:', {
+                                        layout: queueItem.tata_letak,
+                                        hasRawData: !!enhancedResult.raw_data,
+                                        rawDataLength: enhancedResult.raw_data.length,
+                                        resultIndex: enhancedResult.resultIndex
+                                    });
+                                    
+                                    console.log('Enhanced result queueItem.selectedRegions:', enhancedResult.queueItem.selectedRegions);
+                                    console.log('DataMap created with keys:', Object.keys(enhancedResult.dataMap).length, 'entries');
+                                    
+                                    // Calculate summary statistics for the enhanced result
+                                    this.calculateSummaryStats(enhancedResult);
+                                    
+                                    // Debug: Log the enhanced result structure
+                                    console.log('Enhanced result structure:', {
+                                        resultIndex: enhancedResult.resultIndex,
+                                        hasHeaders: !!enhancedResult.headers,
+                                        headersLength: enhancedResult.headers ? enhancedResult.headers.length : 0,
+                                        headers: enhancedResult.headers,
+                                        hasData: !!enhancedResult.data,
+                                        dataLength: enhancedResult.data ? enhancedResult.data.length : 0,
+                                        sampleDataItem: enhancedResult.data && enhancedResult.data[0] ? enhancedResult.data[0] : null,
+                                        layoutType: enhancedResult.queueItem.tata_letak
+                                    });
+                                    
+                                    this.searchResults.push(enhancedResult);
+                                    
+                                    // Calculate summary statistics for the enhanced result
+                                    this.calculateSummaryStats(enhancedResult);
+                                    
+                                    // CRITICAL: Pre-sort all arrays to ensure consistent table iteration
+                                    if (enhancedResult.selectedKlasifikasis) {
+                                        enhancedResult.selectedKlasifikasis.sort((a, b) => a.id - b.id);
+                                    }
+                                    if (enhancedResult.yearGroups) {
+                                        enhancedResult.yearGroups.sort((a, b) => a.year - b.year);
+                                        // Also sort months within each year group
+                                        enhancedResult.yearGroups.forEach(yearGroup => {
+                                            if (yearGroup.months) {
+                                                yearGroup.months.sort((a, b) => a.id - b.id);
+                                            }
+                                        });
+                                    }
+                                    
+                                    console.log('=== ARRAYS PRE-SORTED FOR CONSISTENCY ===');
+                                    console.log('Sorted klasifikasis:', enhancedResult.selectedKlasifikasis);
+                                    console.log('Sorted yearGroups:', enhancedResult.yearGroups);
+                                    console.log('First klasifikasi should be:', enhancedResult.selectedKlasifikasis[0]);
+                                    console.log('First year should be:', enhancedResult.yearGroups[0]);
+                                    
+                                    // Verify table layout is preserved
+                                    console.log('Table layout should be:', enhancedResult.queueItem.tata_letak);
+                                    
+                                    // Manual verification
+                                    const firstRegion = enhancedResult.queueItem.selectedRegions[0];
+                                    const firstVariabel = enhancedResult.selectedVariabels[0];  
+                                    const firstKlasifikasi = enhancedResult.selectedKlasifikasis[0];
+                                    const firstYear = enhancedResult.yearGroups[0];
+                                    const firstMonth = firstYear.months[0];
+                                    
+                                    console.log('=== MANUAL FIRST CELL CHECK ===');
+                                    console.log('Should use:', {
+                                        regionId: firstRegion.id,
+                                        year: firstYear.year, 
+                                        monthId: firstMonth.id,
+                                        variabelId: firstVariabel.id,
+                                        klasifikasiId: firstKlasifikasi.id
+                                    });
+                                    
+                                    const expectedValue = this.getCellValue(firstRegion.id, firstYear.year, firstMonth.id, firstVariabel.id, firstKlasifikasi.id);
+                                    console.log('Expected first cell value:', expectedValue);
+                                    console.log('=== END MANUAL CHECK ===');
+                                    
+                                    // Mark this queue item as processed
+                                    queueItem.processed = true;
+                                } else {
+                                    console.warn('API response format unexpected, using fallback');
+                                    console.log('Response that failed validation:', data);
+                                    const result = this.generateResultForQueueItem(queueItem, this.searchResults.length + 1);
+                                    this.calculateSummaryStats(result);
+                                    this.searchResults.push(result);
+                                    queueItem.processed = true;
+                                }
+                            } else {
+                                console.error('API response not OK:', response.status);
+                                // Fallback to generating mock data if API fails
+                                const result = this.generateResultForQueueItem(queueItem, this.searchResults.length + 1);
+                                this.searchResults.push(result);
+                                queueItem.processed = true;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error processing queue:', error);
+                        
+                        // Fallback: generate results for all unprocessed queue items
+                        const unprocessedItems = this.filterQueue.filter(item => !item.processed);
+                        for (let i = 0; i < unprocessedItems.length; i++) {
+                            const queueItem = unprocessedItems[i];
+                            const result = this.generateResultForQueueItem(queueItem, this.searchResults.length + 1);
+                            this.searchResults.push(result);
+                            queueItem.processed = true;
+                        }
+                    } finally {
+                        this.isProcessing = false;
+                        this.activeTab = 'tabel';
+
+                        console.log('Final search results:', this.searchResults);
+
+                        // Create charts after results are rendered
+                        this.$nextTick(() => {
+                            this.createCharts();
+                        });
                     }
-
-                    this.isProcessing = false;
-                    this.activeTab = 'tabel';
-
-                    // Create charts after results are rendered
-                    this.$nextTick(() => {
-                        this.createCharts();
-                    });
                 },
 
                 generateResultForQueueItem(queueItem, resultIndex) {
@@ -1259,18 +1770,24 @@
 
                     // Get selected regions, variabels, and klasifikasis
                     const selectedRegions = this.availableRegions.filter(r => queueItem.selectedRegions.includes(r.id));
-                    let selectedVariabels = this.availableVariabels.filter(v => queueItem.variabels.includes(v.id));
+                    // Handle both formats: new format (variabels array) and legacy format (selectedVariabel single)
+                    let selectedVariabels = [];
+                    if (queueItem.variabels) {
+                        selectedVariabels = this.availableVariabels.filter(v => queueItem.variabels.includes(v.id));
+                    } else if (queueItem.selectedVariabel) {
+                        selectedVariabels = this.availableVariabels.filter(v => v.id.toString() === queueItem.selectedVariabel.toString());
+                    }
                     let selectedKlasifikasis = this.availableKlasifikasis.filter(k => queueItem.klasifikasis.includes(k.id));
 
                     // Fallback: if no selections, use defaults to prevent empty tables
                     if (selectedVariabels.length === 0) {
-                        selectedVariabels = this.variabelsData[queueItem.topik]?.slice(0, 2) || [
+                        selectedVariabels = [
                             { id: 1, deskripsi: 'Default Variabel 1', satuan: 'Ton' },
                             { id: 2, deskripsi: 'Default Variabel 2', satuan: 'Ton' }
                         ];
                     }
                     if (selectedKlasifikasis.length === 0) {
-                        selectedKlasifikasis = Object.values(this.klasifikasisData).slice(0, 2) || [
+                        selectedKlasifikasis = [
                             { id: 1, deskripsi: 'Default Klasifikasi 1' },
                             { id: 2, deskripsi: 'Default Klasifikasi 2' }
                         ];
@@ -1279,7 +1796,17 @@
                         years = [2020, 2021, 2022];
                     }
                     if (months.length === 0) {
-                        months = this.bulans.slice(0, 6); // First 6 months
+                        months = this.bulans.slice(0, 6) || [
+                            { id: 1, nama: 'Januari' },
+                            { id: 2, nama: 'Februari' },
+                            { id: 3, nama: 'Maret' }
+                        ];
+                    }
+                    if (selectedRegions.length === 0) {
+                        selectedRegions = this.availableRegions.slice(0, 3) || [
+                            { id: 1, nama: 'Default Region 1' },
+                            { id: 2, nama: 'Default Region 2' }
+                        ];
                     }
 
                     // Create year groups with months
@@ -1326,7 +1853,7 @@
                     });
 
                     // Calculate regional totals
-                    selectedRegions.slice(0, 5).forEach(region => {
+                    selectedRegions.forEach(region => {
                         const regionTotal = [];
                         const totalColumns = yearGroups.length * months.length;
                         
@@ -1368,7 +1895,7 @@
                     
                     if (queueItem.tata_letak === 'tipe_1') {
                         headers = years.map(y => y.toString());
-                        data = selectedRegions.slice(0, 5).map(region => ({
+                        data = selectedRegions.map(region => ({
                             label: region.nama,
                             values: years.map(() => Math.floor(Math.random() * 10000) + 1000)
                         }));
@@ -1432,7 +1959,7 @@
                             type: 'line',
                             data: {
                                 labels: result.headers,
-                                datasets: result.data.slice(0, 5).map((row, idx) => ({
+                                datasets: result.data.map((row, idx) => ({
                                     label: row.label,
                                     data: row.values,
                                     backgroundColor: colors[idx % colors.length] + '20',
@@ -1497,9 +2024,19 @@
                     this.searchResults = [];
                 },
 
+                clearResults() {
+                    this.searchResults = [];
+                    // Reset processed status for all queue items so they can be reprocessed
+                    this.filterQueue.forEach(item => {
+                        item.processed = false;
+                    });
+                    console.log('Results cleared and queue items reset for reprocessing');
+                },
+
                 getQueueSummary(queueItem) {
                     const topik = queueItem.topik === '1' ? 'Benih' : 'Pupuk';
-                    const variabelCount = queueItem.variabels.length;
+                    // Handle both old format (variabels array) and new format (selectedVariabel single value)
+                    const variabelCount = queueItem.variabels ? queueItem.variabels.length : (queueItem.selectedVariabel ? 1 : 0);
                     const klasifikasiCount = queueItem.klasifikasis.length;
                     const regionCount = queueItem.selectedRegions.length;
                     
@@ -1516,26 +2053,60 @@
                 },
 
                 getVariabelNames(queueItem) {
-                    const selectedVariabels = this.availableVariabels.filter(v => queueItem.variabels.includes(v.id));
-                    if (selectedVariabels.length === 0) return '-';
-                    if (selectedVariabels.length <= 2) {
-                        return selectedVariabels.map(v => v.deskripsi).join(', ');
+                    // First try to get from API response if available
+                    const currentResult = this.searchResults.find(r => r.queueItem === queueItem);
+                    if (currentResult && currentResult.selectedVariabels && currentResult.selectedVariabels.length > 0) {
+                        const variabels = currentResult.selectedVariabels;
+                        if (variabels.length <= 2) {
+                            return variabels.map(v => v.deskripsi || v.nama || 'Unknown').join(', ');
+                        }
+                        return `${variabels[0].deskripsi || variabels[0].nama || 'Unknown'}, ${variabels[1].deskripsi || variabels[1].nama || 'Unknown'} (+${variabels.length - 2} lainnya)`;
                     }
-                    return `${selectedVariabels[0].deskripsi}, ${selectedVariabels[1].deskripsi} (+${selectedVariabels.length - 2} lainnya)`;
+                    
+                    // Fallback to original method - handle both formats
+                    if (queueItem.variabels && this.availableVariabels) {
+                        // New format: variabels array
+                        const selectedVariabels = this.availableVariabels.filter(v => queueItem.variabels.includes(v.id));
+                        if (selectedVariabels.length === 0) return 'Default Variabel';
+                        return selectedVariabels.map(v => v.deskripsi).join(', ');
+                    } else if (queueItem.selectedVariabel && this.availableVariabels) {
+                        // Old format: selectedVariabel single value
+                        const selectedVariabel = this.availableVariabels.find(v => v.id === queueItem.selectedVariabel);
+                        if (!selectedVariabel) return 'Default Variabel';
+                        return selectedVariabel.deskripsi;
+                    }
+                    return 'Default Variabel';
                 },
 
                 getKlasifikasiNames(queueItem) {
+                    // First try to get from API response if available
+                    const currentResult = this.searchResults.find(r => r.queueItem === queueItem);
+                    if (currentResult && currentResult.selectedKlasifikasis && currentResult.selectedKlasifikasis.length > 0) {
+                        const klasifikasis = currentResult.selectedKlasifikasis;
+                        if (klasifikasis.length <= 3) {
+                            return klasifikasis.map(k => k.deskripsi || k.nama || 'Unknown').join(', ');
+                        }
+                        return `${klasifikasis.slice(0, 3).map(k => k.deskripsi || k.nama || 'Unknown').join(', ')} (+${klasifikasis.length - 3} lainnya)`;
+                    }
+                    
+                    // Fallback to original method
+                    if (!queueItem.klasifikasis || !this.availableKlasifikasis) return 'Default Klasifikasi';
                     const selectedKlasifikasis = this.availableKlasifikasis.filter(k => queueItem.klasifikasis.includes(k.id));
-                    if (selectedKlasifikasis.length === 0) return '-';
+                    if (selectedKlasifikasis.length === 0) return 'Default Klasifikasi';
                     if (selectedKlasifikasis.length <= 3) {
                         return selectedKlasifikasis.map(k => k.deskripsi).join(', ');
                     }
                     return `${selectedKlasifikasis.slice(0, 3).map(k => k.deskripsi).join(', ')} (+${selectedKlasifikasis.length - 3} lainnya)`;
                 },
 
-                getRegionName(regionId) {
-                    const region = this.availableRegions.find(r => r.id == regionId);
-                    return region ? region.nama : `Wilayah ${regionId}`;
+                getRegionName(regionOrId) {
+                    // Handle both region objects and region IDs
+                    if (typeof regionOrId === 'object' && regionOrId.nama) {
+                        return regionOrId.nama;
+                    }
+                    // Handle region ID (number or string)
+                    const region = this.availableRegions.find(r => r.id == regionOrId);
+                    return region ? region.nama : `Wilayah ${regionOrId}`;
                 },
 
                 getPeriodSummary(queueItem) {
@@ -1618,6 +2189,118 @@
                     
                     const topikName = result.queueItem.topik === '1' ? 'benih' : 'pupuk';
                     XLSX.writeFile(wb, `laporan-${topikName}-hasil-${result.resultIndex}-${new Date().toISOString().split('T')[0]}.xlsx`);
+                },
+
+                // Enhanced getCellValue that searches across ALL search results
+                getCellValue(regionId, year, monthId, variabelId, klasifikasiId) {
+                    try {
+                        // Search through ALL search results to find the data
+                        // This allows data from different queue items to be combined
+                        for (const result of this.searchResults) {
+                            if (result.raw_data && Array.isArray(result.raw_data)) {
+                                const targetRecord = result.raw_data.find(record => 
+                                    String(record.id_wilayah) === String(regionId) &&
+                                    String(record.tahun) === String(year) &&
+                                    String(record.id_bulan) === String(monthId) &&
+                                    String(record.id_variabel) === String(variabelId) &&
+                                    String(record.id_klasifikasi) === String(klasifikasiId)
+                                );
+                                
+                                if (targetRecord) {
+                                    return parseFloat(targetRecord.nilai) || 0;
+                                }
+                            }
+                        }
+                        
+                        return 0;
+                    } catch (error) {
+                        console.error('getCellValue error:', error);
+                        return 0;
+                    }
+                },
+
+                // Create a dataMap from the API response for efficient data lookup
+                createDataMap(apiData, queueItem) {
+                    const dataMap = {};
+                    
+                    try {
+                        // Debug the API response structure
+                        console.log('createDataMap called with:', {
+                            hasApiData: !!apiData,
+                            hasRawData: !!(apiData && apiData.raw_data),
+                            rawDataLength: apiData && apiData.raw_data ? apiData.raw_data.length : 0,
+                            sampleRawDataItem: apiData && apiData.raw_data && apiData.raw_data[0] ? apiData.raw_data[0] : null,
+                            layoutType: queueItem.tata_letak
+                        });
+                        
+                        // Check if we have raw data from the API
+                        if (!apiData || !apiData.raw_data || !Array.isArray(apiData.raw_data)) {
+                            console.log('No raw_data in API response, cannot create dataMap');
+                            return dataMap;
+                        }
+                        
+                        // Convert raw data to key-value map
+                        apiData.raw_data.forEach(item => {
+                            // Create key in format: regionId_year_monthId_variabelId_klasifikasiId
+                            // Use the correct property names from the database result
+                            const key = `${item.id_wilayah}_${item.tahun}_${item.id_bulan}_${item.id_variabel}_${item.id_klasifikasi}`;
+                            dataMap[key] = parseFloat(item.nilai) || 0;
+                        });
+                        
+                        console.log('DataMap created successfully:', {
+                            totalEntries: apiData.raw_data.length,
+                            uniqueKeys: Object.keys(dataMap).length,
+                            sampleKeys: Object.keys(dataMap).slice(0, 5),
+                            sampleValues: Object.values(dataMap).slice(0, 5),
+                            firstFewItems: apiData.raw_data.slice(0, 3).map(item => ({
+                                key: `${item.id_wilayah}_${item.tahun}_${item.id_bulan}_${item.id_variabel}_${item.id_klasifikasi}`,
+                                value: item.nilai
+                            }))
+                        });
+                        
+                    } catch (error) {
+                        console.error('Error creating dataMap:', error);
+                    }
+                    
+                    return dataMap;
+                },
+
+                // Get aggregated value across all regions for tipe_2 and tipe_3 layouts
+                getAggregatedValue(layoutType, klasifikasiId, variabelId, year, monthId) {
+                    try {
+                        // Find the current result context
+                        let result = null;
+                        for (const searchResult of this.searchResults) {
+                            if (searchResult.dataMap && searchResult.queueItem.tata_letak === layoutType) {
+                                result = searchResult;
+                                break;
+                            }
+                        }
+                        
+                        if (!result || !result.dataMap || !result.selectedRegions) {
+                            return 0;
+                        }
+
+                        // Sum values across all selected regions for this combination
+                        let total = 0;
+                        let count = 0;
+                        
+                        result.selectedRegions.forEach(region => {
+                            const key = `${region.id}_${year}_${monthId}_${variabelId}_${klasifikasiId}`;
+                            const value = result.dataMap[key];
+                            if (value !== undefined) {
+                                total += parseFloat(value);
+                                count++;
+                            }
+                        });
+                        
+                        // Return average to match backend logic
+                        return count > 0 ? total / count : 0;
+                        
+                    } catch (error) {
+                        console.error('getAggregatedValue error:', error);
+                        return 0;
+                    }
                 },
 
                 formatNumber(value) {
