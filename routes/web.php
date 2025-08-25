@@ -146,6 +146,11 @@ Route::middleware(['auth'])->prefix('admin/daftar-alamat')->name('admin.daftar-a
     Route::view('maps', 'admin.daftar-alamat.maps')->name('maps');
     Route::view('reports', 'admin.daftar-alamat.reports')->name('reports');
     Route::view('settings', 'admin.daftar-alamat.settings')->name('settings');
+    
+    // Export routes
+    Route::get('export/excel', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'exportExcel'])->name('export.excel');
+    Route::get('export/csv', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'exportCsv'])->name('export.csv');
+    Route::get('export/pdf', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'exportPdf'])->name('export.pdf');
 });
 
 // Panel Benih Pupuk Routes

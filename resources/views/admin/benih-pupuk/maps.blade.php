@@ -30,8 +30,8 @@
                     </div>
                     <button id="lokasi-saya" class="bg-white dark:bg-zinc-800 hover:bg-neutral-50 dark:hover:bg-zinc-700 text-neutral-700 dark:text-neutral-200 font-medium py-2 px-4 border border-neutral-300 dark:border-neutral-600 rounded-md shadow-sm text-sm flex items-center">
                         <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                         Lokasi Saya
                     </button>
@@ -44,8 +44,8 @@
                 <div class="flex items-center justify-center h-full bg-neutral-50 dark:bg-zinc-800">
                     <div class="text-center">
                         <svg class="mx-auto h-12 w-12 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                         <h3 class="mt-2 text-sm font-medium text-neutral-900 dark:text-white">Memuat peta...</h3>
                         <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Sedang memuat data alamat dan peta.</p>

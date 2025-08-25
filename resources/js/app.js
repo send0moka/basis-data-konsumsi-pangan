@@ -1,4 +1,4 @@
-// Alpine.js is provided by Flux UI for admin pages
+// Alpine.js is provided by Livewire for admin pages
 // For landing pages, we'll dynamically load it if needed
 
 // Simple approach: Load Alpine.js for non-admin pages
@@ -6,9 +6,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentPath = window.location.pathname;
     const isAdminPage = currentPath.startsWith('/admin') || 
                        currentPath.startsWith('/dashboard') ||
-                       currentPath.startsWith('/login') ||
+                       currentPath.startsWith('/profile') ||
                        currentPath.startsWith('/settings') ||
-                       document.querySelector('flux\\:main, flux\\:sidebar, [data-flux]');
+                       document.querySelector('[wire\\:id]') ||
+                       document.querySelector('[livewire\\:id]') ||
+                       window.Livewire;
     
     if (!isAdminPage && !window.Alpine) {
         // Load Alpine.js for landing pages
@@ -17,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
         script.defer = true;
         document.head.appendChild(script);
     }
+    
+    console.log('App.js initialized');
 });
 
 // Initialize global flags to prevent duplicate listeners
