@@ -793,7 +793,7 @@
                                                         </thead>
                                                         <tbody class="bg-white">
                                                             <template x-for="(region, regionIndex) in result.queueItem.selectedRegions" :key="`region-${regionIndex}-${region.id || regionIndex}`">
-                                                                <tr class="hover:bg-green-50 transition-colors duration-150" :class="regionIndex % 2 === 0 ? 'bg-gray-50' : 'bg-white'">
+                                                                <tr class="hover:bg-green-50 transition-colors duration-150" :class="regionIndex % 2 === 0 ? 'bg-neutral-50' : 'bg-white'">
                                                                     <td class="px-4 py-3 text-sm font-medium text-neutral-900 border border-neutral-300 sticky left-0 bg-white z-10"
                                                                         x-text="getRegionName(region)"></td>
                                                                     <!-- Force fresh iteration by rebuilding nested loops with unique keys -->
@@ -872,14 +872,14 @@
                                                         </thead>
                                                         <tbody class="bg-white">
                                                             <template x-for="(region, regionIndex) in result.queueItem.selectedRegions" :key="`region2-${regionIndex}`">
-                                                                <tr class="hover:bg-gray-50 transition-colors">
-                                                                    <td class="px-4 py-3 border border-gray-200 font-medium text-gray-900 sticky left-0 bg-white z-10"
+                                                                <tr class="hover:bg-neutral-50 transition-colors">
+                                                                    <td class="px-4 py-3 border border-neutral-200 font-medium text-neutral-900 sticky left-0 bg-white z-10"
                                                                         x-text="region.nama || `Region ${regionIndex + 1}`"></td>
                                                                     <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas-cell-${kIndex}`">
                                                                         <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var-cell-${vIndex}`">
                                                                             <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year-cell-${yearIndex}`">
                                                                                 <template x-for="(month, mIndex) in yearGroup.months" :key="`month-cell-${mIndex}`">
-                                                                                    <td class="px-3 py-2 border border-gray-200 text-center text-sm text-gray-700" 
+                                                                                    <td class="px-3 py-2 border border-neutral-200 text-center text-sm text-neutral-700" 
                                                                                         x-text="getCellValue(region.id, result.yearGroups[result.yearGroups.length - 1 - yearIndex].year, result.yearGroups[result.yearGroups.length - 1 - yearIndex].months[mIndex].id, variabel.id, result.selectedKlasifikasis[result.selectedKlasifikasis.length - 1 - kIndex].id)"></td>
                                                                                 </template>
                                                                             </template>
@@ -944,15 +944,15 @@
                                                         </thead>
                                                         <tbody class="bg-white">
                                                             <template x-for="(region, regionIndex) in result.queueItem.selectedRegions" :key="`region3-${regionIndex}`">
-                                                                <tr class="hover:bg-gray-50 transition-colors">
-                                                                    <td class="px-4 py-3 border border-gray-200 font-medium text-gray-900 sticky left-0 bg-white z-10"
+                                                                <tr class="hover:bg-neutral-50 transition-colors">
+                                                                    <td class="px-4 py-3 border border-neutral-200 font-medium text-neutral-900 sticky left-0 bg-white z-10"
                                                                         x-text="region.nama || `Region ${regionIndex + 1}`"></td>
                                                                     <!-- Use pre-sorted arrays for consistent ordering -->
                                                                     <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month-cell-${mIndex}`">
                                                                         <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var-cell-${vIndex}`">
                                                                             <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas-cell-${kIndex}`">
                                                                                 <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year-cell-${yearIndex}`">
-                                                                                    <td class="px-3 py-2 border border-gray-200 text-center text-sm text-gray-700" 
+                                                                                    <td class="px-3 py-2 border border-neutral-200 text-center text-sm text-neutral-700" 
                                                                                         x-text="formatNumber(getCellValue(region.id, yearGroup.year, result.yearGroups[0].months[result.yearGroups[0].months.length - 1 - mIndex].id, variabel.id, result.selectedKlasifikasis[result.selectedKlasifikasis.length - 1 - kIndex].id))"></td>
                                                                                 </template>
                                                                             </template>

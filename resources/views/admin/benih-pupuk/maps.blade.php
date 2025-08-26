@@ -74,7 +74,7 @@
                         <span class="text-sm text-neutral-600 dark:text-neutral-400">Sekolah</span>
                     </div>
                     <div class="flex items-center">
-                        <span class="w-4 h-4 rounded-full bg-gray-500 mr-2"></span>
+                        <span class="w-4 h-4 rounded-full bg-neutral-500 mr-2"></span>
                         <span class="text-sm text-neutral-600 dark:text-neutral-400">Lainnya</span>
                     </div>
                 </div>

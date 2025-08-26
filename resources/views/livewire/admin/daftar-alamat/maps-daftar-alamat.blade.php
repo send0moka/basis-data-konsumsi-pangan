@@ -105,7 +105,7 @@
     @if($showInfoModal)
     <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <div class="fixed inset-0 bg-neutral-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <div class="inline-block align-bottom bg-white dark:bg-neutral-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
                 @if($selectedAlamat)
@@ -198,7 +198,7 @@
                     @endif
                 </div>
                 </div>
-                <div class="bg-gray-50 dark:bg-neutral-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <div class="bg-neutral-50 dark:bg-neutral-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button wire:click="closeInfoModal" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
                         Tutup
                     </button>
@@ -254,11 +254,11 @@
                         .bindPopup(`
                             <div class="p-2 min-w-[200px]">
                                 <h3 class="font-semibold text-sm mb-2">${location.title}</h3>
-                                <p class="text-xs text-gray-600 mb-1">${location.wilayah}</p>
-                                <p class="text-xs text-gray-500 mb-2">${location.alamat}</p>
+                                <p class="text-xs text-neutral-600 mb-1">${location.wilayah}</p>
+                                <p class="text-xs text-neutral-500 mb-2">${location.alamat}</p>
                                 <div class="flex justify-between items-center text-xs">
                                     <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">${location.status}</span>
-                                    ${location.kategori ? `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded">${location.kategori}</span>` : ''}
+                                    ${location.kategori ? `<span class="bg-neutral-100 text-neutral-800 px-2 py-1 rounded">${location.kategori}</span>` : ''}
                                 </div>
                                 ${location.telp ? `<p class="text-xs mt-2"><strong>Telp:</strong> ${location.telp}</p>` : ''}
                                 ${location.email ? `<p class="text-xs"><strong>Email:</strong> ${location.email}</p>` : ''}
@@ -289,11 +289,11 @@
                             .bindPopup(`
                                 <div class="p-2 min-w-[200px]">
                                     <h3 class="font-semibold text-sm mb-2">${location.title}</h3>
-                                    <p class="text-xs text-gray-600 mb-1">${location.wilayah}</p>
-                                    <p class="text-xs text-gray-500 mb-2">${location.alamat}</p>
+                                    <p class="text-xs text-neutral-600 mb-1">${location.wilayah}</p>
+                                    <p class="text-xs text-neutral-500 mb-2">${location.alamat}</p>
                                     <div class="flex justify-between items-center text-xs">
                                         <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">${location.status}</span>
-                                        ${location.kategori ? `<span class="bg-gray-100 text-gray-800 px-2 py-1 rounded">${location.kategori}</span>` : ''}
+                                        ${location.kategori ? `<span class="bg-neutral-100 text-neutral-800 px-2 py-1 rounded">${location.kategori}</span>` : ''}
                                     </div>
                                     ${location.telp ? `<p class="text-xs mt-2"><strong>Telp:</strong> ${location.telp}</p>` : ''}
                                     ${location.email ? `<p class="text-xs"><strong>Email:</strong> ${location.email}</p>` : ''}

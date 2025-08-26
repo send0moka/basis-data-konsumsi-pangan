@@ -80,11 +80,11 @@ class DaftarAlamat extends Model
             'Aktif' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
             'Tidak Aktif' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
             'Draft' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-            'Arsip' => 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
+            'Arsip' => 'bg-neutral-100 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-300',
             'Pending' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
         ];
 
-        return $badges[$this->status] ?? 'bg-gray-100 text-gray-800';
+        return $badges[$this->status] ?? 'bg-neutral-100 text-neutral-800';
     }
 
     // Static methods

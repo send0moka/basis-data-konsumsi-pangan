@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BenihPupukController extends Controller
 {
@@ -643,5 +645,80 @@ class BenihPupukController extends Controller
                 'error' => $e->getMessage()
             ]);
         }
+    }
+
+    /**
+     * Export benih pupuk data to Excel
+     */
+    public function exportExcel(Request $request)
+    {
+        $filters = $request->all();
+        
+        return Excel::download(new \App\Exports\BenihPupukExport($filters), 
+            'benih-pupuk-report-' . date('Y-m-d') . '.xlsx');
+    }
+
+    /**
+     * Export benih pupuk data to CSV
+     */
+    public function exportCsv(Request $request)
+    {
+        $filters = $request->all();
+        
+        return Excel::download(new \App\Exports\BenihPupukExport($filters), 
+            'benih-pupuk-report-' . date('Y-m-d') . '.csv');
+    }
+
+    /**
+     * Export benih pupuk data to PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        $filters = $request->all();
+        
+        // Get filtered data
+        $query = DB::table('benih_pupuk_data as d')
+            ->join('benih_pupuk_variabel as v', 'd.id_variabel', '=', 'v.id')
+            ->join('benih_pupuk_klasifikasi as k', 'd.id_klasifikasi', '=', 'k.id')
+            ->join('benih_pupuk_wilayah as w', 'd.id_wilayah', '=', 'w.id')
+            ->join('benih_pupuk_bulan as b', 'd.id_bulan', '=', 'b.id')
+            ->select(
+                'd.tahun',
+                'b.deskripsi as bulan',
+                'w.nama as wilayah',
+                'v.deskripsi as variabel',
+                'k.deskripsi as klasifikasi',
+                'd.nilai',
+                'd.status'
+            );
+
+        // Apply filters
+        if (!empty($filters['tahun'])) {
+            $query->where('d.tahun', $filters['tahun']);
+        }
+        if (!empty($filters['bulan'])) {
+            $query->where('d.id_bulan', $filters['bulan']);
+        }
+        if (!empty($filters['wilayah'])) {
+            $query->where('d.id_wilayah', $filters['wilayah']);
+        }
+        if (!empty($filters['variabel'])) {
+            $query->where('d.id_variabel', $filters['variabel']);
+        }
+        if (!empty($filters['klasifikasi'])) {
+            $query->where('d.id_klasifikasi', $filters['klasifikasi']);
+        }
+        if (!empty($filters['status'])) {
+            $query->where('d.status', $filters['status']);
+        }
+
+        $data = $query->orderBy('d.tahun', 'desc')
+            ->orderBy('d.id_bulan')
+            ->orderBy('w.nama')
+            ->get();
+
+        $pdf = Pdf::loadView('exports.benih-pupuk-pdf', compact('data', 'filters'));
+        
+        return $pdf->download('benih-pupuk-report-' . date('Y-m-d') . '.pdf');
     }
 }
