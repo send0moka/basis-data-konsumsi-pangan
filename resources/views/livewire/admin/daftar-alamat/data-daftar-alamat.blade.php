@@ -139,6 +139,9 @@
                                 @endif
                             </div>
                         </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                            Gambar
+                        </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors" wire:click="sortByField('nama_dinas')">
                             <div class="flex items-center space-x-1">
                                 <span>Nama Dinas</span>
@@ -236,6 +239,17 @@
                             <td class="px-6 py-4 text-sm text-neutral-900 dark:text-white">
                                 <div class="max-w-xs truncate">{{ $alamat->wilayah }}</div>
                             </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($alamat->gambar)
+                                    <img src="{{ $alamat->gambar_url }}" alt="Gambar {{ $alamat->nama_dinas }}" class="w-12 h-12 object-cover rounded-lg shadow-sm">
+                                @else
+                                    <div class="w-12 h-12 bg-neutral-100 dark:bg-neutral-700 rounded-lg flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                @endif
+                            </td>
                             <td class="px-6 py-4 text-sm text-neutral-900 dark:text-white">
                                 <div class="max-w-xs">
                                     <div class="font-medium truncate">{{ $alamat->nama_dinas }}</div>
@@ -303,7 +317,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-neutral-500 dark:text-neutral-400">
+                            <td colspan="8" class="px-6 py-12 text-center text-neutral-500 dark:text-neutral-400">
                                 <div class="flex flex-col items-center">
                                     <svg class="w-12 h-12 mb-4 text-neutral-300 dark:text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -329,22 +343,29 @@
     <!-- Modal Form -->
     @if($showModal)
     <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-neutral-500 bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="$set('showModal', false)"></div>
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-neutral-500 bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="$set('showModal', false)"></div>
+        
+        <!-- Modal container -->
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white dark:bg-neutral-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
-                <div class="bg-white dark:bg-neutral-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-medium text-neutral-900 dark:text-white" id="modal-title">
-                            {{ $modalMode === 'create' ? 'Tambah Alamat Baru' : 'Edit Alamat' }}
-                        </h3>
-                        <button wire:click="$set('showModal', false)" class="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-            <form wire:submit="save" class="space-y-6">
+            <div class="relative inline-block align-bottom bg-white dark:bg-neutral-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full z-10">
+                <form id="alamat-form" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" id="modal-mode" value="{{ $modalMode }}">
+                    <input type="hidden" id="selected-id" value="{{ $selectedId }}">
+                    <div class="bg-white dark:bg-neutral-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-medium text-neutral-900 dark:text-white" id="modal-title">
+                                {{ $modalMode === 'create' ? 'Tambah Alamat Baru' : 'Edit Alamat' }}
+                            </h3>
+                            <button type="button" wire:click="$set('showModal', false)" class="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">No</label>
@@ -444,17 +465,68 @@
                         <textarea wire:model="keterangan" placeholder="Keterangan tambahan" rows="2" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent"></textarea>
                         @error('keterangan') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
-                </div>
-            </form>
-                </div>
-                <div class="bg-neutral-50 dark:bg-neutral-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button wire:click="save" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        {{ $modalMode === 'create' ? 'Simpan' : 'Perbarui' }}
-                    </button>
-                    <button wire:click="$set('showModal', false)" class="mt-3 w-full inline-flex justify-center rounded-md border border-neutral-300 dark:border-neutral-600 shadow-sm px-4 py-2 bg-white dark:bg-neutral-800 text-base font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        Batal
-                    </button>
-                </div>
+
+                    <!-- Image Upload Section -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Gambar</label>
+                        
+                        <!-- File Input -->
+                        <div class="mt-1">
+                            <input id="gambar-upload" type="file" accept="image/*" 
+                                   class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300" 
+                                   onchange="previewImage(this)" />
+                            @error('gambar') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div id="image-preview" class="mt-4 hidden">
+                            <p class="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Preview:</p>
+                            <div class="border-2 border-dashed border-neutral-300 dark:border-neutral-600 rounded-lg p-4">
+                                <img id="preview-img" src="" alt="Preview" class="max-w-full h-auto max-h-48 mx-auto rounded-lg shadow-sm">
+                            </div>
+                        </div>
+
+                        <!-- Existing Image -->
+                        @if ($existingGambar)
+                            <div class="mt-4" id="existing-image">
+                                <p class="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Gambar Saat Ini:</p>
+                                <div class="relative inline-block">
+                                    <img src="{{ asset('storage/' . $existingGambar) }}" alt="Existing Image" class="max-w-full h-auto max-h-48 rounded-lg shadow-sm">
+                                    <button wire:click="deleteImage" type="button" 
+                                            wire:confirm="Apakah Anda yakin ingin menghapus gambar ini?"
+                                            class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-lg">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        @endif
+
+                        <p class="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                            Format yang didukung: JPEG, PNG, JPG, GIF, SVG. Maksimal 2MB.
+                        </p>
+                    </div>
+                        </div>
+                    </div>
+                    <div class="bg-neutral-50 dark:bg-neutral-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" onclick="submitForm()" id="submit-btn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="submit-text">{{ $modalMode === 'create' ? 'Simpan' : 'Perbarui' }}</span>
+                            <span id="loading-text" class="hidden">
+                                <div class="flex items-center">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                {{ $modalMode === 'create' ? 'Menyimpan...' : 'Memperbarui...' }}
+                                </div>
+                            </span>
+                        </button>
+                        <button type="button" wire:click="$set('showModal', false)" class="mt-3 w-full inline-flex justify-center rounded-md border border-neutral-300 dark:border-neutral-600 shadow-sm px-4 py-2 bg-white dark:bg-neutral-800 text-base font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Batal
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -466,4 +538,170 @@
             {{ session('message') }}
         </div>
     @endif
+    
+    @if (session()->has('error'))
+        <div class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            const existingImage = document.getElementById('existing-image');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    if (existingImage) {
+                        existingImage.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function submitForm() {
+            const form = document.getElementById('alamat-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const submitText = document.getElementById('submit-text');
+            const loadingText = document.getElementById('loading-text');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitText.classList.add('hidden');
+            loadingText.classList.remove('hidden');
+            
+            const formData = new FormData();
+            const modalMode = document.getElementById('modal-mode').value;
+            const selectedId = document.getElementById('selected-id').value;
+            
+            // Add all form fields manually
+            formData.append('no', document.querySelector('input[wire\\:model="no"]').value || '');
+            formData.append('wilayah', document.querySelector('input[wire\\:model="wilayah"]').value || '');
+            formData.append('nama_dinas', document.querySelector('input[wire\\:model="nama_dinas"]').value || '');
+            formData.append('alamat', document.querySelector('textarea[wire\\:model="alamat"]').value || '');
+            formData.append('telp', document.querySelector('input[wire\\:model="telp"]').value || '');
+            formData.append('faks', document.querySelector('input[wire\\:model="faks"]').value || '');
+            formData.append('email', document.querySelector('input[wire\\:model="email"]').value || '');
+            formData.append('website', document.querySelector('input[wire\\:model="website"]').value || '');
+            formData.append('posisi', document.querySelector('input[wire\\:model="posisi"]').value || '');
+            formData.append('urut', document.querySelector('input[wire\\:model="urut"]').value || '');
+            formData.append('status', document.querySelector('select[wire\\:model="status"]').value || '');
+            formData.append('kategori', document.querySelector('select[wire\\:model="kategori"]').value || '');
+            formData.append('keterangan', document.querySelector('textarea[wire\\:model="keterangan"]').value || '');
+            formData.append('latitude', document.querySelector('input[wire\\:model="latitude"]').value || '');
+            formData.append('longitude', document.querySelector('input[wire\\:model="longitude"]').value || '');
+            
+            // Handle file upload with base64 encoding to bypass PHP temp file issues
+            const fileInput = document.getElementById('gambar-upload');
+            
+            if (fileInput && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                
+                if (file.type.startsWith('image/') && file.size <= 2048000) {
+                    // Convert to base64 to bypass PHP temp file system
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        
+                        formData.append('gambar_base64', e.target.result);
+                        formData.append('gambar_name', file.name);
+                        formData.append('gambar_type', file.type);
+                        
+                        // Submit form after file is read
+                        submitFormData(formData);
+                    };
+                    reader.onerror = function(e) {
+                        console.error('FileReader error:', e);
+                        submitFormData(formData); // Submit without image
+                    };
+                    reader.readAsDataURL(file);
+                    return; // Exit here, will continue in reader.onload
+                }
+            }
+            
+            // Submit form without file
+            submitFormData(formData);
+        }
+        
+        function submitFormData(formData) {
+            const submitBtn = document.getElementById('submit-btn');
+            const submitText = document.getElementById('submit-text');
+            const loadingText = document.getElementById('loading-text');
+            const modalMode = document.getElementById('modal-mode').value;
+            const selectedId = document.getElementById('selected-id').value;
+            
+            // Add mode and ID to formData
+            formData.append('mode', modalMode);
+            if (selectedId) {
+                formData.append('id', selectedId);
+            }
+            
+            
+            fetch('{{ route("admin.daftar-alamat.save") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    return response.text().then(text => {
+                        console.error('Server returned non-JSON response:', text);
+                        // Try to extract JSON from mixed content
+                        const jsonMatch = text.match(/\{.*\}$/);
+                        if (jsonMatch) {
+                            try {
+                                return JSON.parse(jsonMatch[0]);
+                            } catch (e) {
+                                throw new Error('Server returned HTML instead of JSON. Check server logs.');
+                            }
+                        }
+                        throw new Error('Server returned HTML instead of JSON. Check server logs.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Close modal and refresh
+                    @this.set('showModal', false);
+                    @this.$refresh();
+                    
+                    // Show success message
+                    const message = document.createElement('div');
+                    message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+                    message.textContent = data.message;
+                    document.body.appendChild(message);
+                    setTimeout(() => message.remove(), 3000);
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                
+                // Show error message
+                const message = document.createElement('div');
+                message.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+                message.textContent = error.message || 'Terjadi kesalahan saat menyimpan data';
+                document.body.appendChild(message);
+                setTimeout(() => message.remove(), 5000);
+            })
+            .finally(() => {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitText.classList.remove('hidden');
+                loadingText.classList.add('hidden');
+            });
+        }
+    </script>
 </div>

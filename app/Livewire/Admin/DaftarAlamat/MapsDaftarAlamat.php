@@ -83,6 +83,7 @@ class MapsDaftarAlamat extends Component
                 'kategori' => $alamat->kategori,
                 'telp' => $alamat->telp,
                 'email' => $alamat->email,
+                'gambar' => $alamat->gambar ? asset('storage/' . $alamat->gambar) : null,
             ];
         });
 
@@ -128,6 +129,7 @@ class MapsDaftarAlamat extends Component
                 'kategori' => $alamat->kategori,
                 'telp' => $alamat->telp,
                 'email' => $alamat->email,
+                'gambar' => $alamat->gambar ? asset('storage/' . $alamat->gambar) : null,
             ];
         });
 

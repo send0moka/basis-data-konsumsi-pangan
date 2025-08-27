@@ -151,6 +151,9 @@ Route::middleware(['auth'])->prefix('admin/daftar-alamat')->name('admin.daftar-a
     Route::get('export/excel', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'exportExcel'])->name('export.excel');
     Route::get('export/csv', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'exportCsv'])->name('export.csv');
     Route::get('export/pdf', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'exportPdf'])->name('export.pdf');
+    
+    // Save route for traditional form submission
+    Route::post('save', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'save'])->name('save');
 });
 
 // Panel Benih Pupuk Routes

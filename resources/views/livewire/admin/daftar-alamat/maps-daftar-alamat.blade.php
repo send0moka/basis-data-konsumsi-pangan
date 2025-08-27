@@ -190,6 +190,17 @@
                         </div>
                     @endif
 
+                    @if($selectedAlamat->gambar)
+                        <div>
+                            <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Gambar</label>
+                            <div class="mt-2">
+                                <img src="{{ asset('storage/' . $selectedAlamat->gambar) }}" 
+                                     alt="{{ $selectedAlamat->nama_dinas }}" 
+                                     class="w-full max-w-sm h-48 object-cover rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-600">
+                            </div>
+                        </div>
+                    @endif
+
                     @if($selectedAlamat->keterangan)
                         <div>
                             <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Keterangan</label>
@@ -252,15 +263,22 @@
                     const marker = L.marker([location.lat, location.lng], { icon: customIcon })
                         .addTo(map)
                         .bindPopup(`
-                            <div class="p-2 min-w-[200px]">
+                            <div class="p-3 min-w-[250px] max-w-[300px]">
+                                ${location.gambar ? `
+                                    <div class="mb-3">
+                                        <img src="${location.gambar}" alt="${location.title}" 
+                                             class="w-full h-32 object-cover rounded-lg shadow-sm" 
+                                             onerror="this.style.display='none'">
+                                    </div>
+                                ` : ''}
                                 <h3 class="font-semibold text-sm mb-2">${location.title}</h3>
                                 <p class="text-xs text-neutral-600 mb-1">${location.wilayah}</p>
                                 <p class="text-xs text-neutral-500 mb-2">${location.alamat}</p>
-                                <div class="flex justify-between items-center text-xs">
+                                <div class="flex justify-between items-center text-xs mb-2">
                                     <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">${location.status}</span>
                                     ${location.kategori ? `<span class="bg-neutral-100 text-neutral-800 px-2 py-1 rounded">${location.kategori}</span>` : ''}
                                 </div>
-                                ${location.telp ? `<p class="text-xs mt-2"><strong>Telp:</strong> ${location.telp}</p>` : ''}
+                                ${location.telp ? `<p class="text-xs mt-1"><strong>Telp:</strong> ${location.telp}</p>` : ''}
                                 ${location.email ? `<p class="text-xs"><strong>Email:</strong> ${location.email}</p>` : ''}
                             </div>
                         `);
@@ -287,15 +305,22 @@
                         const marker = L.marker([location.lat, location.lng], { icon: customIcon })
                             .addTo(map)
                             .bindPopup(`
-                                <div class="p-2 min-w-[200px]">
+                                <div class="p-3 min-w-[250px] max-w-[300px]">
+                                    ${location.gambar ? `
+                                        <div class="mb-3">
+                                            <img src="${location.gambar}" alt="${location.title}" 
+                                                 class="w-full h-32 object-cover rounded-lg shadow-sm" 
+                                                 onerror="this.style.display='none'">
+                                        </div>
+                                    ` : ''}
                                     <h3 class="font-semibold text-sm mb-2">${location.title}</h3>
                                     <p class="text-xs text-neutral-600 mb-1">${location.wilayah}</p>
                                     <p class="text-xs text-neutral-500 mb-2">${location.alamat}</p>
-                                    <div class="flex justify-between items-center text-xs">
+                                    <div class="flex justify-between items-center text-xs mb-2">
                                         <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">${location.status}</span>
                                         ${location.kategori ? `<span class="bg-neutral-100 text-neutral-800 px-2 py-1 rounded">${location.kategori}</span>` : ''}
                                     </div>
-                                    ${location.telp ? `<p class="text-xs mt-2"><strong>Telp:</strong> ${location.telp}</p>` : ''}
+                                    ${location.telp ? `<p class="text-xs mt-1"><strong>Telp:</strong> ${location.telp}</p>` : ''}
                                     ${location.email ? `<p class="text-xs"><strong>Email:</strong> ${location.email}</p>` : ''}
                                 </div>
                             `);

@@ -27,6 +27,7 @@ class DaftarAlamat extends Model
         'keterangan',
         'latitude',
         'longitude',
+        'gambar',
     ];
 
     protected $casts = [
@@ -85,6 +86,12 @@ class DaftarAlamat extends Model
         ];
 
         return $badges[$this->status] ?? 'bg-neutral-100 text-neutral-800';
+    }
+
+    public function getGambarUrlAttribute()
+    {
+        if (!$this->gambar) return null;
+        return asset('storage/' . $this->gambar);
     }
 
     // Static methods
