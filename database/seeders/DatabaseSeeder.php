@@ -15,9 +15,18 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RolePermissionSeeder::class,
+            DaftarAlamatSeeder::class,
+            
+            // Enhanced NBM System Seeders
             KelompokSeeder::class,
             KomoditiSeeder::class,
             TransaksiNbmSeeder::class,
+            FaktorEksternalSeeder::class,
+            KebijakanPanganSeeder::class,
+            PolaMusimanSeeder::class,
+            TransaksiNbmRegionalSeeder::class,
+            
+            // Legacy BPS Seeders
             KelompokBpsSeeder::class,
             KomoditiBpsSeeder::class,
             SusenasSeeder::class,

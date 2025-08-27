@@ -146,6 +146,14 @@ Route::middleware(['auth'])->prefix('admin/daftar-alamat')->name('admin.daftar-a
     Route::view('maps', 'admin.daftar-alamat.maps')->name('maps');
     Route::view('reports', 'admin.daftar-alamat.reports')->name('reports');
     Route::view('settings', 'admin.daftar-alamat.settings')->name('settings');
+    
+    // Export routes
+    Route::get('export/excel', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'exportExcel'])->name('export.excel');
+    Route::get('export/csv', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'exportCsv'])->name('export.csv');
+    Route::get('export/pdf', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'exportPdf'])->name('export.pdf');
+    
+    // Save route for traditional form submission
+    Route::post('save', [App\Http\Controllers\Admin\DaftarAlamatController::class, 'save'])->name('save');
 });
 
 // Panel Benih Pupuk Routes
@@ -155,9 +163,11 @@ Route::middleware(['auth'])->prefix('admin/benih-pupuk')->name('admin.benih-pupu
     })->name('dashboard');
     
     Route::view('data', 'admin.panel-benih-pupuk.data')->name('data');
-    Route::view('maps', 'admin.panel-benih-pupuk.maps')->name('maps');
-    Route::view('reports', 'admin.panel-benih-pupuk.reports')->name('reports');
-    Route::view('settings', 'admin.panel-benih-pupuk.settings')->name('settings');
+    
+    // Export routes - using direct names without duplicate prefix
+    Route::get('export/excel', [App\Http\Controllers\BenihPupukController::class, 'exportExcel'])->name('export.excel');
+    Route::get('export/csv', [App\Http\Controllers\BenihPupukController::class, 'exportCsv'])->name('export.csv');
+    Route::get('export/pdf', [App\Http\Controllers\BenihPupukController::class, 'exportPdf'])->name('export.pdf');
 });
 
 // Susenas Routes (accessible by both superadmin and admin)

@@ -12,7 +12,10 @@ class KomoditiSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create sample komoditi data
+        // Create the 26 specific komoditi data with enhanced nutritional information
         Komoditi::factory(26)->create();
+        
+        // Add additional komoditi for testing ML models
+        // Komoditi::factory(20)->create();
     }
 }

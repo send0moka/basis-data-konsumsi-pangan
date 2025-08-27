@@ -26,24 +26,8 @@
                         <span class="nav-link-text transition-colors {{ request()->routeIs('admin.benih-pupuk.data') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Data Benih & Pupuk') }}</span>
                     </flux:navlist.item>
                     
-                    <flux:navlist.item icon="map" :href="route('admin.benih-pupuk.maps')" :current="request()->routeIs('admin.benih-pupuk.maps')" wire:navigate class="group active-icon">
-                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.benih-pupuk.maps') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Peta Distribusi') }}</span>
-                    </flux:navlist.item>
                 </flux:navlist.group>
 
-                <!-- Laporan -->
-                <flux:navlist.group :heading="__('Laporan')" class="grid">
-                    <flux:navlist.item icon="document-chart-bar" :href="route('admin.benih-pupuk.reports')" :current="request()->routeIs('admin.benih-pupuk.reports')" wire:navigate class="group active-icon">
-                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.benih-pupuk.reports') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Laporan Benih & Pupuk') }}</span>
-                    </flux:navlist.item>
-                </flux:navlist.group>
-
-                <!-- Pengaturan -->
-                <flux:navlist.group :heading="__('Pengaturan')" class="grid">
-                    <flux:navlist.item icon="cog" :href="route('admin.benih-pupuk.settings')" :current="request()->routeIs('admin.benih-pupuk.settings')" wire:navigate class="group active-icon">
-                        <span class="nav-link-text transition-colors {{ request()->routeIs('admin.benih-pupuk.settings') ? 'text-neutral-900 dark:!text-white' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-200' }}">{{ __('Pengaturan') }}</span>
-                    </flux:navlist.item>
-                </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
@@ -153,5 +137,6 @@
 
         @stack('scripts')
         @fluxScripts
+        @livewireScripts
     </body>
 </html>
