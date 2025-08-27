@@ -13,7 +13,7 @@ class IklimoptdpiTopik extends Model
     protected $table = 'iklimoptdpi_topik';
     
     protected $fillable = [
-        'nama',
+        'deskripsi',
     ];
 
     protected function casts(): array
@@ -24,8 +24,8 @@ class IklimoptdpiTopik extends Model
         ];
     }
 
-    public function iklimoptdpiData(): HasMany
+    public function variabels(): HasMany
     {
-        return $this->hasMany(IklimoptdpiData::class, 'id_iklimoptdpi_topik');
+        return $this->hasMany(IklimoptdpiVariabel::class, 'id_topik');
     }
 }

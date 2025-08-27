@@ -54,10 +54,9 @@ class BenihPupukController extends Controller
             return response()->json([]);
         }
         
-        $klasifikasis = DB::table('benih_pupuk_variabel_klasifikasi as vk')
-            ->join('benih_pupuk_klasifikasi as k', 'vk.id_klasifikasi', '=', 'k.id')
+        $klasifikasis = DB::table('benih_pupuk_klasifikasi as k')
             ->select('k.id', 'k.deskripsi')
-            ->whereIn('vk.id_variabel', $variabelIds)
+            ->whereIn('k.id_variabel', $variabelIds)
             ->distinct()
             ->orderBy('k.id')
             ->get();
@@ -70,7 +69,7 @@ class BenihPupukController extends Controller
      */
     public function getWilayahs()
     {
-        $wilayahs = DB::table('benih_pupuk_wilayah')
+        $wilayahs = DB::table('wilayah')
             ->select('id', 'nama', 'id_parent')
             ->orderBy('sorter')
             ->get();
@@ -83,7 +82,7 @@ class BenihPupukController extends Controller
      */
     public function getProvinces()
     {
-        $provinces = DB::table('benih_pupuk_wilayah')
+        $provinces = DB::table('wilayah')
             ->select('id', 'nama')
             ->whereNull('id_parent')
             ->orderBy('sorter')
@@ -97,7 +96,7 @@ class BenihPupukController extends Controller
      */
     public function getKabupatenByProvince($provinceId)
     {
-        $kabupaten = DB::table('benih_pupuk_wilayah')
+        $kabupaten = DB::table('wilayah')
             ->select('id', 'nama')
             ->where('id_parent', $provinceId)
             ->orderBy('sorter')
@@ -111,8 +110,8 @@ class BenihPupukController extends Controller
      */
     public function getBulans()
     {
-        $bulans = DB::table('benih_pupuk_bulan')
-            ->select('id', 'nama')
+        $bulans = DB::table('bulan')
+            ->select('id', 'nama_bulan as nama')
             ->where('id', '>', 0) // Exclude id=0 ("-")
             ->orderBy('id')
             ->get();
@@ -223,8 +222,8 @@ class BenihPupukController extends Controller
             $query = DB::table('benih_pupuk_data as d')
                 ->join('benih_pupuk_variabel as v', 'd.id_variabel', '=', 'v.id')
                 ->join('benih_pupuk_klasifikasi as k', 'd.id_klasifikasi', '=', 'k.id')
-                ->join('benih_pupuk_wilayah as w', 'd.id_wilayah', '=', 'w.id')
-                ->join('benih_pupuk_bulan as b', 'd.id_bulan', '=', 'b.id')
+                ->join('wilayah as w', 'd.id_wilayah', '=', 'w.id')
+                ->join('bulan as b', 'd.id_bulan', '=', 'b.id')
                 ->join('benih_pupuk_topik as t', 'v.id_topik', '=', 't.id')
                 ->select(
                     'd.tahun',
@@ -271,7 +270,7 @@ class BenihPupukController extends Controller
                 Log::info('Available variabel data for topik: ' . json_encode($checkQuery));
                 
                 // Also check if regions exist
-                $regionCheck = DB::table('benih_pupuk_wilayah')
+                $regionCheck = DB::table('wilayah')
                     ->whereIn('id', $selectedRegions)
                     ->get(['id', 'nama']);
                 Log::info('Available regions: ' . json_encode($regionCheck));
@@ -306,19 +305,6 @@ class BenihPupukController extends Controller
                     ->where('id', 1)
                     ->first(['id', 'nama', 'deskripsi']);
                 Log::info('Klasifikasi 1 details: ' . json_encode($klasifikasiCheck));
-                
-                // Check the junction table that might be missing
-                $junctionCheck = DB::table('benih_pupuk_variabel_klasifikasi')
-                    ->where('id_variabel', 1)
-                    ->where('id_klasifikasi', 1)
-                    ->first();
-                Log::info('Junction table record for variabel 1, klasifikasi 1: ' . json_encode($junctionCheck));
-                
-                // Check if any junction records exist at all
-                $allJunction = DB::table('benih_pupuk_variabel_klasifikasi')
-                    ->limit(5)
-                    ->get();
-                Log::info('Sample junction table records: ' . json_encode($allJunction));
             }
             Log::info('Search query found ' . $rawData->count() . ' records');
             if ($rawData->count() > 0) {
@@ -390,7 +376,7 @@ class BenihPupukController extends Controller
             }
 
             // Get ALL selected regions from database, not just ones with data
-            $allSelectedRegions = DB::table('benih_pupuk_wilayah')
+            $allSelectedRegions = DB::table('wilayah')
                 ->whereIn('id', $filters['selectedRegions'])
                 ->orderBy('sorter')
                 ->pluck('nama', 'id');
@@ -471,7 +457,7 @@ class BenihPupukController extends Controller
 
         } else {
             // tipe_3: Months as columns, years as rows
-            $monthNames = DB::table('benih_pupuk_bulan')
+            $monthNames = DB::table('bulan')
                 ->whereIn('id', $selectedMonths)
                 ->orderBy('id')
                 ->pluck('nama')
@@ -565,7 +551,7 @@ class BenihPupukController extends Controller
                 ->whereIn('id', $filters['klasifikasis'] ?? [])
                 ->select('id', 'deskripsi')
                 ->get()->toArray(),
-            'selectedRegions' => DB::table('benih_pupuk_wilayah')
+            'selectedRegions' => DB::table('wilayah')
                 ->whereIn('id', $filters['selectedRegions'] ?? [])
                 ->select('id', 'nama')
                 ->orderBy('sorter')
@@ -573,7 +559,7 @@ class BenihPupukController extends Controller
             'yearGroups' => collect($years)->map(function($year) use ($selectedMonths) {
                 return [
                     'year' => $year,
-                    'months' => DB::table('benih_pupuk_bulan')
+                    'months' => DB::table('bulan')
                         ->whereIn('id', $selectedMonths)
                         ->orderBy('id')
                         ->select('id', 'nama')
@@ -608,7 +594,7 @@ class BenihPupukController extends Controller
             $sampleData = DB::table('benih_pupuk_data as d')
                 ->join('benih_pupuk_variabel as v', 'd.id_variabel', '=', 'v.id')
                 ->join('benih_pupuk_klasifikasi as k', 'd.id_klasifikasi', '=', 'k.id')
-                ->join('benih_pupuk_wilayah as w', 'd.id_wilayah', '=', 'w.id')
+                ->join('wilayah as w', 'd.id_wilayah', '=', 'w.id')
                 ->join('benih_pupuk_topik as t', 'v.id_topik', '=', 't.id')
                 ->select(
                     't.id as topik_id',

@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Bulan;
+use App\Models\Wilayah;
+use App\Models\IklimoptdpiVariabel;
+use App\Models\IklimoptdpiKlasifikasi;
 
 class IklimoptdpiData extends Model
 {
@@ -12,56 +16,48 @@ class IklimoptdpiData extends Model
     
     protected $table = 'iklimoptdpi_data';
     
+    // Composite primary key
+    protected $primaryKey = null;
+    public $incrementing = false;
+    
     protected $fillable = [
-        'nilai',
-        'wilayah',
         'tahun',
+        'id_bulan',
+        'id_variabel',
+        'id_klasifikasi',
+        'id_wilayah',
+        'nilai',
         'status',
-        'id_iklimoptdpi_topik',
-        'id_iklimoptdpi_variabel',
-        'id_iklimoptdpi_klasifikasi',
     ];
 
     protected function casts(): array
     {
         return [
-            'nilai' => 'decimal:2',
             'tahun' => 'integer',
+            'id_bulan' => 'integer',
+            'nilai' => 'double',
             'created_at' => 'datetime:Y-m-d H:i:s',
             'updated_at' => 'datetime:Y-m-d H:i:s',
         ];
     }
 
-    public function iklimoptdpiTopik(): BelongsTo
+    public function bulan(): BelongsTo
     {
-        return $this->belongsTo(IklimoptdpiTopik::class, 'id_iklimoptdpi_topik');
+        return $this->belongsTo(Bulan::class, 'id_bulan');
     }
 
-    // Alias for iklimoptdpiTopik to match the relationship name used in the component
-    public function topik()
+    public function variabel(): BelongsTo
     {
-        return $this->belongsTo(IklimoptdpiTopik::class, 'id_iklimoptdpi_topik');
+        return $this->belongsTo(IklimoptdpiVariabel::class, 'id_variabel');
     }
 
-    public function iklimoptdpiVariabel(): BelongsTo
+    public function klasifikasi(): BelongsTo
     {
-        return $this->belongsTo(IklimoptdpiVariabel::class, 'id_iklimoptdpi_variabel');
+        return $this->belongsTo(IklimoptdpiKlasifikasi::class, 'id_klasifikasi');
     }
 
-    // Alias for iklimoptdpiVariabel to match the relationship name used in the component
-    public function variabel()
+    public function wilayah(): BelongsTo
     {
-        return $this->belongsTo(IklimoptdpiVariabel::class, 'id_iklimoptdpi_variabel');
-    }
-
-    public function iklimoptdpiKlasifikasi(): BelongsTo
-    {
-        return $this->belongsTo(IklimoptdpiKlasifikasi::class, 'id_iklimoptdpi_klasifikasi');
-    }
-
-    // Alias for iklimoptdpiKlasifikasi to match the relationship name used in the component
-    public function klasifikasi()
-    {
-        return $this->belongsTo(IklimoptdpiKlasifikasi::class, 'id_iklimoptdpi_klasifikasi');
+        return $this->belongsTo(Wilayah::class, 'id_wilayah');
     }
 }

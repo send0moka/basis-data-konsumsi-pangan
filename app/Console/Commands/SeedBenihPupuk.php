@@ -32,13 +32,9 @@ class SeedBenihPupuk extends Command
             // Drop tables in reverse order due to foreign key constraints
             $tables = [
                 'benih_pupuk_data',
-                'benih_pupuk_variabel_klasifikasi', 
                 'benih_pupuk_variabel',
-                'benih_pupuk_wilayah',
-                'benih_pupuk_wilayah_kategori',
                 'benih_pupuk_klasifikasi',
                 'benih_pupuk_topik',
-                'benih_pupuk_bulan'
             ];
             
             foreach ($tables as $table) {

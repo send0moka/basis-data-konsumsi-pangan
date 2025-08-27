@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\BenihPupuk;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WilayahKategori extends Model
 {
-    protected $table = 'benih_pupuk_wilayah_kategori';
+    protected $table = 'wilayah_kategori';
     protected $primaryKey = 'id';
     public $timestamps = false;
     

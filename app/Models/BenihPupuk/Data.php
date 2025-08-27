@@ -4,14 +4,19 @@ namespace App\Models\BenihPupuk;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\BenihPupuk\Variabel;
+use App\Models\BenihPupuk\Klasifikasi;
+use App\Models\BenihPupuk\Topik;
+use App\Models\Wilayah;
+use App\Models\Bulan;
 
 class Data extends Model
 {
     protected $table = 'benih_pupuk_data';
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
     
-    protected $primaryKey = ['tahun', 'id_bulan', 'id_wilayah', 'id_variabel', 'id_klasifikasi'];
+    protected $primaryKey = 'id';
     
     protected $fillable = [
         'tahun',
