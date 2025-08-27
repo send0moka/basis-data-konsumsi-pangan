@@ -232,6 +232,13 @@
     <!-- Map Script -->
     <script>
         function initializeMap() {
+            // Check if Leaflet is loaded
+            if (typeof L === 'undefined') {
+                // Wait for Leaflet to load and try again
+                setTimeout(initializeMap, 100);
+                return;
+            }
+            
             // Check if map container exists and is not already initialized
             const mapContainer = document.getElementById('map');
             if (!mapContainer || mapContainer._leaflet_id) {
@@ -340,14 +347,17 @@
         document.addEventListener('DOMContentLoaded', initializeMap);
         
         // Initialize map on Livewire navigation (for SPA navigation)
-        document.addEventListener('livewire:navigated', initializeMap);
+        document.addEventListener('livewire:navigated', function() {
+            // Add small delay to ensure Leaflet script is loaded
+            setTimeout(initializeMap, 200);
+        });
         
         // Initialize map immediately if DOM is already loaded
         if (document.readyState === 'loading') {
             // DOM is still loading
         } else {
             // DOM is already loaded
-            initializeMap();
+            setTimeout(initializeMap, 100);
         }
     </script>
     @endpush
