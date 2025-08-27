@@ -64,6 +64,10 @@
                     <tr>
                         <th scope="col" class="px-6 py-3">Kode</th>
                         <th scope="col" class="px-6 py-3">Nama Kelompok</th>
+                        <th scope="col" class="px-6 py-3">Deskripsi</th>
+                        <th scope="col" class="px-6 py-3">Prioritas Nasional</th>
+                        <th scope="col" class="px-6 py-3">Target Konsumsi Harian</th>
+                        <th scope="col" class="px-6 py-3">Status Aktif</th>
                         <th scope="col" class="px-6 py-3">Dibuat</th>
                         <th scope="col" class="px-6 py-3 no-print">Aksi</th>
                     </tr>
@@ -76,6 +80,20 @@
                         </td>
                         <td class="px-6 py-4">
                             {{ $kelompok->nama }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ $kelompok->deskripsi }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ $kelompok->prioritas_nasional }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ $kelompok->target_konsumsi_harian }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded text-xs {{ $kelompok->status_aktif ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                {{ $kelompok->status_aktif ? 'Aktif' : 'Nonaktif' }}
+                            </span>
                         </td>
                         <td class="px-6 py-4">
                             {{ $kelompok->created_at->format('d/m/Y') }}
@@ -130,6 +148,21 @@
 
                         <flux:input wire:model="nama" label="Nama Kelompok" placeholder="Masukkan nama kelompok" required />
                         @error('nama') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="deskripsi" label="Deskripsi" placeholder="Deskripsi kelompok" />
+                        @error('deskripsi') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="prioritas_nasional" label="Prioritas Nasional" placeholder="Prioritas nasional (misal: tinggi, sedang, rendah)" />
+                        @error('prioritas_nasional') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="target_konsumsi_harian" label="Target Konsumsi Harian" type="number" step="0.01" placeholder="Target konsumsi harian" />
+                        @error('target_konsumsi_harian') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" wire:model="status_aktif" id="status_aktif" class="form-checkbox h-4 w-4 text-accent" />
+                            <label for="status_aktif" class="text-sm">Aktif</label>
+                        </div>
+                        @error('status_aktif') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex justify-end space-x-3 mt-6">
                         <flux:button type="button" wire:click="closeCreateModal" variant="ghost">
@@ -158,6 +191,21 @@
 
                         <flux:input wire:model="nama" label="Nama Kelompok" placeholder="Masukkan nama kelompok" required />
                         @error('nama') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="deskripsi" label="Deskripsi" placeholder="Deskripsi kelompok" />
+                        @error('deskripsi') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="prioritas_nasional" label="Prioritas Nasional" placeholder="Prioritas nasional (misal: tinggi, sedang, rendah)" />
+                        @error('prioritas_nasional') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="target_konsumsi_harian" label="Target Konsumsi Harian" type="number" step="0.01" placeholder="Target konsumsi harian" />
+                        @error('target_konsumsi_harian') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" wire:model="status_aktif" id="status_aktif_edit" class="form-checkbox h-4 w-4 text-accent" />
+                            <label for="status_aktif_edit" class="text-sm">Aktif</label>
+                        </div>
+                        @error('status_aktif') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex justify-end space-x-3 mt-6">
                         <flux:button type="button" wire:click="closeEditModal" variant="ghost">

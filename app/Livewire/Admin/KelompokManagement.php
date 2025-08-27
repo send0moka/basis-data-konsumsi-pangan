@@ -18,12 +18,17 @@ class KelompokManagement extends Component
     public $showCreateModal = false;
     public $showEditModal = false;
     public $showDeleteModal = false;
-    
+
     public $kode = '';
     public $nama = '';
     public $editingKelompok = null;
     public $deletingKelompok = null;
     public $exportFormat = 'xlsx';
+
+    public $deskripsi = '';
+    public $prioritas_nasional = '';
+    public $target_konsumsi_harian = '';
+    public $status_aktif = true;
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -37,6 +42,10 @@ class KelompokManagement extends Component
     protected $rules = [
         'kode' => 'required|unique:kelompok,kode',
         'nama' => 'required|min:3',
+        'deskripsi' => 'nullable|string',
+        'prioritas_nasional' => 'nullable|string',
+        'target_konsumsi_harian' => 'nullable|numeric',
+        'status_aktif' => 'boolean',
     ];
 
     public function updatingSearch()
@@ -72,10 +81,14 @@ class KelompokManagement extends Component
 
     public function openEditModal($kelompokId)
     {
-        $this->editingKelompok = Kelompok::findOrFail($kelompokId);
-        $this->kode = $this->editingKelompok->kode;
-        $this->nama = $this->editingKelompok->nama;
-        $this->showEditModal = true;
+    $this->editingKelompok = Kelompok::findOrFail($kelompokId);
+    $this->kode = $this->editingKelompok->kode;
+    $this->nama = $this->editingKelompok->nama;
+    $this->deskripsi = $this->editingKelompok->deskripsi;
+    $this->prioritas_nasional = $this->editingKelompok->prioritas_nasional;
+    $this->target_konsumsi_harian = $this->editingKelompok->target_konsumsi_harian;
+    $this->status_aktif = $this->editingKelompok->status_aktif;
+    $this->showEditModal = true;
     }
 
     public function closeEditModal()
@@ -103,6 +116,10 @@ class KelompokManagement extends Component
         Kelompok::create([
             'kode' => $this->kode,
             'nama' => $this->nama,
+            'deskripsi' => $this->deskripsi,
+            'prioritas_nasional' => $this->prioritas_nasional,
+            'target_konsumsi_harian' => $this->target_konsumsi_harian,
+            'status_aktif' => $this->status_aktif,
         ]);
 
         session()->flash('message', 'Kelompok berhasil dibuat.');
@@ -114,6 +131,10 @@ class KelompokManagement extends Component
         $rules = [
             'kode' => 'required|unique:kelompok,kode,' . $this->editingKelompok->id,
             'nama' => 'required|min:3',
+            'deskripsi' => 'nullable|string',
+            'prioritas_nasional' => 'nullable|string',
+            'target_konsumsi_harian' => 'nullable|numeric',
+            'status_aktif' => 'boolean',
         ];
 
         $this->validate($rules);
@@ -121,6 +142,10 @@ class KelompokManagement extends Component
         $this->editingKelompok->update([
             'kode' => $this->kode,
             'nama' => $this->nama,
+            'deskripsi' => $this->deskripsi,
+            'prioritas_nasional' => $this->prioritas_nasional,
+            'target_konsumsi_harian' => $this->target_konsumsi_harian,
+            'status_aktif' => $this->status_aktif,
         ]);
 
         session()->flash('message', 'Kelompok berhasil diupdate.');
@@ -152,10 +177,10 @@ class KelompokManagement extends Component
         }
 
         $kelompoks = Kelompok::when($this->search, function ($query) {
-                $query->where(function($q) {
-                    $q->where('kode', 'like', '%' . $this->search . '%')
-                      ->orWhere('nama', 'like', '%' . $this->search . '%');
-                });
+            $query->where(function ($q) {
+                $q->where('kode', 'like', '%' . $this->search . '%')
+                    ->orWhere('nama', 'like', '%' . $this->search . '%');
+            });
         })->paginate($perPage);
 
         return view('livewire.admin.kelompok-management', [
@@ -166,12 +191,12 @@ class KelompokManagement extends Component
     public function export()
     {
         $format = strtolower($this->exportFormat ?? 'xlsx');
-        if (! in_array($format, ['xlsx','csv'], true)) {
+        if (! in_array($format, ['xlsx', 'csv'], true)) {
             $format = 'xlsx';
         }
 
         $filename = 'kelompok-' . now()->format('Ymd-His') . '.' . $format;
-        
+
         return Excel::download(new KelompokExport($this->search ?: null), $filename, $format === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX);
     }
 

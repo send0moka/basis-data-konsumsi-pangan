@@ -65,6 +65,19 @@
                         <th scope="col" class="px-6 py-3">Kode Kelompok</th>
                         <th scope="col" class="px-6 py-3">Kode Komoditi</th>
                         <th scope="col" class="px-6 py-3">Nama Komoditi</th>
+                        <th scope="col" class="px-6 py-3">Satuan Dasar</th>
+                        <th scope="col" class="px-6 py-3">Kalori/100g</th>
+                        <th scope="col" class="px-6 py-3">Protein/100g</th>
+                        <th scope="col" class="px-6 py-3">Lemak/100g</th>
+                        <th scope="col" class="px-6 py-3">Karbohidrat/100g</th>
+                        <th scope="col" class="px-6 py-3">Serat/100g</th>
+                        <th scope="col" class="px-6 py-3">Vitamin C/100g</th>
+                        <th scope="col" class="px-6 py-3">Zat Besi/100g</th>
+                        <th scope="col" class="px-6 py-3">Kalsium/100g</th>
+                        <th scope="col" class="px-6 py-3">Musim Panen</th>
+                        <th scope="col" class="px-6 py-3">Asal Produksi</th>
+                        <th scope="col" class="px-6 py-3">Shelf Life (hari)</th>
+                        <th scope="col" class="px-6 py-3">Harga Rata/kg</th>
                         <th scope="col" class="px-6 py-3">Dibuat</th>
                         <th scope="col" class="px-6 py-3 no-print">Aksi</th>
                     </tr>
@@ -72,34 +85,33 @@
                 <tbody>
                     @forelse ($komoditis as $komoditi)
                     <tr class="bg-white border-b dark:!bg-neutral-800 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:!bg-neutral-700 transition-colors">
-                        <td class="px-6 py-4 font-medium text-neutral-900 dark:text-white">
-                            {{ $komoditi->kode_kelompok }}
-                        </td>
-                        <td class="px-6 py-4 font-medium text-neutral-900 dark:text-white">
-                            {{ $komoditi->kode_komoditi }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ $komoditi->nama }}
-                        </td>
-                        <td class="px-6 py-4">
-                            {{ $komoditi->created_at->format('d/m/Y') }}
-                        </td>
+                        <td class="px-6 py-4 font-medium text-neutral-900 dark:text-white">{{ $komoditi->kode_kelompok }}</td>
+                        <td class="px-6 py-4 font-medium text-neutral-900 dark:text-white">{{ $komoditi->kode_komoditi }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->nama }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->satuan_dasar }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->kalori_per_100g }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->protein_per_100g }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->lemak_per_100g }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->karbohidrat_per_100g }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->serat_per_100g }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->vitamin_c_per_100g }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->zat_besi_per_100g }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->kalsium_per_100g }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->musim_panen }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->asal_produksi }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->shelf_life_hari }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->harga_rata_per_kg }}</td>
+                        <td class="px-6 py-4">{{ $komoditi->created_at->format('d/m/Y') }}</td>
                         <td class="px-6 py-4 no-print">
                             <div class="flex space-x-2">
-                                <flux:button wire:click="openEditModal({{ $komoditi->id }})" variant="ghost" size="sm">
-                                    Edit
-                                </flux:button>
-                                <flux:button wire:click="openDeleteModal({{ $komoditi->id }})" variant="danger" size="sm">
-                                    Hapus
-                                </flux:button>
+                                <flux:button wire:click="openEditModal({{ $komoditi->id }})" variant="ghost" size="sm">Edit</flux:button>
+                                <flux:button wire:click="openDeleteModal({{ $komoditi->id }})" variant="danger" size="sm">Hapus</flux:button>
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-neutral-500 dark:text-neutral-400">
-                            Tidak ada komoditi ditemukan
-                        </td>
+                        <td colspan="18" class="px-6 py-4 text-center text-neutral-500 dark:text-neutral-400">Tidak ada komoditi ditemukan</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -145,6 +157,45 @@
 
                         <flux:input wire:model="nama" label="Nama Komoditi" placeholder="Masukkan nama komoditi" required />
                         @error('nama') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="satuan_dasar" label="Satuan Dasar" placeholder="Contoh: kg, gram, liter" required />
+                        @error('satuan_dasar') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="kalori_per_100g" label="Kalori per 100g" type="number" step="0.01" placeholder="Kalori per 100g" />
+                        @error('kalori_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="protein_per_100g" label="Protein per 100g" type="number" step="0.01" placeholder="Protein per 100g" />
+                        @error('protein_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="lemak_per_100g" label="Lemak per 100g" type="number" step="0.01" placeholder="Lemak per 100g" />
+                        @error('lemak_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="karbohidrat_per_100g" label="Karbohidrat per 100g" type="number" step="0.01" placeholder="Karbohidrat per 100g" />
+                        @error('karbohidrat_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="serat_per_100g" label="Serat per 100g" type="number" step="0.01" placeholder="Serat per 100g" />
+                        @error('serat_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="vitamin_c_per_100g" label="Vitamin C per 100g" type="number" step="0.01" placeholder="Vitamin C per 100g" />
+                        @error('vitamin_c_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="zat_besi_per_100g" label="Zat Besi per 100g" type="number" step="0.01" placeholder="Zat Besi per 100g" />
+                        @error('zat_besi_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="kalsium_per_100g" label="Kalsium per 100g" type="number" step="0.01" placeholder="Kalsium per 100g" />
+                        @error('kalsium_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="musim_panen" label="Musim Panen" placeholder="Contoh: Jan-Mar, Apr-Jun" />
+                        @error('musim_panen') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="asal_produksi" label="Asal Produksi" placeholder="Contoh: lokal, impor" />
+                        @error('asal_produksi') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="shelf_life_hari" label="Shelf Life (hari)" type="number" placeholder="Shelf life dalam hari" />
+                        @error('shelf_life_hari') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="harga_rata_per_kg" label="Harga Rata-rata per Kg" type="number" step="0.01" placeholder="Harga rata-rata per kg" />
+                        @error('harga_rata_per_kg') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex justify-end space-x-3 mt-6">
                         <flux:button type="button" wire:click="closeCreateModal" variant="ghost">
@@ -184,6 +235,45 @@
 
                         <flux:input wire:model="nama" label="Nama Komoditi" placeholder="Masukkan nama komoditi" required />
                         @error('nama') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="satuan_dasar" label="Satuan Dasar" placeholder="Contoh: kg, gram, liter" required />
+                        @error('satuan_dasar') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="kalori_per_100g" label="Kalori per 100g" type="number" step="0.01" placeholder="Kalori per 100g" />
+                        @error('kalori_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="protein_per_100g" label="Protein per 100g" type="number" step="0.01" placeholder="Protein per 100g" />
+                        @error('protein_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="lemak_per_100g" label="Lemak per 100g" type="number" step="0.01" placeholder="Lemak per 100g" />
+                        @error('lemak_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="karbohidrat_per_100g" label="Karbohidrat per 100g" type="number" step="0.01" placeholder="Karbohidrat per 100g" />
+                        @error('karbohidrat_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="serat_per_100g" label="Serat per 100g" type="number" step="0.01" placeholder="Serat per 100g" />
+                        @error('serat_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="vitamin_c_per_100g" label="Vitamin C per 100g" type="number" step="0.01" placeholder="Vitamin C per 100g" />
+                        @error('vitamin_c_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="zat_besi_per_100g" label="Zat Besi per 100g" type="number" step="0.01" placeholder="Zat Besi per 100g" />
+                        @error('zat_besi_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="kalsium_per_100g" label="Kalsium per 100g" type="number" step="0.01" placeholder="Kalsium per 100g" />
+                        @error('kalsium_per_100g') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="musim_panen" label="Musim Panen" placeholder="Contoh: Jan-Mar, Apr-Jun" />
+                        @error('musim_panen') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="asal_produksi" label="Asal Produksi" placeholder="Contoh: lokal, impor" />
+                        @error('asal_produksi') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="shelf_life_hari" label="Shelf Life (hari)" type="number" placeholder="Shelf life dalam hari" />
+                        @error('shelf_life_hari') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+
+                        <flux:input wire:model="harga_rata_per_kg" label="Harga Rata-rata per Kg" type="number" step="0.01" placeholder="Harga rata-rata per kg" />
+                        @error('harga_rata_per_kg') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex justify-end space-x-3 mt-6">
                         <flux:button type="button" wire:click="closeEditModal" variant="ghost">

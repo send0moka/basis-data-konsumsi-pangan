@@ -37,6 +37,10 @@ class KelompokExport implements FromCollection, WithHeadings, WithMapping
         return [
             'Kode',
             'Nama Kelompok',
+            'Deskripsi',
+            'Prioritas Nasional',
+            'Target Konsumsi Harian',
+            'Status Aktif',
             'Dibuat Pada',
             'Diupdate Pada',
         ];
@@ -51,6 +55,10 @@ class KelompokExport implements FromCollection, WithHeadings, WithMapping
         return [
             $kelompok->kode,
             $kelompok->nama,
+            $kelompok->deskripsi,
+            $kelompok->prioritas_nasional,
+            $kelompok->target_konsumsi_harian,
+            $kelompok->status_aktif ? 'Aktif' : 'Nonaktif',
             $kelompok->created_at->format('d/m/Y H:i:s'),
             $kelompok->updated_at->format('d/m/Y H:i:s'),
         ];
