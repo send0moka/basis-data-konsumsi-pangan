@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class IklimoptdpiKlasifikasi extends Model
 {
@@ -13,7 +14,10 @@ class IklimoptdpiKlasifikasi extends Model
     protected $table = 'iklimoptdpi_klasifikasi';
     
     protected $fillable = [
-        'nama',
+        'id_variabel',
+        'deskripsi',
+        'nilai_min',
+        'nilai_max',
     ];
 
     protected function casts(): array
@@ -24,8 +28,13 @@ class IklimoptdpiKlasifikasi extends Model
         ];
     }
 
+    public function variabel()
+    {
+        return $this->belongsTo(IklimoptdpiVariabel::class, 'id_variabel');
+    }
+
     public function iklimoptdpiData(): HasMany
     {
-        return $this->hasMany(IklimoptdpiData::class, 'id_iklimoptdpi_klasifikasi');
+        return $this->hasMany(IklimoptdpiData::class, 'id_klasifikasi');
     }
 }

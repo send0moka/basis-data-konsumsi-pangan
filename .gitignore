@@ -59,6 +59,8 @@ model_checkpoints/
 *.csv
 *.json
 # *.sql
+ref_pertanianbp.sql
+ref_pertanianiod.sql
 TransaksiNbmSeeder_*.php
 parse_nbm_data.py
 create_efficient_seeder.py
@@ -69,6 +71,5 @@ create_efficient_seeder.py
 
 # Debug Files
 debug_api.php
-debug_layout.php
 /public/debug-ajax.html
 

@@ -125,6 +125,10 @@
                                            class="block px-4 py-2 text-sm text-neutral-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
                                             Data Benih dan Pupuk
                                         </a>
+                                        <a href="{{ route('pertanian.iklim-opt-dpi') }}"
+                                           class="block px-4 py-2 text-sm text-neutral-700 hover:bg-[#efefa4]/20 hover:text-[#6a4c35] font-medium transition-colors">
+                                            Iklim, dan OPT DPI
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -224,6 +228,10 @@
                             <a href="{{ route('pertanian.benih-pupuk') }}" 
                                class="block py-2 text-sm text-neutral-600 hover:text-[#6a4c35] font-medium transition-colors">
                                 Data Benih dan Pupuk
+                            </a>
+                            <a href="{{ route('pertanian.iklim-opt-dpi') }}"
+                                 class="block py-2 text-sm text-neutral-600 hover:text-[#6a4c35] font-medium transition-colors">
+                                Iklim, dan OPT DPI
                             </a>
                         </div>
                     </div>

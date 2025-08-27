@@ -24,19 +24,19 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `benih_pupuk_bulan`
+-- Table structure for table `bulan`
 --
 
-CREATE TABLE `benih_pupuk_bulan` (
+CREATE TABLE `bulan` (
   `id` tinyint(3) UNSIGNED NOT NULL,
   `nama` varchar(15) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Dumping data for table `benih_pupuk_bulan`
+-- Dumping data for table `bulan`
 --
 
-INSERT INTO `benih_pupuk_bulan` (`id`, `nama`) VALUES
+INSERT INTO `bulan` (`id`, `nama`) VALUES
 (0, '-'),
 (1, 'Januari'),
 (2, 'Februari'),
@@ -1980,7 +1980,7 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (9, '2025_08_12_081844_create_kelompok_table', 1),
 (10, '2025_08_12_090629_create_komoditi_table', 1),
 (11, '2025_08_12_095814_create_transaksi_nbms_table', 1),
-(12, '2025_08_20_001001_create_benih_pupuk_bulan_table', 1),
+(12, '2025_08_20_001001_create_bulan_table', 1),
 (13, '2025_08_20_001002_create_benih_pupuk_topik_table', 1),
 (14, '2025_08_20_001003_create_benih_pupuk_klasifikasi_table', 1),
 (15, '2025_08_20_001004_create_benih_pupuk_wilayah_kategori_table', 1),
@@ -5883,9 +5883,9 @@ INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `re
 --
 
 --
--- Indexes for table `benih_pupuk_bulan`
+-- Indexes for table `bulan`
 --
-ALTER TABLE `benih_pupuk_bulan`
+ALTER TABLE `bulan`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -6193,7 +6193,7 @@ ALTER TABLE `users`
 -- Constraints for table `benih_pupuk_data`
 --
 ALTER TABLE `benih_pupuk_data`
-  ADD CONSTRAINT `benih_pupuk_data_id_bulan_foreign` FOREIGN KEY (`id_bulan`) REFERENCES `benih_pupuk_bulan` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `benih_pupuk_data_id_bulan_foreign` FOREIGN KEY (`id_bulan`) REFERENCES `bulan` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `benih_pupuk_data_id_variabel_id_klasifikasi_foreign` FOREIGN KEY (`id_variabel`,`id_klasifikasi`) REFERENCES `benih_pupuk_variabel_klasifikasi` (`id_variabel`, `id_klasifikasi`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `benih_pupuk_data_id_wilayah_foreign` FOREIGN KEY (`id_wilayah`) REFERENCES `benih_pupuk_wilayah` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 

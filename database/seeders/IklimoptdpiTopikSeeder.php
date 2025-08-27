@@ -14,26 +14,14 @@ class IklimoptdpiTopikSeeder extends Seeder
     public function run(): void
     {
         $topiks = [
-            'Curah Hujan',
-            'Suhu Udara',
-            'Kelembaban Udara',
-            'Kecepatan Angin',
-            'Radiasi Matahari',
-            'Tekanan Udara',
-            'Evapotranspirasi',
-            'Indeks Kekeringan',
-            'Pola Iklim Musiman',
-            'Anomali Iklim',
-            'El Nino Southern Oscillation',
-            'Indian Ocean Dipole',
-            'Monsun',
-            'Siklus Karbon',
-            'Emisi Gas Rumah Kaca'
+            'Iklim',
+            'OPT Utama',
+            'DPI',
         ];
 
         foreach ($topiks as $topik) {
             IklimoptdpiTopik::create([
-                'nama' => $topik,
+                'deskripsi' => $topik,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

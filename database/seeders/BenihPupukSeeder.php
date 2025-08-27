@@ -16,6 +16,11 @@ class BenihPupukSeeder extends Seeder
     public $command;
 
     /**
+     * Cached IDs of klasifikasi rows labeled 'Realisasi'.
+     */
+    private array $realisasiIds = [];
+
+    /**
      * Run the database seeds.
      */
     public function run(): void
@@ -31,9 +36,6 @@ class BenihPupukSeeder extends Seeder
             
             // Seed reference data
             $this->seedReferenceData();
-            
-            // Seed wilayah data (all kabupaten/kota)
-            $this->seedWilayahData();
             
             // Generate and seed data (2014-2025, all variables, all regions)
             $this->seedData();
@@ -77,50 +79,29 @@ class BenihPupukSeeder extends Seeder
         
         $tables = [
             'benih_pupuk_data',
-            'benih_pupuk_variabel_klasifikasi',
-            'benih_pupuk_variabel',
-            'benih_pupuk_wilayah',
-            'benih_pupuk_wilayah_kategori',
             'benih_pupuk_klasifikasi',
+            'benih_pupuk_variabel',
             'benih_pupuk_topik',
-            'benih_pupuk_bulan',
         ];
 
+        // Disable foreign key checks to allow truncating tables with foreign key constraints
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        
         foreach ($tables as $table) {
             DB::table($table)->truncate();
         }
+        
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     private function seedReferenceData(): void
     {
         $this->info('Seeding reference data...');
-        
-        $this->seedBulan();
+
         $this->seedTopik();
-        $this->seedKlasifikasi();
-        $this->seedWilayahKategori();
         $this->seedVariabel();
-        $this->seedVariabelKlasifikasi();
-    }
-    
-    private function seedBulan()
-    {
-        DB::table('benih_pupuk_bulan')->insert([
-            ['id' => 0, 'nama' => '-'],
-            ['id' => 1, 'nama' => 'Januari'],
-            ['id' => 2, 'nama' => 'Februari'],
-            ['id' => 3, 'nama' => 'Maret'],
-            ['id' => 4, 'nama' => 'April'],
-            ['id' => 5, 'nama' => 'Mei'],
-            ['id' => 6, 'nama' => 'Juni'],
-            ['id' => 7, 'nama' => 'Juli'],
-            ['id' => 8, 'nama' => 'Agustus'],
-            ['id' => 9, 'nama' => 'September'],
-            ['id' => 10, 'nama' => 'Oktober'],
-            ['id' => 11, 'nama' => 'November'],
-            ['id' => 12, 'nama' => 'Desember'],
-            ['id' => 13, 'nama' => 'Setahun']
-        ]);
+        $this->seedKlasifikasi();
     }
     
     private function seedTopik()
@@ -133,88 +114,34 @@ class BenihPupukSeeder extends Seeder
     
     private function seedKlasifikasi()
     {
-        DB::table('benih_pupuk_klasifikasi')->insert([
-            ['id' => 1, 'deskripsi' => '-'],
-            ['id' => 2, 'deskripsi' => 'Inbrida'],
-            ['id' => 3, 'deskripsi' => 'Hibrida'],
-            ['id' => 4, 'deskripsi' => 'Komposit'],
-            ['id' => 5, 'deskripsi' => 'Alokasi'],
-            ['id' => 6, 'deskripsi' => 'Realisasi'],
-        ]);
-    }
-    
-    private function seedWilayahKategori()
-    {
-        DB::table('benih_pupuk_wilayah_kategori')->insert([
-            ['id' => 1, 'deskripsi' => 'Wilayah'],
-        ]);
-    }
-    
-    private function seedWilayahData()
-    {
-        $this->info('Seeding wilayah data (all kabupaten/kota)...');
-        
-        // All 546 Indonesian kabupaten/kota from the original SQL file
-        $wilayahData = $this->getAllWilayahData();
-        
-        // Insert in chunks to handle large dataset
-        foreach (array_chunk($wilayahData, 100) as $chunk) {
-            DB::table('benih_pupuk_wilayah')->insert($chunk);
-        }
-        
-        $this->info('Seeded ' . count($wilayahData) . ' wilayah records');
-    }
-
-    private function getAllWilayahData(): array
-    {
-        // Load all wilayah data (546 regions) from generated file
-        $dataFile = base_path('wilayah_data.php');
-        
-        if (file_exists($dataFile)) {
-            return require $dataFile;
-        }
-        
-        // Fallback to minimal data if file doesn't exist
-        $this->warn('wilayah_data.php not found, using province data only');
-        
-        return [
-            ['id' => 1, 'kode' => 1, 'nama' => 'Aceh', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 1],
-            ['id' => 2, 'kode' => 2, 'nama' => 'Sumatera Utara', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 2],
-            ['id' => 3, 'kode' => 3, 'nama' => 'Sumatera Barat', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 3],
-            ['id' => 4, 'kode' => 4, 'nama' => 'Riau', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 4],
-            ['id' => 5, 'kode' => 5, 'nama' => 'Jambi', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 5],
-            ['id' => 6, 'kode' => 6, 'nama' => 'Sumatera Selatan', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 6],
-            ['id' => 7, 'kode' => 7, 'nama' => 'Bengkulu', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 7],
-            ['id' => 8, 'kode' => 8, 'nama' => 'Lampung', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 8],
-            ['id' => 9, 'kode' => 9, 'nama' => 'Bangka Belitung', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 9],
-            ['id' => 10, 'kode' => 10, 'nama' => 'Kepulauan Riau', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 10],
-            ['id' => 11, 'kode' => 11, 'nama' => 'DKI Jakarta', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 11],
-            ['id' => 12, 'kode' => 12, 'nama' => 'Jawa Barat', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 12],
-            ['id' => 13, 'kode' => 13, 'nama' => 'Jawa Tengah', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 13],
-            ['id' => 14, 'kode' => 14, 'nama' => 'DI Yogyakarta', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 14],
-            ['id' => 15, 'kode' => 15, 'nama' => 'Jawa Timur', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 15],
-            ['id' => 16, 'kode' => 16, 'nama' => 'Banten', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 16],
-            ['id' => 17, 'kode' => 17, 'nama' => 'Bali', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 17],
-            ['id' => 18, 'kode' => 18, 'nama' => 'Nusa Tenggara Barat', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 18],
-            ['id' => 19, 'kode' => 19, 'nama' => 'Nusa Tenggara Timur', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 19],
-            ['id' => 20, 'kode' => 20, 'nama' => 'Kalimantan Barat', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 20],
-            ['id' => 21, 'kode' => 21, 'nama' => 'Kalimantan Tengah', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 21],
-            ['id' => 22, 'kode' => 22, 'nama' => 'Kalimantan Selatan', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 22],
-            ['id' => 23, 'kode' => 23, 'nama' => 'Kalimantan Timur', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 23],
-            ['id' => 24, 'kode' => 24, 'nama' => 'Kalimantan Utara', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 24],
-            ['id' => 25, 'kode' => 25, 'nama' => 'Sulawesi Utara', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 25],
-            ['id' => 26, 'kode' => 26, 'nama' => 'Sulawesi Tengah', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 26],
-            ['id' => 27, 'kode' => 27, 'nama' => 'Sulawesi Selatan', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 27],
-            ['id' => 28, 'kode' => 28, 'nama' => 'Sulawesi Tenggara', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 28],
-            ['id' => 29, 'kode' => 29, 'nama' => 'Gorontalo', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 29],
-            ['id' => 30, 'kode' => 30, 'nama' => 'Sulawesi Barat', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 30],
-            ['id' => 31, 'kode' => 31, 'nama' => 'Maluku', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 31],
-            ['id' => 32, 'kode' => 32, 'nama' => 'Maluku Utara', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 32],
-            ['id' => 33, 'kode' => 33, 'nama' => 'Papua Barat', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 33],
-            ['id' => 34, 'kode' => 34, 'nama' => 'Papua', 'id_kategori' => 1, 'id_parent' => null, 'sorter' => 34],
+        // Seed klasifikasi tied directly to each variabel
+        $map = [
+            1 => ['Inbrida', 'Hibrida'],
+            2 => ['Hibrida', 'Komposit'],
+            3 => ['-'],
+            4 => ['Alokasi', 'Realisasi'],
+            5 => ['Alokasi', 'Realisasi'],
+            6 => ['Alokasi', 'Realisasi'],
+            7 => ['Alokasi', 'Realisasi'],
+            8 => ['Alokasi', 'Realisasi'],
+            9 => ['-'],
         ];
-    }
 
+        $rows = [];
+        foreach ($map as $variabelId => $names) {
+            foreach ($names as $name) {
+                $rows[] = [
+                    'id_variabel' => $variabelId,
+                    'deskripsi' => $name,
+                ];
+            }
+        }
+
+        foreach (array_chunk($rows, 100) as $chunk) {
+            DB::table('benih_pupuk_klasifikasi')->insert($chunk);
+        }
+    }
+    
     private function seedVariabel()
     {
         DB::table('benih_pupuk_variabel')->insert([
@@ -229,28 +156,6 @@ class BenihPupukSeeder extends Seeder
             ['id' => 9, 'id_topik' => 1, 'deskripsi' => 'Padi Benih Pokok', 'satuan' => 'Ton', 'sorter' => 1],
         ]);
     }
-    
-    private function seedVariabelKlasifikasi()
-    {
-        DB::table('benih_pupuk_variabel_klasifikasi')->insert([
-            ['id_variabel' => 1, 'id_klasifikasi' => 2, 'keterangan' => null], // Padi Benih Sebar -> Inbrida
-            ['id_variabel' => 1, 'id_klasifikasi' => 3, 'keterangan' => null], // Padi Benih Sebar -> Hibrida
-            ['id_variabel' => 2, 'id_klasifikasi' => 3, 'keterangan' => null], // Jagung Benih Sebar -> Hibrida
-            ['id_variabel' => 2, 'id_klasifikasi' => 4, 'keterangan' => null], // Jagung Benih Sebar -> Komposit
-            ['id_variabel' => 3, 'id_klasifikasi' => 1, 'keterangan' => null], // Kedelai Benih Sebar -> -
-            ['id_variabel' => 4, 'id_klasifikasi' => 5, 'keterangan' => null], // Pupuk Urea -> Alokasi
-            ['id_variabel' => 4, 'id_klasifikasi' => 6, 'keterangan' => null], // Pupuk Urea -> Realisasi
-            ['id_variabel' => 5, 'id_klasifikasi' => 5, 'keterangan' => null], // Pupuk SP-36 -> Alokasi
-            ['id_variabel' => 5, 'id_klasifikasi' => 6, 'keterangan' => null], // Pupuk SP-36 -> Realisasi
-            ['id_variabel' => 6, 'id_klasifikasi' => 5, 'keterangan' => null], // Pupuk ZA -> Alokasi
-            ['id_variabel' => 6, 'id_klasifikasi' => 6, 'keterangan' => null], // Pupuk ZA -> Realisasi
-            ['id_variabel' => 7, 'id_klasifikasi' => 5, 'keterangan' => null], // Pupuk NPK -> Alokasi
-            ['id_variabel' => 7, 'id_klasifikasi' => 6, 'keterangan' => null], // Pupuk NPK -> Realisasi
-            ['id_variabel' => 8, 'id_klasifikasi' => 5, 'keterangan' => null], // Pupuk Organik -> Alokasi
-            ['id_variabel' => 8, 'id_klasifikasi' => 6, 'keterangan' => null], // Pupuk Organik -> Realisasi
-            ['id_variabel' => 9, 'id_klasifikasi' => 1, 'keterangan' => null], // Padi Benih Pokok -> -
-        ]);
-    }
 
     private function seedData(): void
     {
@@ -259,69 +164,78 @@ class BenihPupukSeeder extends Seeder
         $data = [];
         $now = Carbon::now();
         $batchCounter = 0;
-        $totalBatches = 0;
 
         // Get all available regions (assuming we have all 546 regions seeded)
-        $regionIds = DB::table('benih_pupuk_wilayah')->pluck('id')->toArray();
+        $regionIds = DB::table('wilayah')->pluck('id')->toArray();
         
-        // Variable-klasifikasi mapping for realistic data
-        $variabelKlasifikasiData = [
-            1 => [2, 3], // Padi Benih Sebar -> Inbrida, Hibrida
-            2 => [3, 4], // Jagung Benih Sebar -> Hibrida, Komposit
-            3 => [1],    // Kedelai Benih Sebar -> -
-            4 => [5, 6], // Pupuk Urea -> Alokasi, Realisasi
-            5 => [5, 6], // Pupuk SP-36 -> Alokasi, Realisasi
-            6 => [5, 6], // Pupuk ZA -> Alokasi, Realisasi
-            7 => [5, 6], // Pupuk NPK -> Alokasi, Realisasi
-            8 => [5, 6], // Pupuk Organik -> Alokasi, Realisasi
-            9 => [1],    // Padi Benih Pokok -> -
+        // Variable->klasifikasi names mapping (resolve to IDs below)
+        $variabelKlasifikasiNames = [
+            1 => ['Inbrida', 'Hibrida'],
+            2 => ['Hibrida', 'Komposit'],
+            3 => ['-'],
+            4 => ['Alokasi', 'Realisasi'],
+            5 => ['Alokasi', 'Realisasi'],
+            6 => ['Alokasi', 'Realisasi'],
+            7 => ['Alokasi', 'Realisasi'],
+            8 => ['Alokasi', 'Realisasi'],
+            9 => ['-'],
         ];
 
-        // Estimate total records for progress tracking
-        $totalRecords = 0;
-        for ($tahun = 2014; $tahun <= 2025; $tahun++) {
-            for ($bulan = 1; $bulan <= 12; $bulan++) {
-                foreach ($regionIds as $regionId) {
-                    foreach ($variabelKlasifikasiData as $variabelId => $klasifikasiIds) {
-                        $totalRecords += count($klasifikasiIds);
-                    }
+        // Resolve klasifikasi IDs for each variabel based on inserted klasifikasi rows
+        $variabelKlasifikasiData = [];
+        foreach ($variabelKlasifikasiNames as $variabelId => $names) {
+            $rows = DB::table('benih_pupuk_klasifikasi')
+                ->where('id_variabel', $variabelId)
+                ->whereIn('deskripsi', $names)
+                ->pluck('id', 'deskripsi')
+                ->toArray();
+            $ids = [];
+            foreach ($names as $n) {
+                if (isset($rows[$n])) {
+                    $ids[] = $rows[$n];
                 }
             }
+            $variabelKlasifikasiData[$variabelId] = $ids;
         }
 
-        $this->info("Generating ~{$totalRecords} records...");
+        // Cache all 'Realisasi' klasifikasi IDs to adjust value generation below
+        $this->realisasiIds = DB::table('benih_pupuk_klasifikasi')
+            ->where('deskripsi', 'Realisasi')
+            ->pluck('id')
+            ->toArray();
 
-        // Generate data for 2014-2025, all months, all regions, all variables
+        // Get all bulan IDs (1-13)
+        $bulanIds = range(1, 13);
+
+        // Generate data for each year, month, region, variable, and classification
         for ($tahun = 2014; $tahun <= 2025; $tahun++) {
-            $this->info("Processing year: {$tahun}");
-            
-            for ($bulan = 1; $bulan <= 12; $bulan++) {
+            foreach ($bulanIds as $bulanId) {
                 foreach ($regionIds as $regionId) {
                     foreach ($variabelKlasifikasiData as $variabelId => $klasifikasiIds) {
                         foreach ($klasifikasiIds as $klasifikasiId) {
-                            // Generate realistic values based on variable type
-                            $nilai = $this->generateRealisticValue($variabelId, $klasifikasiId, $tahun, $bulan);
+                            // Generate a realistic value based on variable, classification, year, and month
+                            $nilai = $this->generateRealisticValue($variabelId, $klasifikasiId, $tahun, $bulanId);
                             
                             $data[] = [
                                 'tahun' => $tahun,
-                                'id_bulan' => $bulan,
+                                'id_bulan' => $bulanId,
                                 'id_wilayah' => $regionId,
                                 'id_variabel' => $variabelId,
                                 'id_klasifikasi' => $klasifikasiId,
                                 'nilai' => $nilai,
                                 'status' => null,
-                                'date_created' => $now,
-                                'date_modified' => null
+                                'created_at' => $now,
+                                'updated_at' => $now
                             ];
 
                             // Insert in chunks to avoid memory issues
-                            if (count($data) >= 5000) {
+                            if (count($data) >= 1000) {
                                 DB::table('benih_pupuk_data')->insert($data);
                                 $data = [];
                                 $batchCounter++;
                                 
                                 if ($batchCounter % 10 == 0) {
-                                    $this->info("Inserted batch #{$batchCounter} (Year: {$tahun}, Month: {$bulan})");
+                                    $this->info("Inserted batch #{$batchCounter} (Year: {$tahun}, Bulan ID: {$bulanId})");
                                 }
                             }
                         }
@@ -370,7 +284,7 @@ class BenihPupukSeeder extends Seeder
         
         // Klasifikasi adjustment (realisasi typically lower than alokasi)
         $klasifikasiFactor = 1.0;
-        if ($klasifikasiId == 6) { // Realisasi
+        if (in_array($klasifikasiId, $this->realisasiIds, true)) { // Realisasi
             $klasifikasiFactor = 0.75 + (rand(0, 20) / 100); // 75-95% of allocation
         }
         

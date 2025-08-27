@@ -4,7 +4,7 @@ namespace App\Models\BenihPupuk;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Klasifikasi extends Model
 {
@@ -13,16 +13,16 @@ class Klasifikasi extends Model
     public $timestamps = false;
     
     protected $fillable = [
+        'id_variabel',
         'deskripsi'
     ];
     
     /**
-     * Get the variabel records that have this klasifikasi.
+     * The variabel that this klasifikasi belongs to.
      */
-    public function variabels(): BelongsToMany
+    public function variabel(): BelongsTo
     {
-        return $this->belongsToMany(Variabel::class, 'benih_pupuk_variabel_klasifikasi', 'id_klasifikasi', 'id_variabel')
-                    ->withPivot(['keterangan']);
+        return $this->belongsTo(Variabel::class, 'id_variabel', 'id');
     }
     
     /**
