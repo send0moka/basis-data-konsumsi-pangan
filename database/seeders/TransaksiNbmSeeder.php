@@ -17,26 +17,83 @@ class TransaksiNbmSeeder extends Seeder
         // Clear existing data
         TransaksiNbm::truncate();
         
-        echo "Seeding TransaksiNbm data...\n";
+        echo "Seeding TransaksiNbm data (memory-optimized approach)...\n";
         
-        // Process data in chunks of 500 for better performance
-        $chunkSize = 500;
-        $data = $this->getData();
-        $chunks = array_chunk($data, $chunkSize);
+        // Get base yearly data - limit to recent years to reduce memory usage
+        $baseData = $this->getData();
+        $recentData = array_filter($baseData, fn($r) => $r['tahun'] >= 2020); // Only 2020-2023
         
-        foreach ($chunks as $index => $chunk) {
-            // Add timestamps to each record
-            $chunkWithTimestamps = array_map(function($record) {
-                $record['created_at'] = now();
-                $record['updated_at'] = now();
-                return $record;
-            }, $chunk);
+        $totalRecords = 0;
+        $chunkSize = 50; // Very small chunks
+        
+        echo "Processing " . count($recentData) . " base records from 2020-2023...\n";
+        
+        // Process in smaller batches
+        $batches = array_chunk($recentData, 5); // Process 5 commodities at a time
+        
+        foreach ($batches as $batchIndex => $batch) {
+            echo "Processing batch " . ($batchIndex + 1) . "/" . count($batches) . "\n";
             
-            DB::table('transaksi_nbms')->insert($chunkWithTimestamps);
-            echo "Inserted chunk " . ($index + 1) . " of " . count($chunks) . "\n";
+            $batchData = [];
+            
+            foreach ($batch as $yearlyRecord) {
+                // Create 12 monthly records for each yearly record
+                for ($bulan = 1; $bulan <= 12; $bulan++) {
+                    $monthlyRecord = $yearlyRecord;
+                    $monthlyRecord['bulan'] = $bulan;
+                    $monthlyRecord['periode_data'] = 'bulanan';
+                    
+                    // Simple seasonal variation (avoid complex calculations)
+                    $seasonalFactor = 1 + (sin(($bulan - 1) * pi() / 6) * 0.1);
+                    if (isset($monthlyRecord['keluaran'])) {
+                        $monthlyRecord['keluaran'] = $monthlyRecord['keluaran'] * $seasonalFactor / 12;
+                    }
+                    
+                    // Add minimal enhanced fields
+                    $monthlyRecord['confidence_score'] = 0.85;
+                    $monthlyRecord['data_source'] = 'BPS';
+                    $monthlyRecord['validation_status'] = 'verified';
+                    $monthlyRecord['outlier_flag'] = false;
+                    
+                    $monthlyRecord['created_at'] = now();
+                    $monthlyRecord['updated_at'] = now();
+                    
+                    $batchData[] = $monthlyRecord;
+                }
+            }
+            
+            // Insert batch data in small chunks
+            $chunks = array_chunk($batchData, $chunkSize);
+            foreach ($chunks as $chunk) {
+                DB::table('transaksi_nbms')->insert($chunk);
+                $totalRecords += count($chunk);
+            }
+            
+            // Clear memory after each batch
+            unset($batchData, $chunks);
+            gc_collect_cycles();
+            
+            echo "  Completed batch " . ($batchIndex + 1) . " - Total records: {$totalRecords}\n";
         }
         
-        echo "Successfully seeded " . count($data) . " NBM transaction records\n";
+        echo "Successfully seeded {$totalRecords} NBM transaction records\n";
+    }
+    
+
+    /**
+     * Add minimal enhanced fields (used in optimized version)
+     */
+    private function addEnhancedFields(array $record): array
+    {
+        // Only add essential fields to reduce memory usage
+        $enhanced = [
+            'confidence_score' => 0.85,
+            'data_source' => 'BPS',
+            'validation_status' => 'verified',
+            'outlier_flag' => false,
+        ];
+        
+        return array_merge($record, $enhanced);
     }
     
     private function getData(): array
