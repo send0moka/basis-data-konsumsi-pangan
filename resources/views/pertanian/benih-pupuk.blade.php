@@ -63,1033 +63,982 @@
             </div>
 
             <!-- Two Column Layout -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" x-data="benihPupukForm()">
-                <!-- Search Form - Left Column -->
-                <div class="lg:col-span-1">
-                    <div class="bg-neutral-50 rounded-lg p-6 sticky top-24">
-                        <h3 class="text-lg font-semibold text-neutral-900 mb-6">Filter Data Pertanian</h3>
-                        
-                        <!-- Data Filter Group -->
-                        <div class="bg-white rounded-lg p-4 border border-neutral-200 mb-6">
-                            <h4 class="text-md font-medium text-neutral-800 mb-4">Filter Data</h4>
-                            <div class="space-y-4">
-                                <!-- Pilih Topik -->
-                                <div>
-                                    <label for="topik" class="block text-sm font-medium text-neutral-700 mb-2">
-                                        Topik
-                                    </label>
-                                    <select name="topik" x-model="filters.topik" 
-                                            @change="loadVariabels()"
-                                            class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                        <option value="">Pilih Topik</option>
-                                        <option value="1">Benih</option>
-                                        <option value="2">Pupuk</option>
-                                    </select>
-                                </div>
+<script>
+    const benihPupukInitialData = {
+        topiks: @json($topiks),
+        variabels: @json($variabels),
+        klasifikasis: @json($klasifikasis),
+        tahuns: @json($tahuns),
+        bulans: @json($bulans),
+        wilayahs: @json($wilayahs)
+    };
 
-                                <!-- Pilih Variabel -->
-                                <div>
-                                    <label for="variabels" class="block text-sm font-medium text-neutral-700 mb-2">
-                                        Variabel <span class="text-xs text-neutral-500">(pilih satu)</span>
-                                    </label>
-                                    <div class="space-y-2 max-h-32 overflow-y-auto border border-neutral-200 rounded-md p-2 bg-white" 
-                                         :class="!filters.topik ? 'bg-neutral-100' : 'bg-white'">
-                                        <template x-for="variabel in availableVariabels" :key="variabel.id">
-                                            <label class="flex items-center cursor-pointer hover:bg-neutral-50 p-1 rounded">
-                                                <input type="radio" 
-                                                       :value="variabel.id" 
-                                                       x-model="filters.selectedVariabel"
-                                                       name="variabel"
-                                                       @change="loadKlasifikasis()"
-                                                       :disabled="!filters.topik"
-                                                       class="border-neutral-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200">
-                                                <span class="ml-2 text-sm text-neutral-700" x-text="variabel.deskripsi + ' (' + variabel.satuan + ')'"></span>
-                                            </label>
-                                        </template>
-                                        <div x-show="!filters.topik" class="text-sm text-neutral-500 p-2">
-                                            Pilih topik terlebih dahulu
-                                        </div>
-                                        <div x-show="filters.topik && availableVariabels.length === 0" class="text-sm text-neutral-500 p-2">
-                                            Memuat variabel...
-                                        </div>
-                                    </div>
-                                </div>
+    function benihPupukForm() {
+        return {
+            init(data) {
+                this.allData = data;
+                this.$watch('wilayahLevel', () => {
+                    // Reset selections when switching levels
+                    this.selection.provinsi_ids = [];
+                    this.selection.kabupaten_ids = [];
+                    this.selectedProvinsiId = null;
+                });
+                this.$watch('selectedProvinsiId', () => {
+                    // Reset kabupaten selection when province changes
+                    this.selection.kabupaten_ids = [];
+                });
+            },
+            // Data sources from Controller
+            allData: {
+                topiks: [],
+                variabels: [],
+                klasifikasis: [],
+                tahuns: [],
+                bulans: [],
+                wilayahs: []
+            },
 
-                                <!-- Pilih Klasifikasi -->
-                                <div>
-                                    <label for="klasifikasis" class="block text-sm font-medium text-neutral-700 mb-2">
-                                        Klasifikasi Variabel
-                                    </label>
-                                    <div class="space-y-2 max-h-28 overflow-y-auto border border-neutral-200 rounded-md p-2" 
-                                         :class="!filters.selectedVariabel ? 'bg-neutral-100' : 'bg-white'">
-                                        <template x-for="klasifikasi in availableKlasifikasis" :key="klasifikasi.id">
-                                            <label class="flex items-center cursor-pointer hover:bg-neutral-50 p-1 rounded">
-                                                <input type="checkbox" 
-                                                       :value="klasifikasi.id" 
-                                                       x-model="filters.klasifikasis"
-                                                       :disabled="!filters.selectedVariabel"
-                                                       class="rounded border-neutral-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200">
-                                                <span class="ml-2 text-sm text-neutral-700" x-text="klasifikasi.deskripsi"></span>
-                                            </label>
-                                        </template>
-                                        <div x-show="!filters.selectedVariabel" class="text-sm text-neutral-500 p-2">
-                                            Pilih variabel terlebih dahulu
-                                        </div>
-                                        <div x-show="filters.selectedVariabel && availableKlasifikasis.length === 0" class="text-sm text-neutral-500 p-2">
-                                            Memuat klasifikasi...
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+            // Form state
+            selection: {
+                topik_id: null,
+                variabel_id: null,
+                klasifikasi_ids: [],
+                tahun_ids: [],
+                bulan_ids: [],
+                provinsi_ids: [],
+                kabupaten_ids: [],
+                tata_letak: 'master-header-variabel',
+                wilayah: {
+                    tingkat: 'nasional',
+                    provinsi: [],
+                    kabupaten: [],
+                    selected_provinsi: null,
+                },
+            },
+
+            wilayahLevel: 'provinsi', // 'nasional' or 'provinsi'
+            selectedProvinsiId: null,
+
+            // Search inputs
+            search: {
+                topik: '',
+                variabel: '',
+                klasifikasi: '',
+                tahun: '',
+                bulan: '',
+                wilayah: '',
+            },
+
+            // UI state
+            isProcessing: false,
+            activeTab: 'tabel',
+            selections: [],
+            selectedForRemoval: [],
+            searchResults: [],
+
+            // Methods
+            selectTopik(id) {
+                this.selection.topik_id = id;
+                this.selection.variabel_id = null;
+                this.selection.klasifikasi_ids = [];
+            },
+
+            selectVariabel(id) {
+                this.selection.variabel_id = id;
+                this.selection.klasifikasi_ids = [];
+            },
+
+            isSelectionValid() {
+                return this.selection.topik_id && this.selection.variabel_id && this.selection.tahun_ids.length > 0 && this.selection.bulan_ids.length > 0;
+            },
+
+            addSelection() {
+                if (!this.isSelectionValid()) return;
+
+                const topik = this.allData.topiks.find(t => t.id === this.selection.topik_id);
+                const variabel = this.allData.variabels.find(v => v.id === this.selection.variabel_id);
+                
+                const tahun_awal = Math.min(...this.selection.tahun_ids);
+                const tahun_akhir = Math.max(...this.selection.tahun_ids);
+                const bulan_awal = this.allData.bulans.find(b => b.id == Math.min(...this.selection.bulan_ids))?.nama || '';
+                const bulan_akhir = this.allData.bulans.find(b => b.id == Math.max(...this.selection.bulan_ids))?.nama || '';
+
+                const newSelection = {
+                    id: Date.now(),
+                    topik_id: this.selection.topik_id,
+                    variabel_id: this.selection.variabel_id,
+                    klasifikasi_ids: [...this.selection.klasifikasi_ids],
+                    tahun_ids: [...this.selection.tahun_ids],
+                    bulan_ids: [...this.selection.bulan_ids],
+                    display: {
+                        variabel_nama: variabel ? `${topik.nama} - ${variabel.nama}` : topik.nama,
+                        klasifikasi_nama: this.selection.klasifikasi_ids.length > 0 ? 'Terpilih' : 'Semua',
+                        tahun: this.selection.tahun_ids.length > 1 ? `${tahun_awal} - ${tahun_akhir}` : tahun_awal,
+                        bulan: this.selection.bulan_ids.length > 1 ? `${bulan_awal} - ${bulan_akhir}` : bulan_awal
+                    }
+                };
+
+                this.selections.push(newSelection);
+                this.resetSelection();
+            },
+
+            removeSelection() {
+                // Convert IDs for removal to numbers for strict comparison
+                const idsToRemove = this.selectedForRemoval.map(Number);
+                // Filter the array by creating a new one, which is a robust way to trigger reactivity
+                this.selections = this.selections.filter(item => !idsToRemove.includes(item.id));
+                // Clear the selection
+                this.selectedForRemoval = [];
+            },
+
+            resetSelection() {
+                this.selection.topik_id = null;
+                this.selection.variabel_id = null;
+                this.selection.klasifikasi_ids = [];
+                this.selection.tahun_ids = [];
+                this.selection.bulan_ids = [];
+            },
+
+            resetForm() {
+                this.selection = {
+                    topik_id: null,
+                    variabel_id: null,
+                    klasifikasi_ids: [],
+                    tahun_ids: [],
+                    bulan_ids: [],
+                    provinsi_ids: [],
+                    kabupaten_ids: [],
+                    tata_letak: 'data-series',
+                    wilayah: {
+                        tingkat: 'nasional',
+                        provinsi: [],
+                        kabupaten: [],
+                        selected_provinsi: null,
+                    },
+                };
+                this.selections = [];
+                this.searchResults = { data: [], columnOrder: [], config: {} };
+                this.selectedForRemoval = [];
+                this.wilayahLevel = 'nasional';
+                this.selectedProvinsiId = null;
+            },
+
+            async fetchData() {
+                if (this.selections.length === 0) {
+                    alert('Silakan tambahkan data terlebih dahulu.');
+                    return;
+                }
+                this.isProcessing = true;
+                this.searchResults = { data: [], columnOrder: [], config: {} }; // Reset results
+
+                try {
+                    const payload = {
+                        selections: this.selections.map(s => ({
+                            variabel_id: s.variabel_id,
+                            tahun_ids: s.tahun_ids,
+                            klasifikasi_ids: s.klasifikasi_ids,
+                            bulan_ids: s.bulan_ids,
+                        })),
+                        config: {
+                            tata_letak: this.selection.tata_letak,
+                            provinsi_ids: this.selection.provinsi_ids,
+                            kabupaten_ids: this.selection.kabupaten_ids,
+                        }
+                    };
+
+                    console.log('Sending payload:', payload);
+                    console.log('Selection state:', this.selection);
+
+                    const response = await fetch('{{ route('api.benih-pupuk.filter') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('Server error:', errorData);
+                        throw new Error(errorData.message || 'Network response was not ok');
+                    }
+
+                    const results = await response.json();
+                    console.log('Received results:', results);
+                    this.searchResults = results;
+                    // Optional: render chart if you have chart data
+                    // this.renderChart(results); 
+
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    alert('Terjadi kesalahan saat mengambil data: ' + error.message);
+                } finally {
+                    this.isProcessing = false;
+                }
+            },
+
+            renderChart(data) {
+                const ctx = document.getElementById('chart-container').getContext('2d');
+                if (window.myChart instanceof Chart) {
+                    window.myChart.destroy();
+                }
+
+                if (!data || !data.chart || !data.chart.labels || !data.chart.datasets) {
+                    return;
+                }
+
+                window.myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.chart.labels,
+                        datasets: data.chart.datasets.map(dataset => ({
+                            label: dataset.label,
+                            data: dataset.data,
+                            backgroundColor: dataset.backgroundColor || 'rgba(54, 162, 235, 0.6)',
+                            borderColor: dataset.borderColor || 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }))
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                            }
+                        }
+                    }
+                });
+            },
+
+            exportExcel() {
+                if (this.dynamicRows.length === 0) {
+                    alert('Tidak ada data untuk diekspor.');
+                    return;
+                }
+
+                // Create a hidden form to submit data
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route('api.benih-pupuk.export') }}';
+                form.style.display = 'none';
+
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                form.appendChild(csrfInput);
+
+                const headersInput = document.createElement('input');
+                headersInput.type = 'hidden';
+                headersInput.name = 'headers';
+                headersInput.value = JSON.stringify(this.dynamicHeaders);
+                form.appendChild(headersInput);
+
+                const rowsInput = document.createElement('input');
+                rowsInput.type = 'hidden';
+                rowsInput.name = 'rows';
+                rowsInput.value = JSON.stringify(this.dynamicRows);
+                form.appendChild(rowsInput);
+                
+                const titleInput = document.createElement('input');
+                titleInput.type = 'hidden';
+                titleInput.name = 'title';
+                titleInput.value = "Laporan Benih dan Pupuk";
+                form.appendChild(titleInput);
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            },
+
+            // Dependent selection reset
+            loadVariabels() {
+                this.selection.variabel_id = null;
+                this.selection.klasifikasi_ids = [];
+            },
+
+            loadKlasifikasis() {
+                this.selection.klasifikasi_ids = [];
+            },
+
+            // Computed properties for filtering dropdowns
+            get filteredTopik() {
+                if (!this.search.topik) return this.allData.topiks;
+                return this.allData.topiks.filter(t => t.nama.toLowerCase().includes(this.search.topik.toLowerCase()));
+            },
+
+            get filteredVariabel() {
+                if (!this.selection.topik_id) return [];
+                let variabels = this.allData.variabels.filter(v => v.topik_id == this.selection.topik_id);
+                if (this.search.variabel) {
+                    variabels = variabels.filter(v => v.nama.toLowerCase().includes(this.search.variabel.toLowerCase()));
+                }
+                return variabels;
+            },
+
+            get filteredKlasifikasi() {
+                if (!this.selection.variabel_id) return [];
+                let klasifikasis = this.allData.klasifikasis.filter(k => k.variabel_id == this.selection.variabel_id);
+                if (this.search.klasifikasi) {
+                    klasifikasis = klasifikasis.filter(k => k.nama.toLowerCase().includes(this.search.klasifikasi.toLowerCase()));
+                }
+                return klasifikasis;
+            },
+
+            get filteredTahun() {
+                if (!this.search.tahun) return this.allData.tahuns;
+                return this.allData.tahuns.filter(t => t.toString().includes(this.search.tahun));
+            },
+
+            get filteredBulan() {
+                if (!this.search.bulan) return this.allData.bulans;
+                return this.allData.bulans.filter(b => b.nama.toLowerCase().includes(this.search.bulan.toLowerCase()));
+            },
+
+
+            toggleKabupaten(id) {
+                if (this.selection.kabupaten_ids.includes(id)) {
+                    this.selection.kabupaten_ids = this.selection.kabupaten_ids.filter(kId => kId !== id);
+                } else {
+                    this.selection.kabupaten_ids.push(id);
+                }
+            },
+
+            toggleWilayah(id) {
+                if (this.selection.provinsi_ids.includes(id)) {
+                    this.selection.provinsi_ids = this.selection.provinsi_ids.filter(pId => pId !== id);
+                } else {
+                    this.selection.provinsi_ids.push(id);
+                }
+            },
+
+            get filteredWilayah() {
+                const searchTerm = this.search.wilayah.toLowerCase();
+                if (this.wilayahLevel === 'nasional') {
+                    if (!searchTerm) return this.allData.wilayahs;
+                    return this.allData.wilayahs.filter(p => p.nama.toLowerCase().includes(searchTerm));
+                }
+
+                // Tingkat Provinsi
+                if (this.selectedProvinsiId) {
+                    const selectedProv = this.allData.wilayahs.find(p => p.id == this.selectedProvinsiId);
+                    if (!selectedProv) return [];
+                    // Return an array with a single province object, containing filtered kabupaten
+                    const filteredKabupaten = selectedProv.kabupaten.filter(k => k.nama.toLowerCase().includes(searchTerm));
+                    return [{ ...selectedProv, kabupaten: filteredKabupaten }];
+                }
+
+                // Default view for 'provinsi' level before a province is selected
+                if (!searchTerm) return this.allData.wilayahs;
+                return this.allData.wilayahs.filter(provinsi => {
+                    const provMatch = provinsi.nama.toLowerCase().includes(searchTerm);
+                    const kabMatch = provinsi.kabupaten.some(kab => kab.nama.toLowerCase().includes(searchTerm));
+                    return provMatch || kabMatch;
+                });
+            },
+
+        get dynamicHeaders() {
+            if (!this.searchResults || !this.searchResults.data || this.searchResults.data.length === 0) {
+                return [];
+            }
+
+            const { columnOrder } = this.searchResults;
+            
+            // Create simple headers based on columnOrder from backend
+            const headers = [];
+            
+            // Add main header row with column names
+            const mainHeaderRow = columnOrder.map(col => ({
+                name: col.charAt(0).toUpperCase() + col.slice(1), // Capitalize first letter
+                span: 1
+            }));
+            
+            headers.push([
+                { name: 'Wilayah', span: 1, rowspan: 1 },
+                ...mainHeaderRow
+            ]);
+            
+            return headers;
+        },
+
+        get dynamicRows() {
+            if (!this.searchResults || !this.searchResults.data || this.searchResults.data.length === 0) {
+                return [];
+            }
+            
+            // Backend already returns data in the correct format: [{wilayah: "...", values: [...]}]
+            return this.searchResults.data;
+        },
+
+        // Helper function
+        getColumnOrderKeys(layout) {
+            if (layout === 'tipe_1') return ['variabel', 'klasifikasi', 'tahun', 'bulan'];
+            if (layout === 'tipe_2') return ['klasifikasi', 'variabel', 'tahun', 'bulan'];
+            if (layout === 'tipe_3') return ['tahun', 'bulan', 'variabel', 'klasifikasi'];
+            return [];
+        }
+        };
+    }
+</script>
+
+
+                    <div x-data="benihPupukForm()" x-init="init(benihPupukInitialData)" class="space-y-12">
+                        <!-- Step 1: Select Data -->
+<section class="bg-neutral-50 rounded-lg p-6 border border-neutral-200">
+    <h2 class="text-2xl font-bold text-neutral-800 mb-1 flex items-center">
+        <span class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">1</span>
+        Pilih Data
+    </h2>
+    <p class="text-neutral-600 mb-6 ml-11">Pilih Topik, Variabel dan Periode Waktu.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <!-- 1.1 Topik -->
+        <div class="bg-white p-4 rounded-lg border">
+            <h3 class="font-semibold text-neutral-900 mb-3">1.1 Topik</h3>
+            <input type="text" x-model="search.topik" placeholder="search..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
+            <div class="space-y-1 max-h-32 overflow-y-auto">
+                <template x-for="topik in filteredTopik" :key="topik.id">
+                    <div @click="selectTopik(topik.id)" class="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-md" :class="{'bg-blue-100 font-semibold': selection.topik_id === topik.id}">
+                        <span class="ml-2 text-sm text-neutral-700" x-text="topik.nama"></span>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- 1.2 Variabel -->
+        <div class="bg-white p-4 rounded-lg border">
+            <h3 class="font-semibold text-neutral-900 mb-3">1.2 Variabel</h3>
+            <div :class="!selection.topik_id ? 'opacity-50 pointer-events-none' : ''">
+                <input type="text" x-model="search.variabel" placeholder="search..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
+                <div class="max-h-24 overflow-y-auto mb-3 border rounded-md p-2">
+                    <template x-for="variabel in filteredVariabel" :key="variabel.id">
+                        <div @click="selectVariabel(variabel.id)" class="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-md" :class="{'bg-blue-100 font-semibold': selection.variabel_id === variabel.id}">
+                            <span class="ml-2 text-sm text-neutral-700" x-text="variabel.nama"></span>
                         </div>
+                    </template>
+                </div>
+                <h4 class="font-medium text-neutral-800 mb-2 text-sm">Klasifikasi Variabel</h4>
+                <input type="text" x-model="search.klasifikasi" placeholder="search..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
+                <div class="max-h-24 overflow-y-auto border rounded-md p-2">
+                    <template x-for="klasifikasi in filteredKlasifikasi" :key="klasifikasi.id">
+                        <label class="flex items-center cursor-pointer hover:bg-green-50 p-2 rounded-md">
+                            <input type="checkbox" :value="klasifikasi.id" x-model="selection.klasifikasi_ids">
+                            <span class="ml-2 text-sm text-neutral-700" x-text="klasifikasi.nama"></span>
+                        </label>
+                    </template>
+                </div>
+            </div>
+        </div>
 
-                        <!-- Time Filter Group -->
-                        <div class="bg-white rounded-lg p-4 border border-neutral-200 mb-6">
-                            <h4 class="text-md font-medium text-neutral-800 mb-4">Filter Waktu</h4>
-                            <div class="space-y-4">
-                                <!-- Tahun Selection -->
-                                <div>
-                                    <label class="block text-sm font-medium text-neutral-700 mb-2">
-                                        Tahun
-                                    </label>
-                                    <div class="space-y-2">
-                                        <!-- Year Selection Mode -->
-                                        <div class="flex gap-2 mb-3">
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" x-model="yearMode" value="specific" 
-                                                       class="text-blue-600 focus:ring-blue-500">
-                                                <span class="ml-1 text-xs text-neutral-700">Pilih Spesifik</span>
-                                            </label>
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" x-model="yearMode" value="range" 
-                                                       class="text-blue-600 focus:ring-blue-500">
-                                                <span class="ml-1 text-xs text-neutral-700">Rentang</span>
-                                            </label>
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" x-model="yearMode" value="all" 
-                                                       class="text-blue-600 focus:ring-blue-500">
-                                                <span class="ml-1 text-xs text-neutral-700">Semua</span>
-                                            </label>
-                                        </div>
-
-                                        <!-- Specific Years Selection -->
-                                        <div x-show="yearMode === 'specific'" class="max-h-32 overflow-y-auto border border-neutral-200 rounded-md p-2 bg-white">
-                                            <template x-for="year in years" :key="year">
-                                                <label class="flex items-center cursor-pointer hover:bg-neutral-50 p-1 rounded">
-                                                    <input type="checkbox" 
-                                                           :value="year" 
-                                                           x-model="filters.selectedYears"
-                                                           class="rounded border-neutral-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200">
-                                                    <span class="ml-2 text-sm text-neutral-700" x-text="year"></span>
-                                                </label>
-                                            </template>
-                                        </div>
-
-                                        <!-- Year Range Selection -->
-                                        <div x-show="yearMode === 'range'" class="grid grid-cols-2 gap-2">
-                                            <div>
-                                                <label class="block text-xs font-medium text-neutral-600 mb-1">Dari</label>
-                                                <select x-model="filters.tahun_awal" 
-                                                        @change="validateYearRange()"
-                                                        class="w-full px-2 py-1 border border-neutral-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                    <option value="">Pilih Tahun</option>
-                                                    <template x-for="year in years" :key="year">
-                                                        <option :value="year" x-text="year"></option>
-                                                    </template>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-medium text-neutral-600 mb-1">Sampai</label>
-                                                <select x-model="filters.tahun_akhir" 
-                                                        @change="validateYearRange()"
-                                                        class="w-full px-2 py-1 border border-neutral-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                    <option value="">Pilih Tahun</option>
-                                                    <template x-for="year in years" :key="year">
-                                                        <option :value="year" x-text="year" :disabled="filters.tahun_awal && year < filters.tahun_awal"></option>
-                                                    </template>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div x-show="yearMode === 'all'" class="text-sm text-neutral-600 p-2 bg-blue-50 rounded">
-                                            Semua tahun (2014-2025) akan digunakan
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Bulan Selection (Required) -->
-                                <div>
-                                    <label class="block text-sm font-medium text-neutral-700 mb-2">
-                                        Bulan <span class="text-red-500">*</span>
-                                    </label>
-                                    <div class="space-y-2">
-                                        <!-- Month Selection Mode -->
-                                        <div class="flex gap-2 mb-3">
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" x-model="monthMode" value="specific" 
-                                                       class="text-blue-600 focus:ring-blue-500">
-                                                <span class="ml-1 text-xs text-neutral-700">Pilih Spesifik</span>
-                                            </label>
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" x-model="monthMode" value="range" 
-                                                       class="text-blue-600 focus:ring-blue-500">
-                                                <span class="ml-1 text-xs text-neutral-700">Rentang</span>
-                                            </label>
-                                            <label class="flex items-center cursor-pointer">
-                                                <input type="radio" x-model="monthMode" value="all" 
-                                                       class="text-blue-600 focus:ring-blue-500">
-                                                <span class="ml-1 text-xs text-neutral-700">Semua</span>
-                                            </label>
-                                        </div>
-
-                                        <!-- Specific Months Selection -->
-                                        <div x-show="monthMode === 'specific'" class="grid grid-cols-2 gap-1 max-h-32 overflow-y-auto border border-neutral-200 rounded-md p-2 bg-white">
-                                            <template x-for="bulan in bulans" :key="bulan.id">
-                                                <label class="flex items-center cursor-pointer hover:bg-neutral-50 p-1 rounded">
-                                                    <input type="checkbox" 
-                                                           :value="bulan.id" 
-                                                           x-model="filters.selectedMonths"
-                                                           class="rounded border-neutral-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200">
-                                                    <span class="ml-1 text-xs text-neutral-700" x-text="bulan.nama.substring(0,3)"></span>
-                                                </label>
-                                            </template>
-                                        </div>
-
-                                        <!-- Month Range Selection -->
-                                        <div x-show="monthMode === 'range'" class="grid grid-cols-2 gap-2">
-                                            <div>
-                                                <label class="block text-xs font-medium text-neutral-600 mb-1">Dari</label>
-                                                <select x-model="filters.bulan_awal" 
-                                                        class="w-full px-2 py-1 border border-neutral-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                    <option value="">Pilih Bulan</option>
-                                                    <template x-for="bulan in bulans" :key="bulan.id">
-                                                        <option :value="bulan.id" x-text="bulan.nama"></option>
-                                                    </template>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-medium text-neutral-600 mb-1">Sampai</label>
-                                                <select x-model="filters.bulan_akhir" 
-                                                        class="w-full px-2 py-1 border border-neutral-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                    <option value="">Pilih Bulan</option>
-                                                    <template x-for="bulan in bulans" :key="bulan.id">
-                                                        <option :value="bulan.id" x-text="bulan.nama" :disabled="filters.bulan_awal && bulan.id < filters.bulan_awal"></option>
-                                                    </template>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div x-show="monthMode === 'all'" class="text-sm text-neutral-600 p-2 bg-blue-50 rounded">
-                                            Semua bulan (Januari-Desember) akan digunakan
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Region Filter Group -->
-                        <div class="bg-white rounded-lg p-4 border border-neutral-200 mb-6">
-                            <h4 class="text-md font-medium text-neutral-800 mb-4">Filter Wilayah</h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-neutral-700 mb-2">
-                                        Pilih Wilayah
-                                    </label>
-                                    <div class="space-y-2">
-                                        <!-- Select All/None -->
-                                        <div class="flex gap-2 mb-2">
-                                            <button type="button" @click="selectAllRegions()" 
-                                                    class="px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">
-                                                Pilih Semua
-                                            </button>
-                                            <button type="button" @click="selectNoneRegions()" 
-                                                    class="px-2 py-1 bg-neutral-500 text-white text-xs rounded hover:bg-neutral-600">
-                                                Kosongkan
-                                            </button>
-                                        </div>
-                                        
-                                        <!-- Region Selection -->
-                                        <div class="max-h-40 overflow-y-auto border border-neutral-200 rounded-md p-2 bg-white">
-                                            <template x-for="wilayah in availableRegions" :key="wilayah.id">
-                                                <label class="flex items-center cursor-pointer hover:bg-neutral-50 p-1 rounded">
-                                                    <input type="checkbox" 
-                                                           :value="wilayah.id" 
-                                                           x-model="filters.selectedRegions"
-                                                           class="rounded border-neutral-300 text-blue-600 focus:border-blue-500 focus:ring focus:ring-blue-200">
-                                                    <span class="ml-2 text-sm text-neutral-700" x-text="wilayah.nama"></span>
-                                                </label>
-                                            </template>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Opsi Tata Letak Tabel -->
-                        <div class="bg-white rounded-lg p-4 border border-neutral-200 mb-6">
-                            <h4 class="text-md font-medium text-neutral-800 mb-4">📋 Opsi Tata Letak Tabel</h4>
-                            <p class="text-xs text-neutral-600 mb-4">Pilih tata letak untuk menampilkan hasil data</p>
-                            
-                            <div class="space-y-4">
-                                <!-- Tipe 1: Variabel × Tahun/Bulan -->
-                                <div class="relative">
-                                    <input type="radio" 
-                                           id="layout-tipe1-filter"
-                                           name="layout-filter"
-                                           value="tipe_1"
-                                           x-model="filters.tata_letak"
-                                           class="sr-only">
-                                    <label for="layout-tipe1-filter" 
-                                           :class="filters.tata_letak === 'tipe_1' ? 'bg-blue-50 border-blue-500' : 'bg-white border-neutral-200'"
-                                           class="table-layout-radio block p-3 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:border-blue-300">
-                                        <!-- Header -->
-                                        <div class="flex items-center justify-between mb-2">
-                                            <div class="flex items-center">
-                                                <span class="text-sm">🌍</span>
-                                                <span class="ml-2 font-medium text-neutral-900 text-sm">Tipe 1</span>
-                                            </div>
-                                            <div :class="filters.tata_letak === 'tipe_1' ? 'border-blue-500 bg-blue-500' : 'border-neutral-300'"
-                                                 class="w-4 h-4 border-2 rounded-full flex items-center justify-center transition-all duration-200">
-                                                <div :class="filters.tata_letak === 'tipe_1' ? 'opacity-100 scale-100' : 'opacity-0 scale-0'"
-                                                     class="w-2 h-2 bg-white rounded-full transition-all duration-200"></div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Description -->
-                                        <p class="text-xs text-neutral-600 mb-2">Wilayah × Variabel × Klasifikasi × Tahun × Bulan</p>
-                                        
-                                        <!-- Mini Table Preview -->
-                                        <div class="table-preview bg-neutral-50 border border-neutral-200 rounded-md overflow-hidden">
-                                            <table class="preview-table w-full">
-                                                <thead>
-                                                    <tr class="bg-green-500 text-white">
-                                                        <th class="px-1 py-0.5 text-left border border-green-400 text-xs">Wilayah</th>
-                                                        <th class="px-1 py-0.5 text-center border border-green-400 text-xs" colspan="2">Benih</th>
-                                                    </tr>
-                                                    <tr class="bg-green-400 text-white">
-                                                        <th class="px-1 py-0.5 border border-green-300 text-xs"></th>
-                                                        <th class="px-1 py-0.5 text-center border border-green-300 text-xs">Inbrida</th>
-                                                        <th class="px-1 py-0.5 text-center border border-green-300 text-xs">Hibrida</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="bg-white">
-                                                    <tr>
-                                                        <td class="px-1 py-0.5 text-left border text-xs font-medium">Aceh</td>
-                                                        <td class="px-1 py-0.5 text-right border text-xs">1,250</td>
-                                                        <td class="px-1 py-0.5 text-right border text-xs">1,380</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        
-                                        <div class="mt-1 text-xs text-neutral-500">
-                                            ✨ Analisis regional terstruktur
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <!-- Tipe 2: Klasifikasi × Variabel -->
-                                <div class="relative">
-                                    <input type="radio" 
-                                           id="layout-tipe2-filter"
-                                           name="layout-filter"
-                                           value="tipe_2"
-                                           x-model="filters.tata_letak"
-                                           class="sr-only">
-                                    <label for="layout-tipe2-filter" 
-                                           :class="filters.tata_letak === 'tipe_2' ? 'bg-blue-50 border-blue-500' : 'bg-white border-neutral-200'"
-                                           class="table-layout-radio block p-3 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:border-blue-300">
-                                        <!-- Header -->
-                                        <div class="flex items-center justify-between mb-2">
-                                            <div class="flex items-center">
-                                                <span class="text-sm">📋</span>
-                                                <span class="ml-2 font-medium text-neutral-900 text-sm">Tipe 2</span>
-                                            </div>
-                                            <div :class="filters.tata_letak === 'tipe_2' ? 'border-blue-500 bg-blue-500' : 'border-neutral-300'"
-                                                 class="w-4 h-4 border-2 rounded-full flex items-center justify-center transition-all duration-200">
-                                                <div :class="filters.tata_letak === 'tipe_2' ? 'opacity-100 scale-100' : 'opacity-0 scale-0'"
-                                                     class="w-2 h-2 bg-white rounded-full transition-all duration-200"></div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Description -->
-                                        <p class="text-xs text-neutral-600 mb-2">Wilayah × Klasifikasi × Variabel × Tahun × Bulan</p>
-                                        
-                                        <!-- Mini Table Preview -->
-                                        <div class="table-preview bg-neutral-50 border border-neutral-200 rounded-md overflow-hidden">
-                                            <table class="preview-table w-full">
-                                                <thead>
-                                                    <tr class="bg-green-500 text-white">
-                                                        <th class="px-1 py-0.5 text-left border border-green-400 text-xs">Wilayah</th>
-                                                        <th class="px-1 py-0.5 text-center border border-green-400 text-xs" colspan="2">Inbrida</th>
-                                                    </tr>
-                                                    <tr class="bg-green-400 text-white">
-                                                        <th class="px-1 py-0.5 border border-green-300 text-xs"></th>
-                                                        <th class="px-1 py-0.5 text-center border border-green-300 text-xs">Benih</th>
-                                                        <th class="px-1 py-0.5 text-center border border-green-300 text-xs">Pupuk</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="bg-white">
-                                                    <tr>
-                                                        <td class="px-1 py-0.5 text-left border text-xs font-medium">Aceh</td>
-                                                        <td class="px-1 py-0.5 text-right border text-xs">850</td>
-                                                        <td class="px-1 py-0.5 text-right border text-xs">920</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        
-                                        <div class="mt-1 text-xs text-neutral-500">
-                                            ✨ Komparasi per klasifikasi
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <!-- Tipe 3: Tahun × Bulan -->
-                                <div class="relative">
-                                    <input type="radio" 
-                                           id="layout-tipe3-filter"
-                                           name="layout-filter"
-                                           value="tipe_3"
-                                           x-model="filters.tata_letak"
-                                           class="sr-only">
-                                    <label for="layout-tipe3-filter" 
-                                           :class="filters.tata_letak === 'tipe_3' ? 'bg-blue-50 border-blue-500' : 'bg-white border-neutral-200'"
-                                           class="table-layout-radio block p-3 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:border-blue-300">
-                                        <!-- Header -->
-                                        <div class="flex items-center justify-between mb-2">
-                                            <div class="flex items-center">
-                                                <span class="text-sm">📅</span>
-                                                <span class="ml-2 font-medium text-neutral-900 text-sm">Tipe 3</span>
-                                            </div>
-                                            <div :class="filters.tata_letak === 'tipe_3' ? 'border-blue-500 bg-blue-500' : 'border-neutral-300'"
-                                                 class="w-4 h-4 border-2 rounded-full flex items-center justify-center transition-all duration-200">
-                                                <div :class="filters.tata_letak === 'tipe_3' ? 'opacity-100 scale-100' : 'opacity-0 scale-0'"
-                                                     class="w-2 h-2 bg-white rounded-full transition-all duration-200"></div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Description -->
-                                        <p class="text-xs text-neutral-600 mb-2">Wilayah × Tahun × Bulan × Variabel × Klasifikasi</p>
-                                        
-                                        <!-- Mini Table Preview -->
-                                        <div class="table-preview bg-neutral-50 border border-neutral-200 rounded-md overflow-hidden">
-                                            <table class="preview-table w-full">
-                                                <thead>
-                                                    <tr class="bg-green-500 text-white">
-                                                        <th class="px-1 py-0.5 text-left border border-green-400 text-xs">Wilayah</th>
-                                                        <th class="px-1 py-0.5 text-center border border-green-400 text-xs" colspan="2">2023</th>
-                                                    </tr>
-                                                    <tr class="bg-green-400 text-white">
-                                                        <th class="px-1 py-0.5 border border-green-300 text-xs"></th>
-                                                        <th class="px-1 py-0.5 text-center border border-green-300 text-xs">Jan</th>
-                                                        <th class="px-1 py-0.5 text-center border border-green-300 text-xs">Feb</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="bg-white">
-                                                    <tr>
-                                                        <td class="px-1 py-0.5 text-left border text-xs font-medium">Aceh</td>
-                                                        <td class="px-1 py-0.5 text-right border text-xs">1,250</td>
-                                                        <td class="px-1 py-0.5 text-right border text-xs">2,100</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        
-                                        <div class="mt-1 text-xs text-neutral-500">
-                                            ✨ Analisis temporal regional
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="mt-3 text-xs text-neutral-500">
-                                💡 Tata letak akan diterapkan pada semua hasil
-                            </div>
-                        </div>
-
-                        <!-- Filter Queue Section -->
-                        <div class="bg-white rounded-lg p-4 border border-neutral-200 mb-6">
-                            <h4 class="text-md font-medium text-neutral-800 mb-4">Antrian Filter</h4>
-                            
-                            <!-- Add to Queue Button -->
-                            <button type="button" 
-                                    @click="addToQueue()"
-                                    :disabled="!canAddToQueue()"
-                                    :class="canAddToQueue() ? 'bg-green-600 hover:bg-green-700' : 'bg-neutral-400 cursor-not-allowed'"
-                                    class="w-full text-white px-4 py-2 rounded-md font-medium transition duration-200 mb-4">
-                                <span x-show="!addingToQueue">Tambahkan ke Antrian</span>
-                                <span x-show="addingToQueue">Menambahkan...</span>
-                            </button>
-
-                            <!-- Queue List -->
-                            <div x-show="filterQueue.length > 0" class="space-y-2">
-                                <h5 class="text-sm font-medium text-neutral-700">Antrian Filter:</h5>
-                                <template x-for="(queueItem, index) in filterQueue" :key="index">
-                                    <div class="bg-neutral-50 p-3 rounded border border-neutral-200">
-                                        <div class="flex justify-between items-start">
-                                            <div class="flex-1">
-                                                <div class="text-sm font-medium text-neutral-800" x-text="`Filter ${index + 1}`"></div>
-                                                <div class="text-xs text-neutral-600 mt-1" x-text="getQueueSummary(queueItem)"></div>
-                                            </div>
-                                            <button @click="removeFromQueue(index)" 
-                                                    class="text-red-600 hover:text-red-800 text-xs ml-2">
-                                                Hapus
-                                            </button>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="space-y-3">
-                            <!-- Process Queue Button -->
-                            <button type="button" 
-                                    @click="processQueue()"
-                                    :disabled="filterQueue.length === 0"
-                                    :class="filterQueue.length > 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-neutral-400 cursor-not-allowed'"
-                                    class="w-full text-white px-4 py-2 rounded-md font-medium transition duration-200">
-                                <span x-show="!isProcessing">Proses Antrian (<span x-text="filterQueue.length"></span>)</span>
-                                <span x-show="isProcessing" class="flex items-center justify-center">
-                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Memproses...
-                                </span>
-                            </button>
-
-                            <!-- Clear Queue Button -->
-                            <button type="button" 
-                                    @click="clearQueue()"
-                                    :disabled="filterQueue.length === 0"
-                                    class="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md font-medium transition duration-200 disabled:bg-neutral-400 disabled:cursor-not-allowed">
-                                Kosongkan Antrian
-                            </button>
-
-                            <!-- Reset All Button -->
-                            <button type="button" 
-                                    @click="resetAll()"
-                                    class="w-full bg-neutral-500 hover:bg-neutral-600 text-white px-4 py-2 rounded-md font-medium transition duration-200">
-                                Reset Semua
-                            </button>
-                        </div>
+        <!-- 1.3 Waktu -->
+        <div class="bg-white p-4 rounded-lg border flex flex-col">
+            <h3 class="font-semibold text-neutral-900 mb-3">1.3 Waktu</h3>
+            <div class="grid grid-cols-2 gap-4 flex-grow">
+                <div class="flex flex-col">
+                    <label class="block text-sm font-medium text-neutral-700 mb-1">Tahun</label>
+                    <div class="flex justify-between items-center mb-1">
+                        <button @click="selection.tahun_ids = filteredTahun.map(t => t)" class="text-xs text-blue-600 hover:underline">Select All</button>
+                        <button @click="selection.tahun_ids = []" class="text-xs text-red-600 hover:underline">Clear</button>
+                    </div>
+                    <input type="text" x-model="search.tahun" placeholder="search..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
+                    <div class="overflow-y-auto border rounded-md p-2 flex-grow">
+                        <template x-for="year in filteredTahun" :key="year">
+                            <label class="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-md">
+                                <input type="checkbox" :value="year" x-model="selection.tahun_ids">
+                                <span class="ml-2 text-sm text-neutral-700" x-text="year"></span>
+                            </label>
+                        </template>
                     </div>
                 </div>
-
-                <!-- Results - Right Column -->
-                <div class="lg:col-span-2">
-                    <!-- Queue Status -->
-                    <div x-show="filterQueue.length > 0 && searchResults.length === 0" class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                        <div class="text-center">
-                            <svg class="w-12 h-12 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                            </svg>
-                            <h3 class="text-lg font-medium text-blue-900 mb-2">Filter Siap Diproses</h3>
-                            <p class="text-blue-700 mb-4">
-                                Anda memiliki <span class="font-semibold" x-text="filterQueue.length"></span> filter dalam antrian. 
-                                Klik "Proses Antrian" untuk menghasilkan laporan.
-                            </p>
-                            <button @click="processQueue()" 
-                                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition duration-200">
-                                Proses Antrian
-                            </button>
-                        </div>
+                <div class="flex flex-col">
+                    <label class="block text-sm font-medium text-neutral-700 mb-1">Bulan</label>
+                     <div class="flex justify-between items-center mb-1">
+                        <button @click="selection.bulan_ids = filteredBulan.map(b => b.id)" class="text-xs text-blue-600 hover:underline">Select All</button>
+                        <button @click="selection.bulan_ids = []" class="text-xs text-red-600 hover:underline">Clear</button>
                     </div>
-
-                    <!-- Processing Status -->
-                    <div x-show="isProcessing" class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
-                        <div class="text-center">
-                            <svg class="animate-spin w-12 h-12 text-yellow-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <h3 class="text-lg font-medium text-yellow-900 mb-2">Memproses Data</h3>
-                            <p class="text-yellow-700">
-                                Sedang memproses <span x-text="filterQueue.length"></span> filter. Mohon tunggu...
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Results Container -->
-                    <div x-show="searchResults.length > 0" class="space-y-6">
-                        <!-- Results Header -->
-                        <div class="bg-white rounded-lg shadow-sm border p-6">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-xl font-semibold text-neutral-900">
-                                    Hasil Pencarian (<span x-text="searchResults.length"></span> dataset)
-                                </h3>
-                                <div class="flex gap-2">
-                                    <button @click="clearResults()" 
-                                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                        Clear Results
-                                    </button>
-                                    <button @click="exportToExcel()" 
-                                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition duration-200 flex items-center">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                        Export Excel
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Results Summary -->
-                            <div class="text-sm text-neutral-600 bg-green-50 p-4 rounded-md">
-                                <p><strong>Total Dataset:</strong> <span x-text="searchResults.length"></span></p>
-                                <p><strong>Dihasilkan:</strong> <span x-text="new Date().toLocaleString('id-ID')"></span></p>
-                                <p class="text-xs text-neutral-500 mt-2">
-                                    Klik tab "Grafik" untuk melihat visualisasi data, atau "Metodologi" untuk penjelasan data
-                                </p>
-                            </div>
-
-                            <!-- Data Quality Warning -->
-                            <div class="text-sm bg-orange-50 border border-orange-200 p-4 rounded-md">
-                                <div class="flex items-start">
-                                    <svg class="w-5 h-5 text-orange-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    <div>
-                                        <p class="text-orange-800 font-medium mb-1">⚠️ Perhatian Kualitas Data</p>
-                                        <p class="text-orange-700 text-xs">
-                                            Beberapa nilai data (terutama untuk Pupuk-Alokasi/Realisasi) mungkin tidak realistis karena menggunakan unit pengukuran yang berbeda. 
-                                            Nilai Benih umumnya dalam kisaran 50-500, sedangkan Pupuk bisa mencapai 5.000-23.000.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Tabs -->
-                        <div class="bg-white rounded-lg shadow-sm border">
-                            <!-- Tab Navigation -->
-                            <div class="border-b border-neutral-200">
-                                <nav class="flex space-x-8 px-6" aria-label="Tabs">
-                                    <button @click="activeTab = 'tabel'" 
-                                            :class="activeTab === 'tabel' ? 'border-blue-500 text-blue-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
-                                            class="py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap">
-                                        <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 6h18m-9 8h9m-9 4h9M3 14h6m-6 4h6"></path>
-                                        </svg>
-                                        Tabel
-                                    </button>
-                                    <button @click="activeTab = 'grafik'" 
-                                            :class="activeTab === 'grafik' ? 'border-blue-500 text-blue-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
-                                            class="py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap">
-                                        <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                        </svg>
-                                        Grafik
-                                    </button>
-                                    <button @click="activeTab = 'metodologi'" 
-                                            :class="activeTab === 'metodologi' ? 'border-blue-500 text-blue-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
-                                            class="py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap">
-                                        <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                        Metodologi
-                                    </button>
-                                </nav>
-                            </div>
-
-                            <!-- Tab Content -->
-                            <div class="p-6">
-                                <!-- Tabel Tab -->
-                                <div x-show="activeTab === 'tabel'" class="space-y-8">
-                                    <template x-for="(result, index) in searchResults" :key="index">
-                                        <div class="border border-neutral-200 rounded-lg overflow-hidden">
-                                            <!-- Result Header -->
-                                            <div class="bg-green-600 text-white px-6 py-4">
-                                                <div class="flex justify-between items-start">
-                                                    <div>
-                                                        <h4 class="text-xl font-bold mb-1" x-text="result.topik_nama"></h4>
-                                                        <div class="text-green-100 text-sm" x-text="getQueueSummary(result.queueItem)"></div>
-                                                    </div>
-                                                    <div class="flex items-center space-x-3">
-                                                        <span class="bg-white text-green-700 text-xs font-bold px-3 py-1 rounded-full" 
-                                                              x-text="`Hasil #${result.resultIndex}`"></span>
-                                                        <button @click="exportSingleResult(result, index)" 
-                                                                class="bg-green-500 hover:bg-green-400 text-white px-3 py-1 rounded text-xs font-medium transition duration-200">
-                                                            📊 Export
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Filter Summary Bar -->
-                                            <div class="bg-green-50 border-b border-green-200 px-6 py-3">
-                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                                    <div>
-                                                        <span class="font-medium text-green-800">Variabel:</span>
-                                                        <span class="text-green-700" x-text="getVariabelNames(result.queueItem)"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="font-medium text-green-800">Klasifikasi:</span>
-                                                        <span class="text-green-700" x-text="getKlasifikasiNames(result.queueItem)"></span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="font-medium text-green-800">Periode:</span>
-                                                        <span class="text-green-700" x-text="getPeriodSummary(result.queueItem)"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Enhanced Data Table -->
-                                            <div class="overflow-x-auto">
-                                                <!-- Tipe 1: Wilayah × Variabel × Klasifikasi × Tahun × Bulan -->
-                                                <div x-show="result.queueItem.tata_letak === 'tipe_1'">
-                                                    <table class="min-w-full border-collapse">
-                                                        <thead>
-                                                            <!-- Level 1: Variabel Header -->
-                                                            <tr class="bg-green-500">
-                                                                <th rowspan="4" class="px-4 py-3 text-center text-xs font-bold text-white uppercase border border-green-400 sticky left-0 bg-green-500 z-20 min-w-[150px]">
-                                                                    Wilayah
-                                                                </th>
-                                                                <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var-${vIndex}`">
-                                                                    <th :colspan="result.selectedKlasifikasis.length * result.yearGroups.length * result.yearGroups[0].months.length" 
-                                                                        class="px-2 py-2 text-center text-xs font-bold text-white uppercase border border-green-400"
-                                                                        x-text="variabel.deskripsi || `Var ${vIndex + 1}`"></th>
-                                                                </template>
-                                                            </tr>
-                                                            <!-- Level 2: Klasifikasi Header -->
-                                                            <tr class="bg-green-600">
-                                                                <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var2-${vIndex}`">
-                                                                    <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas-${kIndex}`">
-                                                                        <th :colspan="result.yearGroups.length * result.yearGroups[0].months.length"
-                                                                            class="px-2 py-2 text-center text-xs font-bold text-white border border-green-300"
-                                                                            x-text="klasifikasi.deskripsi || `Klasifikasi ${kIndex + 1}`"></th>
-                                                                    </template>
-                                                                </template>
-                                                            </tr>
-                                                            <!-- Level 3: Tahun Header -->
-                                                            <tr class="bg-green-400">
-                                                                <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var3-${vIndex}`">
-                                                                    <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas3-${kIndex}`">
-                                                                        <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year-${yearIndex}`">
-                                                                            <th :colspan="yearGroup.months.length" 
-                                                                                class="px-2 py-2 text-center text-xs font-medium text-white border border-green-300"
-                                                                                x-text="yearGroup.year"></th>
-                                                                        </template>
-                                                                    </template>
-                                                                </template>
-                                                            </tr>
-                                                            <!-- Level 4: Bulan Header -->
-                                                            <tr class="bg-green-300">
-                                                                <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var4-${vIndex}`">
-                                                                    <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas4-${kIndex}`">
-                                                                        <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year4-${yearIndex}`">
-                                                                            <template x-for="(month, mIndex) in yearGroup.months" :key="`month-${mIndex}`">
-                                                                                <th class="px-1 py-2 text-center text-xs font-medium text-white border border-green-200 min-w-[60px]"
-                                                                                    x-text="month.nama ? month.nama.substring(0, 3) : `M${mIndex + 1}`"></th>
-                                                                            </template>
-                                                                        </template>
-                                                                    </template>
-                                                                </template>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="bg-white">
-                                                            <template x-for="(region, regionIndex) in result.queueItem.selectedRegions" :key="`region-${regionIndex}-${region.id || regionIndex}`">
-                                                                <tr class="hover:bg-green-50 transition-colors duration-150" :class="regionIndex % 2 === 0 ? 'bg-neutral-50' : 'bg-white'">
-                                                                    <td class="px-4 py-3 text-sm font-medium text-neutral-900 border border-neutral-300 sticky left-0 bg-white z-10"
-                                                                        x-text="getRegionName(region)"></td>
-                                                                    <!-- Force fresh iteration by rebuilding nested loops with unique keys -->
-                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`${regionIndex}-var-${vIndex}-${variabel.id || vIndex}`">
-                                                                        <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`${regionIndex}-${vIndex}-klas-${kIndex}-${klasifikasi.id || kIndex}`">
-                                                                            <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`${regionIndex}-${vIndex}-${kIndex}-year-${yearIndex}-${yearGroup.year || yearIndex}`">
-                                                                                <template x-for="(month, mIndex) in yearGroup.months" :key="`${regionIndex}-${vIndex}-${kIndex}-${yearIndex}-month-${mIndex}-${month.id || mIndex}`">
-                                                                                    <td class="px-1 py-2 text-sm text-right text-neutral-700 border border-neutral-200 min-w-[60px]"
-                                                                                        x-text="formatNumber(getCellValue(
-                                                                                            result.queueItem.selectedRegions[regionIndex].id,
-                                                                                            result.yearGroups[result.yearGroups.length - 1 - yearIndex].year,
-                                                                                            result.yearGroups[result.yearGroups.length - 1 - yearIndex].months[mIndex].id,
-                                                                                            result.selectedVariabels[vIndex].id,
-                                                                                            result.selectedKlasifikasis[result.selectedKlasifikasis.length - 1 - kIndex].id
-                                                                                        ))"></td>
-                                                                                </template>
-                                                                            </template>
-                                                                        </template>
-                                                                    </template>
-                                                                </tr>
-                                                            </template>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-                                                <!-- Tipe 2: Wilayah × Klasifikasi Variabel × Variabel × Tahun × Bulan -->
-                                                <div x-show="result.queueItem.tata_letak === 'tipe_2'">
-                                                    <table class="min-w-full border-collapse">
-                                                        <thead>
-                                                            <!-- Level 1: Klasifikasi Variabel Header -->
-                                                            <tr class="bg-green-500">
-                                                                <th rowspan="4" class="px-4 py-3 text-center text-xs font-bold text-white uppercase border border-green-400 sticky left-0 bg-green-500 z-20 min-w-[150px]">
-                                                                    Wilayah
-                                                                </th>
-                                                                <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas-${kIndex}`">
-                                                                    <th :colspan="result.selectedVariabels.length * result.yearGroups.length * result.yearGroups[0].months.length" 
-                                                                        class="px-2 py-2 text-center text-xs font-bold text-white uppercase border border-green-400"
-                                                                        x-text="klasifikasi.deskripsi || `Klasifikasi ${kIndex + 1}`"></th>
-                                                                </template>
-                                                            </tr>
-                                                            <!-- Level 2: Variabel Header -->
-                                                            <tr class="bg-green-600">
-                                                                <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas2-${kIndex}`">
-                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var2-${vIndex}`">
-                                                                        <th :colspan="result.yearGroups.length * result.yearGroups[0].months.length"
-                                                                            class="px-2 py-2 text-center text-xs font-bold text-white border border-green-300"
-                                                                            x-text="variabel.deskripsi || `Var ${vIndex + 1}`"></th>
-                                                                    </template>
-                                                                </template>
-                                                            </tr>
-                                                            <!-- Level 3: Tahun Header -->
-                                                            <tr class="bg-green-400">
-                                                                <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas3-${kIndex}`">
-                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var3-${vIndex}`">
-                                                                        <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year3-${yearIndex}`">
-                                                                            <th :colspan="yearGroup.months.length" 
-                                                                                class="px-2 py-2 text-center text-xs font-medium text-white border border-green-300"
-                                                                                x-text="yearGroup.year"></th>
-                                                                        </template>
-                                                                    </template>
-                                                                </template>
-                                                            </tr>
-                                                            <!-- Level 4: Bulan Header -->
-                                                            <tr class="bg-green-300">
-                                                                <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas4-${kIndex}`">
-                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var4-${vIndex}`">
-                                                                        <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year4-${yearIndex}`">
-                                                                            <template x-for="(month, mIndex) in yearGroup.months" :key="`month4-${mIndex}`">
-                                                                                <th class="px-1 py-2 text-center text-xs font-medium text-white border border-green-200 min-w-[60px]"
-                                                                                    x-text="month.nama ? month.nama.substring(0, 3) : `M${mIndex + 1}`"></th>
-                                                                            </template>
-                                                                        </template>
-                                                                    </template>
-                                                                </template>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="bg-white">
-                                                            <template x-for="(region, regionIndex) in result.queueItem.selectedRegions" :key="`region2-${regionIndex}`">
-                                                                <tr class="hover:bg-neutral-50 transition-colors">
-                                                                    <td class="px-4 py-3 border border-neutral-200 font-medium text-neutral-900 sticky left-0 bg-white z-10"
-                                                                        x-text="region.nama || `Region ${regionIndex + 1}`"></td>
-                                                                    <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas-cell-${kIndex}`">
-                                                                        <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var-cell-${vIndex}`">
-                                                                            <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year-cell-${yearIndex}`">
-                                                                                <template x-for="(month, mIndex) in yearGroup.months" :key="`month-cell-${mIndex}`">
-                                                                                    <td class="px-3 py-2 border border-neutral-200 text-center text-sm text-neutral-700" 
-                                                                                        x-text="getCellValue(region.id, result.yearGroups[result.yearGroups.length - 1 - yearIndex].year, result.yearGroups[result.yearGroups.length - 1 - yearIndex].months[mIndex].id, variabel.id, result.selectedKlasifikasis[result.selectedKlasifikasis.length - 1 - kIndex].id)"></td>
-                                                                                </template>
-                                                                            </template>
-                                                                        </template>
-                                                                    </template>
-                                                                </tr>
-                                                            </template>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-                                                <!-- Tipe 3: Wilayah × Tahun × Bulan × Variabel × Klasifikasi -->
-                                                <div x-show="result.queueItem.tata_letak === 'tipe_3'">
-                                                    <table class="min-w-full border-collapse">
-                                                        <thead>
-                                                            <!-- Level 1: Bulan Header -->
-                                                            <tr class="bg-green-500">
-                                                                <th rowspan="4" class="px-4 py-3 text-center text-xs font-bold text-white uppercase border border-green-400 sticky left-0 bg-green-500 z-20 min-w-[150px]">
-                                                                    Wilayah
-                                                                </th>
-                                                                <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month-${mIndex}`">
-                                                                    <th :colspan="result.selectedVariabels.length * result.selectedKlasifikasis.length * result.yearGroups.length" 
-                                                                        class="px-2 py-2 text-center text-xs font-bold text-white uppercase border border-green-400"
-                                                                        x-text="month.nama ? month.nama.substring(0, 3) : `M${mIndex + 1}`"></th>
-                                                                </template>
-                                                            </tr>
-                                                            <!-- Level 2: Variabel Header -->
-                                                            <tr class="bg-green-600">
-                                                                <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month2-${mIndex}`">
-                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var2-${vIndex}`">
-                                                                        <th :colspan="result.selectedKlasifikasis.length * result.yearGroups.length"
-                                                                            class="px-2 py-2 text-center text-xs font-bold text-white border border-green-300"
-                                                                            x-text="variabel.deskripsi || `Var ${vIndex + 1}`"></th>
-                                                                    </template>
-                                                                </template>
-                                                            </tr>
-                                                            <!-- Level 3: Klasifikasi Header -->
-                                                            <tr class="bg-green-400">
-                                                                <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month3-${mIndex}`">
-                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var3-${vIndex}`">
-                                                                        <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas3-${kIndex}`">
-                                                                            <th :colspan="result.yearGroups.length" 
-                                                                                class="px-2 py-2 text-center text-xs font-medium text-white border border-green-300"
-                                                                                x-text="klasifikasi.deskripsi || `Klasifikasi ${kIndex + 1}`"></th>
-                                                                        </template>
-                                                                    </template>
-                                                                </template>
-                                                            </tr>
-                                                            <!-- Level 4: Tahun Header -->
-                                                            <tr class="bg-green-300">
-                                                                <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month4-${mIndex}`">
-                                                                    <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var4-${vIndex}`">
-                                                                        <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas4-${kIndex}`">
-                                                                            <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year4-${yearIndex}`">
-                                                                                <th class="px-1 py-2 text-center text-xs font-medium text-white border border-green-200 min-w-[60px]"
-                                                                                    x-text="yearGroup.year"></th>
-                                                                            </template>
-                                                                        </template>
-                                                                    </template>
-                                                                </template>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="bg-white">
-                                                            <template x-for="(region, regionIndex) in result.queueItem.selectedRegions" :key="`region3-${regionIndex}`">
-                                                                <tr class="hover:bg-neutral-50 transition-colors">
-                                                                    <td class="px-4 py-3 border border-neutral-200 font-medium text-neutral-900 sticky left-0 bg-white z-10"
-                                                                        x-text="region.nama || `Region ${regionIndex + 1}`"></td>
-                                                                    <!-- Use pre-sorted arrays for consistent ordering -->
-                                                                    <template x-for="(month, mIndex) in result.yearGroups[0].months" :key="`month-cell-${mIndex}`">
-                                                                        <template x-for="(variabel, vIndex) in result.selectedVariabels" :key="`var-cell-${vIndex}`">
-                                                                            <template x-for="(klasifikasi, kIndex) in result.selectedKlasifikasis" :key="`klas-cell-${kIndex}`">
-                                                                                <template x-for="(yearGroup, yearIndex) in result.yearGroups" :key="`year-cell-${yearIndex}`">
-                                                                                    <td class="px-3 py-2 border border-neutral-200 text-center text-sm text-neutral-700" 
-                                                                                        x-text="formatNumber(getCellValue(region.id, yearGroup.year, result.yearGroups[0].months[result.yearGroups[0].months.length - 1 - mIndex].id, variabel.id, result.selectedKlasifikasis[result.selectedKlasifikasis.length - 1 - kIndex].id))"></td>
-                                                                                </template>
-                                                                            </template>
-                                                                        </template>
-                                                                    </template>
-                                                                </tr>
-                                                            </template>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-
-                                            <!-- Table Footer with Statistics -->
-                                            <div class="bg-neutral-50 border-t border-neutral-200 px-6 py-4">
-                                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-                                                    <div class="text-center">
-                                                        <div class="text-neutral-500">Data Entries</div>
-                                                        <div class="font-bold text-green-600" x-text="result.totalEntries || 0"></div>
-                                                    </div>
-                                                    <div class="text-center">
-                                                        <div class="text-neutral-500">Avg Value</div>
-                                                        <div class="font-bold text-blue-600" x-text="formatNumber(result.averageValue || 0)"></div>
-                                                    </div>
-                                                    <div class="text-center">
-                                                        <div class="text-neutral-500">Max Value</div>
-                                                        <div class="font-bold text-orange-600" x-text="formatNumber(result.maxValue || 0)"></div>
-                                                    </div>
-                                                    <div class="text-center">
-                                                        <div class="text-neutral-500">Min Value</div>
-                                                        <div class="font-bold text-red-600" x-text="formatNumber(result.minValue || 0)"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-
-                                <!-- Grafik Tab -->
-                                <div x-show="activeTab === 'grafik'">
-                                    <template x-for="(result, index) in searchResults" :key="index">
-                                        <div class="mb-8 border border-neutral-200 rounded-lg p-6">
-                                            <div class="flex justify-between items-start mb-4">
-                                                <div>
-                                                    <h4 class="text-lg font-semibold text-neutral-900" x-text="result.topik_nama"></h4>
-                                                    <div class="text-sm text-neutral-600 mt-1" x-text="getQueueSummary(result.queueItem)"></div>
-                                                </div>
-                                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full" 
-                                                      x-text="`Grafik ${result.resultIndex}`"></span>
-                                            </div>
-                                            <div class="bg-white border border-neutral-200 rounded-lg p-6">
-                                                <canvas :id="`chart-${index}`" width="400" height="200"></canvas>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-
-                                <!-- Metodologi Tab -->
-                                <div x-show="activeTab === 'metodologi'">
-                                    @include('pertanian.metodologi')
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Empty State -->
-                    <div x-show="searchResults.length === 0 && filterQueue.length === 0 && !isProcessing" class="text-center py-16">
-                        <svg class="w-24 h-24 text-neutral-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                        </svg>
-                        <h3 class="text-lg font-medium text-neutral-900 mb-2">Siap Membuat Laporan</h3>
-                        <p class="text-neutral-600 max-w-md mx-auto">
-                            Lengkapi filter data di sebelah kiri, tambahkan ke antrian, dan klik "Proses Antrian" untuk menghasilkan laporan data benih dan pupuk.
-                        </p>
+                    <input type="text" x-model="search.bulan" placeholder="search..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
+                    <div class="overflow-y-auto border rounded-md p-2 flex-grow">
+                        <template x-for="bulan in filteredBulan" :key="bulan.id">
+                            <label class="flex items-center cursor-pointer hover:bg-green-50 p-2 rounded-md">
+                                <input type="checkbox" :value="bulan.id" x-model="selection.bulan_ids">
+                                <span class="ml-2 text-sm text-neutral-700" x-text="bulan.nama"></span>
+                            </label>
+                        </template>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+            <button @click="addSelection" :disabled="!isSelectionValid()" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                Tambah
+            </button>
+            <button @click="removeSelection()" :disabled="selectedForRemoval.length === 0" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6"></path></svg>
+                Hapus
+            </button>
+        </div>
+        <button @click="resetForm" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400">Set Ulang</button>
+    </div>
+
+    <!-- Data Terpilih -->
+    <div class="bg-white p-4 rounded-lg border">
+        <h3 class="font-semibold text-neutral-900 mb-3">Data Terpilih</h3>
+        <div class="space-y-2">
+            <template x-for="item in selections" :key="item.id">
+                <div class="flex items-center bg-blue-50 p-2 rounded-md">
+                    <input type="checkbox" :value="item.id" x-model="selectedForRemoval">
+                    <span class="ml-2 text-sm text-neutral-800" x-text="`${item.display.variabel_nama} - ${item.display.klasifikasi_nama} - ${item.display.tahun} - ${item.display.bulan}`"></span>
+                </div>
+            </template>
+            <div x-show="selections.length === 0" class="text-center text-neutral-500 py-4">
+                <p>Belum ada data yang ditambahkan.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+                <!-- Step 2: Konfigurasi Tampilan -->
+<section class="bg-neutral-50 rounded-lg p-6 border border-neutral-200">
+    <h2 class="text-2xl font-bold text-neutral-800 mb-1 flex items-center">
+        <span class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">2</span>
+        Konfigurasi Tampilan
+    </h2>
+    <p class="text-neutral-600 mb-6 ml-11">Pilih wilayah dan bagaimana data akan disajikan dalam tabel.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 2.1 Wilayah -->
+        <div class="bg-white p-4 rounded-lg border">
+            <h3 class="font-semibold text-neutral-900 mb-3">2.1 Wilayah</h3>
+
+            <select x-model="wilayahLevel" class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-3 text-sm">
+                <option value="nasional">Tingkat Nasional</option>
+                <option value="provinsi">Tingkat Provinsi</option>
+            </select>
+
+            <!-- Tingkat Nasional View -->
+            <div x-show="wilayahLevel === 'nasional'">
+                 <div class="flex justify-between items-center mb-1">
+                    <button @click="selection.provinsi_ids = filteredWilayah.map(p => p.id)" class="text-xs text-blue-600 hover:underline">Select All</button>
+                    <button @click="selection.provinsi_ids = []" class="text-xs text-red-600 hover:underline">Clear</button>
+                </div>
+                <input type="text" x-model="search.wilayah" placeholder="Cari provinsi..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
+                <div class="max-h-64 overflow-y-auto border rounded-md p-2">
+                    <template x-for="provinsi in filteredWilayah" :key="provinsi.id">
+                        <label class="flex items-center cursor-pointer p-2 rounded-md hover:bg-blue-50">
+                            <input type="checkbox" :value="provinsi.id" :checked="selection.provinsi_ids.includes(provinsi.id)" @click="toggleWilayah(provinsi.id)">
+                            <span class="ml-2 text-sm font-bold text-neutral-800" x-text="provinsi.nama"></span>
+                        </label>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Tingkat Provinsi View -->
+            <div x-show="wilayahLevel === 'provinsi'">
+                <select x-model="selectedProvinsiId" class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-3 text-sm">
+                    <option :value="null">-- Pilih Provinsi Dahulu --</option>
+                    <template x-for="provinsi in allData.wilayahs" :key="provinsi.id">
+                        <option :value="provinsi.id" x-text="provinsi.nama"></option>
+                    </template>
+                </select>
+
+                <div x-show="selectedProvinsiId">
+                     <div class="flex justify-between items-center mb-1">
+                        <button @click="selection.kabupaten_ids = filteredWilayah.flatMap(p => p.kabupaten.map(k => k.id))" class="text-xs text-blue-600 hover:underline">Select All</button>
+                        <button @click="selection.kabupaten_ids = []" class="text-xs text-red-600 hover:underline">Clear</button>
+                    </div>
+                    <input type="text" x-model="search.wilayah" placeholder="Cari kabupaten/kota..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
+                    <div class="max-h-64 overflow-y-auto border rounded-md p-2">
+                        <template x-for="provinsi in filteredWilayah" :key="provinsi.id">
+                            <div class="ml-6">
+                                <template x-for="kabupaten in provinsi.kabupaten" :key="kabupaten.id">
+                                    <label class="flex items-center cursor-pointer p-1 rounded-md hover:bg-green-50">
+                                        <input type="checkbox" :value="kabupaten.id" :checked="selection.kabupaten_ids.includes(kabupaten.id)" @click="toggleKabupaten(kabupaten.id)">
+                                        <span class="ml-2 text-sm text-neutral-700" x-text="kabupaten.nama"></span>
+                                    </label>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                 <div x-show="!selectedProvinsiId" class="p-4 bg-gray-50 rounded-md text-center">
+                    <p class="text-sm text-neutral-500">Silakan pilih provinsi untuk menampilkan daftar kabupaten/kota.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2.2 Tata Letak Tabel -->
+        <div class="bg-white p-4 rounded-lg border">
+            <h3 class="font-semibold text-neutral-900 mb-3">2.2 Tata Letak Tabel</h3>
+            <div class="space-y-4">
+                <!-- Tipe 1 -->
+                <label class="block p-4 border rounded-lg cursor-pointer hover:border-blue-500" :class="{'border-blue-500 bg-blue-50 ring-2 ring-blue-200': selection.tata_letak === 'tipe_1'}">
+                    <div class="flex gap-6 items-start">
+                        <input type="radio" name="tata_letak" value="tipe_1" x-model="selection.tata_letak" class="mt-1">
+                        <div class="flex-1">
+                            <p class="font-semibold">Tipe 1: Master Header Variabel</p>
+                            <p class="text-sm text-neutral-600 mb-2">Kolom diurutkan berdasarkan: Variabel &raquo; Klasifikasi &raquo; Tahun &raquo; Bulan</p>
+                            <table class="w-full border-collapse text-xs mt-2 bg-white">
+                                <thead>
+                                    <tr class="bg-neutral-100">
+                                        <th rowspan="4" class="border p-1 font-semibold align-middle">Wilayah</th>
+                                        <th colspan="4" class="border p-1 font-semibold">Variabel A</th>
+                                    </tr>
+                                    <tr class="bg-neutral-50">
+                                        <th colspan="2" class="border p-1 font-normal">Klasifikasi X</th>
+                                        <th colspan="2" class="border p-1 font-normal">Klasifikasi Y</th>
+                                    </tr>
+                                    <tr class="bg-neutral-50">
+                                        <th colspan="1" class="border p-1 font-normal">2023</th>
+                                        <th colspan="1" class="border p-1 font-normal">2024</th>
+                                        <th colspan="1" class="border p-1 font-normal">2023</th>
+                                        <th colspan="1" class="border p-1 font-normal">2024</th>
+                                    </tr>
+                                    <tr class="bg-neutral-50">
+                                        <th class="border p-1 font-normal">Jan</th>
+                                        <th class="border p-1 font-normal">Jan</th>
+                                        <th class="border p-1 font-normal">Jan</th>
+                                        <th class="border p-1 font-normal">Jan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border p-1">Provinsi A</td>
+                                        <td class="border p-1 text-center">...</td>
+                                        <td class="border p-1 text-center">...</td>
+                                        <td class="border p-1 text-center">...</td>
+                                        <td class="border p-1 text-center">...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </label>
+
+                <!-- Tipe 2 -->
+                <label class="block p-4 border rounded-lg cursor-pointer hover:border-blue-500" :class="{'border-blue-500 bg-blue-50 ring-2 ring-blue-200': selection.tata_letak === 'tipe_2'}">
+                    <div class="flex gap-6 items-start">
+                        <input type="radio" name="tata_letak" value="tipe_2" x-model="selection.tata_letak" class="mt-1">
+                        <div class="flex-1">
+                            <p class="font-semibold">Tipe 2: Master Header Klasifikasi</p>
+                            <p class="text-sm text-neutral-600 mb-2">Kolom diurutkan berdasarkan: Klasifikasi &raquo; Variabel &raquo; Tahun &raquo; Bulan</p>
+                            <table class="w-full border-collapse text-xs mt-2 bg-white">
+                                <thead>
+                                    <tr class="bg-neutral-100">
+                                        <th rowspan="4" class="border p-1 font-semibold align-middle">Wilayah</th>
+                                        <th colspan="4" class="border p-1 font-semibold">Klasifikasi X</th>
+                                    </tr>
+                                    <tr class="bg-neutral-50">
+                                        <th colspan="2" class="border p-1 font-normal">Variabel A</th>
+                                        <th colspan="2" class="border p-1 font-normal">Variabel B</th>
+                                    </tr>
+                                    <tr class="bg-neutral-50">
+                                        <th colspan="1" class="border p-1 font-normal">2023</th>
+                                        <th colspan="1" class="border p-1 font-normal">2024</th>
+                                        <th colspan="1" class="border p-1 font-normal">2023</th>
+                                        <th colspan="1" class="border p-1 font-normal">2024</th>
+                                    </tr>
+                                    <tr class="bg-neutral-50">
+                                        <th class="border p-1 font-normal">Jan</th>
+                                        <th class="border p-1 font-normal">Jan</th>
+                                        <th class="border p-1 font-normal">Jan</th>
+                                        <th class="border p-1 font-normal">Jan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border p-1">Provinsi A</td>
+                                        <td class="border p-1 text-center">...</td>
+                                        <td class="border p-1 text-center">...</td>
+                                        <td class="border p-1 text-center">...</td>
+                                        <td class="border p-1 text-center">...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </label>
+
+                <!-- Tipe 3 -->
+                <label class="block p-4 border rounded-lg cursor-pointer hover:border-blue-500" :class="{'border-blue-500 bg-blue-50 ring-2 ring-blue-200': selection.tata_letak === 'tipe_3'}">
+                    <div class="flex gap-6 items-start">
+                        <input type="radio" name="tata_letak" value="tipe_3" x-model="selection.tata_letak" class="mt-1">
+                        <div class="flex-1">
+                            <p class="font-semibold">Tipe 3: Master Header Waktu</p>
+                            <p class="text-sm text-neutral-600 mb-2">Kolom diurutkan berdasarkan: Tahun &raquo; Bulan &raquo; Variabel &raquo; Klasifikasi</p>
+                            <table class="w-full border-collapse text-xs mt-2 bg-white">
+                                <thead>
+                                    <tr class="bg-neutral-100">
+                                        <th rowspan="4" class="border p-1 font-semibold align-middle">Wilayah</th>
+                                        <th colspan="4" class="border p-1 font-semibold">2023</th>
+                                    </tr>
+                                    <tr class="bg-neutral-50">
+                                        <th colspan="2" class="border p-1 font-normal">Januari</th>
+                                        <th colspan="2" class="border p-1 font-normal">Februari</th>
+                                    </tr>
+                                    <tr class="bg-neutral-50">
+                                        <th colspan="1" class="border p-1 font-normal">Variabel A</th>
+                                        <th colspan="1" class="border p-1 font-normal">Variabel B</th>
+                                        <th colspan="1" class="border p-1 font-normal">Variabel A</th>
+                                        <th colspan="1" class="border p-1 font-normal">Variabel B</th>
+                                    </tr>
+                                    <tr class="bg-neutral-50">
+                                        <th class="border p-1 font-normal">Klas. X</th>
+                                        <th class="border p-1 font-normal">Klas. X</th>
+                                        <th class="border p-1 font-normal">Klas. X</th>
+                                        <th class="border p-1 font-normal">Klas. X</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border p-1">Provinsi A</td>
+                                        <td class="border p-1 text-center">...</td>
+                                        <td class="border p-1 text-center">...</td>
+                                        <td class="border p-1 text-center">...</td>
+                                        <td class="border p-1 text-center">...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Submit Button -->
+<div class="flex justify-end mt-8">
+    <button @click.prevent="fetchData" :disabled="isProcessing" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300 flex items-center justify-center disabled:cursor-not-allowed">
+        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Tampilkan Hasil
+    </button>
+</div>
+
+<!-- Step 3: Tampilan Hasil -->
+<section x-show="isProcessing || (searchResults.data && searchResults.data.length > 0)" class="bg-neutral-50 rounded-lg p-6 border border-neutral-200 mt-12">
+    <h2 class="text-2xl font-bold text-neutral-800 mb-1 flex items-center">
+        <span class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">3</span>
+        Tampilan Hasil
+    </h2>
+    <p class="text-neutral-600 mb-6 ml-11">Hasil dari data yang telah Anda pilih.</p>
+
+    <!-- Loading/Processing State -->
+    <div x-show="isProcessing" class="text-center py-12">
+        <svg class="animate-spin w-12 h-12 text-blue-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <h3 class="text-lg font-medium text-neutral-900 mb-2">Memproses Data...</h3>
+        <p class="text-neutral-700">Mohon tunggu, kami sedang menyiapkan laporan untuk Anda.</p>
+    </div>
+
+    <!-- Results Container -->
+    <div x-show="!isProcessing && searchResults.length > 0">
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-1">
+                <button @click="activeTab = 'tabel'" :class="{'bg-blue-600 text-white': activeTab === 'tabel', 'bg-neutral-200 text-neutral-700': activeTab !== 'tabel'}" class="px-4 py-2 rounded-l-md font-medium">Tabel</button>
+                <button @click="activeTab = 'grafik'" :class="{'bg-blue-600 text-white': activeTab === 'grafik', 'bg-neutral-200 text-neutral-700': activeTab !== 'grafik'}" class="px-4 py-2 rounded-r-md font-medium">Grafik</button>
+            </div>
+            <div class="flex justify-end mb-4">
+            <button @click="exportExcel()" class="px-4 py-2 bg-green-600 text-white rounded-md font-medium flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Export (.xlsx)
+            </button>
+        </div>
+
+        <!-- Tabel Section -->
+        <div x-show="activeTab === 'tabel'" class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-neutral-200 border">
+                                <thead>
+                                    <template x-for="(headerRow, rowIndex) in dynamicHeaders" :key="rowIndex">
+                                        <tr>
+                                            <template x-for="(header, headerIndex) in headerRow" :key="headerIndex">
+                                                <th class="px-4 py-2 border border-neutral-300 bg-neutral-100 text-center font-semibold text-neutral-700"
+                                                    :colspan="header.span"
+                                                    :rowspan="header.rowspan"
+                                                    x-text="header.name">
+                                                </th>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-neutral-200">
+                                    <template x-if="!dynamicRows || dynamicRows.length === 0">
+                                        <tr>
+                                            <td :colspan="(dynamicHeaders[0] || []).length > 0 ? (dynamicHeaders[dynamicHeaders.length - 1] || []).length + 1 : 1" class="text-center py-8 text-neutral-500">
+                                                Tidak ada data yang sesuai dengan kriteria yang dipilih.
+                                            </td>
+                                        </tr>
+                                    </template>
+                                    <template x-for="row in dynamicRows" :key="row.wilayah">
+                                        <tr>
+                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-neutral-800 border" x-text="row.wilayah"></td>
+                                            <template x-for="(value, valueIndex) in row.values" :key="valueIndex">
+                                                <td class="px-4 py-4 whitespace-nowrap text-sm text-neutral-700 border text-right" x-text="value"></td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+        </div>
+
+        <!-- Grafik Section -->
+        <div x-show="activeTab === 'grafik'" style="height: 500px;">
+            <canvas id="chart-container"></canvas>
+        </div>
+    </div>
+    <div x-show="searchResults" class="space-y-6">
+        <!-- Tabs -->
+        <div class="bg-white rounded-lg shadow-sm border">
+            <!-- Tab Navigation -->
+            <div class="border-b border-neutral-200">
+                <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                    <button @click="activeTab = 'tabel'" 
+                            :class="activeTab === 'tabel' ? 'border-blue-500 text-blue-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+                            class="py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap">
+                        Tabel
+                    </button>
+                    <button @click="activeTab = 'grafik'" 
+                            :class="activeTab === 'grafik' ? 'border-blue-500 text-blue-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+                            class="py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap">
+                        Grafik
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-6">
+                <!-- Tabel Tab -->
+                <div x-show="activeTab === 'tabel'">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-semibold text-neutral-700">Tabel Hasil</h4>
+                        <template x-if="searchResults && searchResults.rows">
+                            <button @click="exportToExcel()" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Ekspor ke Excel
+                            </button>
+                        </template>
+                    </div>
+                    <!-- Results Content -->
+                    <div id="tabel-container" class="mt-4">
+                        <template x-if="searchResults && searchResults.rows && searchResults.rows.length > 0">
+                            <div>
+                                <!-- Table -->
+                                <div class="overflow-x-auto bg-white border border-neutral-200 rounded-lg">
+                                    <table class="min-w-full divide-y divide-neutral-200">
+                                        <thead class="bg-neutral-50">
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider" x-text="config.tata_letak === 'tipe_1' ? 'Wilayah' : 'Variabel'"></th>
+                                                <template x-for="header in searchResults.headers">
+                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider" x-text="header"></th>
+                                                </template>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-neutral-200">
+                                            <template x-for="row in searchResults.rows">
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900" x-text="row.label"></td>
+                                                    <template x-for="value in row.values">
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500" x-text="value !== null ? parseFloat(value).toFixed(2) : '-'"></td>
+                                                    </template>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Metodologi Section -->
+                                <div class="mt-8">
+                                    @include('pertanian.partials.metodologi-benih-pupuk')
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <!-- Grafik Tab -->
+                <div x-show="activeTab === 'grafik'">
+                    <!-- Placeholder for Chart -->
+                    <canvas id="chart-container"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
     <script>
+        const benihPupukInitialData = {
+            topiks: @json($topiks),
+            variabels: @json($variabels),
+            klasifikasis: @json($klasifikasis),
+            tahuns: @json($tahuns),
+            bulans: @json($bulans),
+            wilayahs: @json($wilayahs)
+        };
+
+        console.log('Global initial data:', benihPupukInitialData);
+
         function benihPupukForm() {
             return {
-                // Form state
-                filters: {
-                    topik: '',
-                    selectedVariabel: '',
+                init(data) {
+                    console.log('Data received in init():', data);
+                    this.allData = data;
+                },
+                // Data sources from Controller
+                allData: {
+                    topiks: [],
+                    variabels: [],
                     klasifikasis: [],
-                    selectedYears: [],
+                    tahuns: [],
+                    bulans: [],
+                    wilayahs: []
+                },
+
+                // Form state
+                selection: {
+                    topik_id: null,
+                    variabel_id: null,
+                    klasifikasi_ids: [],
                     tahun_awal: '',
                     tahun_akhir: '',
-                    selectedMonths: [],
                     bulan_awal: '',
                     bulan_akhir: '',
-                    selectedRegions: [],
-                    tata_letak: 'tipe_1'
+                    wilayah_ids: [],
+                    tata_letak: 'tipe_1',
+                },
+
+                search: {
+                    topik: '',
+                    variabel: '',
+                    klasifikasi: '',
+                    tahun: '',
+                    bulan: '',
+                    wilayah: '',
                 },
                 
                 // UI state
                 yearMode: 'range',
-                monthMode: 'all',
+                monthMode: 'range',
                 isProcessing: false,
                 addingToQueue: false,
                 activeTab: 'tabel',
                 
                 // Queue system
                 filterQueue: [],
-                searchResults: [],
-                
-                // Data from API
-                availableVariabels: [],
-                availableKlasifikasis: [],
-                availableRegions: [],
-                years: [],
-                bulans: [],
-                topiks: [],
-
-                async init() {
-                    console.log('Initializing benih pupuk form...');
-                    
-                    // Load initial data from API
-                    await this.loadInitialData();
-                    
-                    console.log('Initial data loaded:', {
-                        topiks: this.topiks,
-                        regions: this.availableRegions.length,
-                        bulans: this.bulans.length,
-                        years: this.years.length
-                    });
-                    
-                    // Set default values
-                    this.filters.tahun_awal = '2014';
-                    this.filters.tahun_akhir = '2016';
-                    this.filters.selectedRegions = this.availableRegions.map(r => r.id); // Default to all regions
-                    this.filters.selectedMonths = this.bulans.filter(b => b.id !== 0 && b.id !== 13).map(b => b.id); // Exclude "Setahun" and "-" months
-                    
-                    console.log('Initialization complete');
-                },
+                searchResults: [], // Initialize searchResults to an empty array
 
                 // Consolidate search results by table layout type
                 get consolidatedResults() {
@@ -1227,810 +1176,63 @@
                             { id: 2, nama: 'Sumatera Utara' },
                             { id: 3, nama: 'Sumatera Barat' }
                         ];
-                    }
-                },
-
                 async verifyDisplayedData() {
                     console.log('=== DATA VERIFICATION ===');
-                    
-                    if (this.searchResults.length === 0) {
-                        console.warn('No search results to verify. Run search first.');
-                        return;
-                    }
-                    
-                    const result = this.searchResults[0];
-                    console.log('Verifying result:', result);
-                    
-                    // Get the first displayed region and first value
-                    const firstRegion = result.queueItem?.selectedRegions?.[0];
-                    if (!firstRegion) {
-                        console.warn('No regions found in result');
-                        return;
-                    }
-                    
-                    console.log('First region:', firstRegion);
-                    
-                    // Get the displayed value from table
-                    const displayedValue = this.getCellValue(result, firstRegion, 0, 0, 0, 0);
-                    console.log('Displayed value in table:', displayedValue);
-                    
-                    // Get the raw API data for same parameters
-                    const verificationData = {
-                        topik: result.queueItem.topik,
-                        selectedRegions: [firstRegion.id.toString()],
-                        variabels: result.queueItem.variabels ? result.queueItem.variabels.slice(0, 1) : [result.queueItem.selectedVariabel.toString()],
-                        klasifikasis: result.queueItem.klasifikasis.slice(0, 1), 
-                        tahun_awal: result.queueItem.tahun_awal.toString(),
-                        tahun_akhir: result.queueItem.tahun_awal.toString(), // Same year
-                        selectedMonths: [result.queueItem.bulan_awal.toString()],
-                        tata_letak: 'tipe_1'
-                    };
-                    
-                    console.log('Verification query:', verificationData);
-                    
-                    try {
-                        const response = await fetch('/api/benih-pupuk/search', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            },
-                            body: JSON.stringify(verificationData)
-                        });
+                    // ... (no changes)
+                },
 
-                        const apiData = await response.json();
-                        console.log('API verification response:', apiData);
-                        
-                        if (apiData.data && apiData.data.length > 0) {
-                            const apiValue = apiData.data[0].values[0];
-                            console.log('API returned value:', apiValue);
-                            console.log('Table displayed value:', displayedValue);
-                            console.log('Values match:', apiValue === displayedValue ? '✅ YES' : '❌ NO');
-                            
-                            if (apiValue !== displayedValue) {
-                                console.warn('MISMATCH DETECTED! API vs Table values differ');
-                            } else {
-                                console.log('✅ DATA VERIFIED: Table values match API response');
-                            }
+                loadVariabels() {
+                    this.selection.variabel_id = null;
+                    this.selection.klasifikasi_ids = [];
+                },
+
+                loadKlasifikasis() {
+                    this.selection.klasifikasi_ids = [];
+                },
+
+                get filteredTopik() {
+                    if (!this.search.topik) return this.allData.topiks;
+                    return this.allData.topiks.filter(t => t.nama.toLowerCase().includes(this.search.topik.toLowerCase()));
+                },
+
+                get filteredVariabel() {
+                    if (!this.selection.topik_id) return [];
+                    let variabels = this.allData.variabels.filter(v => v.topik_id == this.selection.topik_id);
+                    if (this.search.variabel) {
+                        variabels = variabels.filter(v => v.nama.toLowerCase().includes(this.search.variabel.toLowerCase()));
+                    }
+                    return variabels;
+                },
+
+                get filteredKlasifikasi() {
+                    if (!this.selection.variabel_id) return [];
+                    let klasifikasis = this.allData.klasifikasis.filter(k => k.variabel_id == this.selection.variabel_id);
+                    if (this.search.klasifikasi) {
+                        klasifikasis = klasifikasis.filter(k => k.nama.toLowerCase().includes(this.search.klasifikasi.toLowerCase()));
+                    }
+                    return klasifikasis;
+                },
+
+                get filteredTahun() {
+                    if (!this.search.tahun) return this.allData.tahuns;
+                    return this.allData.tahuns.filter(y => y.toString().includes(this.search.tahun));
+                },
+
+                get filteredBulan() {
+                    if (!this.search.bulan) return this.allData.bulans;
+                    return this.allData.bulans.filter(b => b.nama.toLowerCase().includes(this.search.bulan.toLowerCase()));
+                },
+
+                get filteredWilayah() {
+                    if (!this.search.wilayah) return this.allData.wilayahs;
+                    const search = this.search.wilayah.toLowerCase();
+                    return this.allData.wilayahs.map(prov => {
+                        const filteredKab = prov.kabupaten.filter(kab => kab.nama.toLowerCase().includes(search));
+                        if (prov.nama.toLowerCase().includes(search) || filteredKab.length > 0) {
+                            return { ...prov, kabupaten: prov.nama.toLowerCase().includes(search) ? prov.kabupaten : filteredKab };
                         }
-                    } catch (error) {
-                        console.error('Verification error:', error);
-                    }
-                },
-
-                // Add a diagnostic function to help debug
-                diagnoseApiResponse(response, requestData) {
-                    console.log('=== API DIAGNOSIS ===');
-                    console.log('Request sent:', requestData);
-                    console.log('Response received:', response);
-                    console.log('Response type:', typeof response);
-                    console.log('Response has headers?', !!response.headers);
-                    console.log('Response has data?', !!response.data);
-                    console.log('Response has resultIndex?', response.resultIndex !== undefined);
-                    
-                    if (response.headers) {
-                        console.log('Headers:', response.headers);
-                        console.log('Headers length:', response.headers.length);
-                        console.log('Headers type:', typeof response.headers);
-                    }
-                    
-                    if (response.data) {
-                        console.log('Data:', response.data);
-                        console.log('Data length:', response.data.length);
-                        console.log('Data type:', typeof response.data);
-                        console.log('Sample data item:', response.data[0]);
-                    }
-                    
-                    console.log('=== END DIAGNOSIS ===');
-                },
-
-                calculateSummaryStats(result) {
-                    if (!result || !result.queueItem) {
-                        result.totalEntries = 0;
-                        result.averageValue = 0;
-                        result.maxValue = 0;
-                        result.minValue = 0;
-                        return;
-                    }
-                    
-                    // Collect all values using the same getCellValue function that tables use
-                    let allValues = [];
-                    
-                    // Iterate through all possible combinations just like the tables do
-                    const regions = result.queueItem.selectedRegions || [];
-                    const variabels = result.selectedVariabels || [];
-                    const klasifikasis = result.selectedKlasifikasis || [];
-                    const yearGroups = result.yearGroups || [];
-                    
-                    console.log('calculateSummaryStats: Starting for layout:', result.queueItem.tata_letak);
-                    
-                    let sampleValues = [];
-                    regions.forEach(region => {
-                        variabels.forEach(variabel => {
-                            klasifikasis.forEach(klasifikasi => {
-                                yearGroups.forEach(yearGroup => {
-                                    if (yearGroup.months) {
-                                        yearGroup.months.forEach(month => {
-                                            const value = this.getCellValue(
-                                                region.id, 
-                                                yearGroup.year, 
-                                                month.id, 
-                                                variabel.id, 
-                                                klasifikasi.id
-                                            );
-                                            
-                                            // Collect first 5 sample values for debugging
-                                            if (sampleValues.length < 5) {
-                                                sampleValues.push({
-                                                    region: region.nama,
-                                                    year: yearGroup.year,
-                                                    month: month.nama,
-                                                    variabel: variabel.id,
-                                                    klasifikasi: klasifikasi.deskripsi,
-                                                    value: value
-                                                });
-                                            }
-                                            
-                                            if (value !== null && value !== undefined && !isNaN(value) && value > 0) {
-                                                allValues.push(parseFloat(value));
-                                            }
-                                        });
-                                    }
-                                });
-                            });
-                        });
-                    });
-                    
-                    console.log('calculateSummaryStats samples:', sampleValues);
-                    console.log('calculateSummaryStats: Total valid values found:', allValues.length);
-                    
-                    if (allValues.length === 0) {
-                        result.totalEntries = 0;
-                        result.averageValue = 0;
-                        result.maxValue = 0;
-                        result.minValue = 0;
-                    } else {
-                        result.totalEntries = allValues.length;
-                        result.averageValue = allValues.reduce((sum, val) => sum + val, 0) / allValues.length;
-                        result.maxValue = Math.max(...allValues);
-                        result.minValue = Math.min(...allValues);
-                    }
-                },
-
-                async loadVariabels() {
-                    if (!this.filters.topik) {
-                        this.availableVariabels = [];
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch(`/api/benih-pupuk/variabels/${this.filters.topik}`);
-                        this.availableVariabels = await response.json();
-                        this.filters.selectedVariabel = '';
-                        this.loadKlasifikasis();
-                    } catch (error) {
-                        console.error('Error loading variabels:', error);
-                        this.availableVariabels = [];
-                    }
-                },
-
-                async loadKlasifikasis() {
-                    if (!this.filters.selectedVariabel) {
-                        this.availableKlasifikasis = [];
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch('/api/benih-pupuk/klasifikasis', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            },
-                            body: JSON.stringify({
-                                variabel_ids: [this.filters.selectedVariabel]
-                            })
-                        });
-                        
-                        this.availableKlasifikasis = await response.json();
-                        
-                        // Auto-select the first few klasifikasi options that likely have data
-                        if (this.availableKlasifikasis.length > 0) {
-                            // Select first 2-3 klasifikasi by default
-                            this.filters.klasifikasis = this.availableKlasifikasis
-                                .slice(0, Math.min(3, this.availableKlasifikasis.length))
-                                .map(k => k.id.toString());
-                            console.log('Auto-selected klasifikasis:', this.filters.klasifikasis);
-                        } else {
-                            this.filters.klasifikasis = [];
-                        }
-                    } catch (error) {
-                        console.error('Error loading klasifikasis:', error);
-                        this.availableKlasifikasis = [];
-                    }
-                },
-
-                validateYearRange() {
-                    if (this.filters.tahun_awal && this.filters.tahun_akhir) {
-                        if (parseInt(this.filters.tahun_akhir) < parseInt(this.filters.tahun_awal)) {
-                            this.filters.tahun_akhir = this.filters.tahun_awal;
-                        }
-                    }
-                },
-
-                selectAllRegions() {
-                    this.filters.selectedRegions = this.availableRegions.map(r => r.id);
-                },
-
-                selectNoneRegions() {
-                    this.filters.selectedRegions = [];
-                },
-
-                canAddToQueue() {
-                    return this.filters.topik && 
-                           this.filters.selectedVariabel && 
-                           this.filters.klasifikasis.length > 0 && 
-                           this.hasValidTimeFilter() &&
-                           this.filters.selectedRegions.length > 0;
-                },
-
-                hasValidTimeFilter() {
-                    // Year validation
-                    const hasValidYears = this.yearMode === 'all' || 
-                                         (this.yearMode === 'specific' && this.filters.selectedYears.length > 0) ||
-                                         (this.yearMode === 'range' && this.filters.tahun_awal && this.filters.tahun_akhir);
-                    
-                    // Month validation (required)
-                    const hasValidMonths = this.monthMode === 'all' || 
-                                          (this.monthMode === 'specific' && this.filters.selectedMonths.length > 0) ||
-                                          (this.monthMode === 'range' && this.filters.bulan_awal && this.filters.bulan_akhir);
-                    
-                    return hasValidYears && hasValidMonths;
-                },
-
-                async addToQueue() {
-                    if (!this.canAddToQueue()) return;
-
-                    this.addingToQueue = true;
-                    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate processing
-
-                    // Create a deep copy of current filters and convert selectedVariabel to variabels array for backend compatibility
-                    const queueItem = {
-                        ...JSON.parse(JSON.stringify(this.filters)),
-                        variabels: [this.filters.selectedVariabel], // Convert single variable to array for backend
-                        yearMode: this.yearMode,
-                        monthMode: this.monthMode,
-                        processed: false, // Track if this item has been processed
-                        timestamp: Date.now()
-                    };
-                    
-                    // Remove the selectedVariabel field since we've converted it to variabels
-                    delete queueItem.selectedVariabel;
-
-                    this.filterQueue.push(queueItem);
-                    this.addingToQueue = false;
-                },
-
-                removeFromQueue(index) {
-                    this.filterQueue.splice(index, 1);
-                },
-
-                clearQueue() {
-                    this.filterQueue = [];
-                },
-
-                async processQueue() {
-                    if (this.filterQueue.length === 0) return;
-
-                    this.isProcessing = true;
-                    // Don't clear existing results - append new ones instead
-                    // this.searchResults = [];
-
-                    try {
-                        // Process only unprocessed items in queue
-                        const unprocessedItems = this.filterQueue.filter(item => !item.processed);
-                        
-                        if (unprocessedItems.length === 0) {
-                            console.log('No unprocessed items in queue');
-                            this.isProcessing = false;
-                            return;
-                        }
-                        
-                        console.log(`Processing ${unprocessedItems.length} unprocessed queue items out of ${this.filterQueue.length} total items`);
-                        console.log('Queue items processed status:', this.filterQueue.map((item, i) => `Item ${i}: ${item.processed ? 'PROCESSED' : 'PENDING'}`));
-                        
-                        for (let i = 0; i < unprocessedItems.length; i++) {
-                            const queueItem = unprocessedItems[i];
-                            
-                            console.log('Processing queue item:', queueItem);
-                            
-                            // Debug: Log the request being sent
-                            console.log('Sending API request with data:', JSON.stringify(queueItem, null, 2));
-                            console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-                            
-                            // Make API call for each queue item
-                            const response = await fetch('/api/benih-pupuk/search', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                },
-                                body: JSON.stringify(queueItem)
-                            });
-                            
-                            console.log('API Response status:', response.status);
-                            console.log('API Response headers:', Object.fromEntries(response.headers.entries()));
-                            
-                            if (response.ok) {
-                                const data = await response.json();
-                                console.log('API Response data:', data);
-                                
-                                // Add diagnosis
-                                this.diagnoseApiResponse(data, queueItem);
-                                
-                                console.log('Checking response structure:', {
-                                    hasData: !!data,
-                                    hasHeaders: !!data.headers,
-                                    resultIndex: data.resultIndex,
-                                    resultIndexUndefined: data.resultIndex !== undefined,
-                                    condition1: !!(data && data.headers),
-                                    condition2: !!(data && data.resultIndex !== undefined),
-                                    overallCondition: !!(data && (data.headers || data.resultIndex !== undefined))
-                                });
-                                
-                                // Check if the response has the expected structure
-                                if (data && (data.headers || data.resultIndex !== undefined)) {
-                                    console.log('Using real API response data');
-                                    
-                                    // Debug the conversion process
-                                    console.log('queueItem.selectedRegions (original):', queueItem.selectedRegions);
-                                    console.log('this.availableRegions sample:', this.availableRegions.slice(0, 3));
-                                    
-                                    // Convert queueItem regions from IDs to full objects for template
-                                    const selectedRegionObjects = this.availableRegions.filter(r => {
-                                        const matchesId = queueItem.selectedRegions.includes(r.id.toString());
-                                        const matchesStringId = queueItem.selectedRegions.includes(r.id);
-                                        if (matchesId || matchesStringId) {
-                                            console.log('Found matching region:', r.nama, 'for ID:', r.id);
-                                        }
-                                        return matchesId || matchesStringId;
-                                    });
-                                    
-                                    console.log('selectedRegionObjects result:', selectedRegionObjects);
-                                    
-                                    const selectedVariabelObjects = this.availableVariabels.filter(v => 
-                                        queueItem.variabels ? queueItem.variabels.includes(v.id.toString()) : 
-                                        (queueItem.selectedVariabel && v.id.toString() === queueItem.selectedVariabel.toString())
-                                    );
-                                    const selectedKlasifikasiObjects = this.availableKlasifikasis.filter(k => queueItem.klasifikasis.includes(k.id.toString()));
-                                    
-                                    // Create enhanced result with queue item info and converted objects
-                                    const enhancedResult = {
-                                        ...data,
-                                        resultIndex: this.searchResults.length + 1, // Set correct result number
-                                        queueItem: {
-                                            ...queueItem,
-                                            selectedRegions: selectedRegionObjects,  // Convert IDs to objects
-                                            selectedVariabels: selectedVariabelObjects,
-                                            selectedKlasifikasis: selectedKlasifikasiObjects
-                                        },
-                                        selectedRegions: selectedRegionObjects,
-                                        selectedVariabels: selectedVariabelObjects,
-                                        selectedKlasifikasis: selectedKlasifikasiObjects,
-                                        tahun_awal: queueItem.tahun_awal,
-                                        tahun_akhir: queueItem.tahun_akhir,
-                                        bulan_awal: queueItem.bulan_awal,
-                                        bulan_akhir: queueItem.bulan_akhir
-                                    };
-                                    
-                                    // Create dataMap for efficient data lookup
-                                    enhancedResult.dataMap = this.createDataMap(data, queueItem);
-                                    
-                                    // IMPORTANT: Add raw_data for getCellValue function
-                                    enhancedResult.raw_data = data.raw_data || [];
-                                    console.log('FIX APPLIED: Raw data assigned to enhancedResult:', {
-                                        layout: queueItem.tata_letak,
-                                        hasRawData: !!enhancedResult.raw_data,
-                                        rawDataLength: enhancedResult.raw_data.length,
-                                        resultIndex: enhancedResult.resultIndex
-                                    });
-                                    
-                                    console.log('Enhanced result queueItem.selectedRegions:', enhancedResult.queueItem.selectedRegions);
-                                    console.log('DataMap created with keys:', Object.keys(enhancedResult.dataMap).length, 'entries');
-                                    
-                                    // Calculate summary statistics for the enhanced result
-                                    this.calculateSummaryStats(enhancedResult);
-                                    
-                                    // Debug: Log the enhanced result structure
-                                    console.log('Enhanced result structure:', {
-                                        resultIndex: enhancedResult.resultIndex,
-                                        hasHeaders: !!enhancedResult.headers,
-                                        headersLength: enhancedResult.headers ? enhancedResult.headers.length : 0,
-                                        headers: enhancedResult.headers,
-                                        hasData: !!enhancedResult.data,
-                                        dataLength: enhancedResult.data ? enhancedResult.data.length : 0,
-                                        sampleDataItem: enhancedResult.data && enhancedResult.data[0] ? enhancedResult.data[0] : null,
-                                        layoutType: enhancedResult.queueItem.tata_letak
-                                    });
-                                    
-                                    this.searchResults.push(enhancedResult);
-                                    
-                                    // Calculate summary statistics for the enhanced result
-                                    this.calculateSummaryStats(enhancedResult);
-                                    
-                                    // CRITICAL: Pre-sort all arrays to ensure consistent table iteration
-                                    if (enhancedResult.selectedKlasifikasis) {
-                                        enhancedResult.selectedKlasifikasis.sort((a, b) => a.id - b.id);
-                                    }
-                                    if (enhancedResult.yearGroups) {
-                                        enhancedResult.yearGroups.sort((a, b) => a.year - b.year);
-                                        // Also sort months within each year group
-                                        enhancedResult.yearGroups.forEach(yearGroup => {
-                                            if (yearGroup.months) {
-                                                yearGroup.months.sort((a, b) => a.id - b.id);
-                                            }
-                                        });
-                                    }
-                                    
-                                    console.log('=== ARRAYS PRE-SORTED FOR CONSISTENCY ===');
-                                    console.log('Sorted klasifikasis:', enhancedResult.selectedKlasifikasis);
-                                    console.log('Sorted yearGroups:', enhancedResult.yearGroups);
-                                    console.log('First klasifikasi should be:', enhancedResult.selectedKlasifikasis[0]);
-                                    console.log('First year should be:', enhancedResult.yearGroups[0]);
-                                    
-                                    // Verify table layout is preserved
-                                    console.log('Table layout should be:', enhancedResult.queueItem.tata_letak);
-                                    
-                                    // Manual verification
-                                    const firstRegion = enhancedResult.queueItem.selectedRegions[0];
-                                    const firstVariabel = enhancedResult.selectedVariabels[0];  
-                                    const firstKlasifikasi = enhancedResult.selectedKlasifikasis[0];
-                                    const firstYear = enhancedResult.yearGroups[0];
-                                    const firstMonth = firstYear.months[0];
-                                    
-                                    console.log('=== MANUAL FIRST CELL CHECK ===');
-                                    console.log('Should use:', {
-                                        regionId: firstRegion.id,
-                                        year: firstYear.year, 
-                                        monthId: firstMonth.id,
-                                        variabelId: firstVariabel.id,
-                                        klasifikasiId: firstKlasifikasi.id
-                                    });
-                                    
-                                    const expectedValue = this.getCellValue(firstRegion.id, firstYear.year, firstMonth.id, firstVariabel.id, firstKlasifikasi.id);
-                                    console.log('Expected first cell value:', expectedValue);
-                                    console.log('=== END MANUAL CHECK ===');
-                                    
-                                    // Mark this queue item as processed
-                                    queueItem.processed = true;
-                                } else {
-                                    console.warn('API response format unexpected, using fallback');
-                                    console.log('Response that failed validation:', data);
-                                    const result = this.generateResultForQueueItem(queueItem, this.searchResults.length + 1);
-                                    this.calculateSummaryStats(result);
-                                    this.searchResults.push(result);
-                                    queueItem.processed = true;
-                                }
-                            } else {
-                                console.error('API response not OK:', response.status);
-                                // Fallback to generating mock data if API fails
-                                const result = this.generateResultForQueueItem(queueItem, this.searchResults.length + 1);
-                                this.searchResults.push(result);
-                                queueItem.processed = true;
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Error processing queue:', error);
-                        
-                        // Fallback: generate results for all unprocessed queue items
-                        const unprocessedItems = this.filterQueue.filter(item => !item.processed);
-                        for (let i = 0; i < unprocessedItems.length; i++) {
-                            const queueItem = unprocessedItems[i];
-                            const result = this.generateResultForQueueItem(queueItem, this.searchResults.length + 1);
-                            this.searchResults.push(result);
-                            queueItem.processed = true;
-                        }
-                    } finally {
-                        this.isProcessing = false;
-                        this.activeTab = 'tabel';
-
-                        console.log('Final search results:', this.searchResults);
-
-                        // Create charts after results are rendered
-                        this.$nextTick(() => {
-                            this.createCharts();
-                        });
-                    }
-                },
-
-                generateResultForQueueItem(queueItem, resultIndex) {
-                    const topikNama = queueItem.topik === '1' ? 'Benih' : 'Pupuk';
-                    
-                    // Get years based on mode
-                    let years = [];
-                    if (queueItem.yearMode === 'all') {
-                        years = this.years.slice();
-                    } else if (queueItem.yearMode === 'specific') {
-                        years = queueItem.selectedYears.map(y => parseInt(y)).sort();
-                    } else if (queueItem.yearMode === 'range') {
-                        for (let year = parseInt(queueItem.tahun_awal); year <= parseInt(queueItem.tahun_akhir); year++) {
-                            years.push(year);
-                        }
-                    }
-
-                    // Get months based on mode
-                    let months = [];
-                    if (queueItem.monthMode === 'all') {
-                        months = this.bulans.slice();
-                    } else if (queueItem.monthMode === 'specific') {
-                        months = this.bulans.filter(b => queueItem.selectedMonths.includes(b.id));
-                    } else if (queueItem.monthMode === 'range') {
-                        months = this.bulans.filter(b => b.id >= queueItem.bulan_awal && b.id <= queueItem.bulan_akhir);
-                    }
-
-                    // Get selected regions, variabels, and klasifikasis
-                    const selectedRegions = this.availableRegions.filter(r => queueItem.selectedRegions.includes(r.id));
-                    // Handle both formats: new format (variabels array) and legacy format (selectedVariabel single)
-                    let selectedVariabels = [];
-                    if (queueItem.variabels) {
-                        selectedVariabels = this.availableVariabels.filter(v => queueItem.variabels.includes(v.id));
-                    } else if (queueItem.selectedVariabel) {
-                        selectedVariabels = this.availableVariabels.filter(v => v.id.toString() === queueItem.selectedVariabel.toString());
-                    }
-                    let selectedKlasifikasis = this.availableKlasifikasis.filter(k => queueItem.klasifikasis.includes(k.id));
-
-                    // Fallback: if no selections, use defaults to prevent empty tables
-                    if (selectedVariabels.length === 0) {
-                        selectedVariabels = [
-                            { id: 1, deskripsi: 'Default Variabel 1', satuan: 'Ton' },
-                            { id: 2, deskripsi: 'Default Variabel 2', satuan: 'Ton' }
-                        ];
-                    }
-                    if (selectedKlasifikasis.length === 0) {
-                        selectedKlasifikasis = [
-                            { id: 1, deskripsi: 'Default Klasifikasi 1' },
-                            { id: 2, deskripsi: 'Default Klasifikasi 2' }
-                        ];
-                    }
-                    if (years.length === 0) {
-                        years = [2020, 2021, 2022];
-                    }
-                    if (months.length === 0) {
-                        months = this.bulans.slice(0, 6) || [
-                            { id: 1, nama: 'Januari' },
-                            { id: 2, nama: 'Februari' },
-                            { id: 3, nama: 'Maret' }
-                        ];
-                    }
-                    if (selectedRegions.length === 0) {
-                        selectedRegions = this.availableRegions.slice(0, 3) || [
-                            { id: 1, nama: 'Default Region 1' },
-                            { id: 2, nama: 'Default Region 2' }
-                        ];
-                    }
-
-                    // Create year groups with months
-                    const yearGroups = years.map(year => ({
-                        year: year,
-                        months: months
-                    }));
-
-                    // Create month groups with variabels for Tipe 3
-                    const monthGroups = months.map(month => ({
-                        bulan: month.nama,
-                        variabels: selectedVariabels.map(v => ({
-                            id: v.id,
-                            nama: v.deskripsi.substring(0, 15) + (v.deskripsi.length > 15 ? '...' : ''),
-                            satuan: v.satuan
-                        }))
-                    }));
-
-                    // Generate detailed data structure for enhanced table
-                    let detailData = [];
-                    let regionTotals = [];
-                    let grandTotals = [];
-                    let allValues = [];
-
-                    // Generate data based on combinations of variabel and klasifikasi
-                    selectedVariabels.forEach(variabel => {
-                        selectedKlasifikasis.forEach(klasifikasi => {
-                            const rowValues = [];
-                            yearGroups.forEach(yearGroup => {
-                                yearGroup.months.forEach(month => {
-                                    const value = Math.floor(Math.random() * 10000) + 1000;
-                                    rowValues.push(value);
-                                    allValues.push(value);
-                                });
-                            });
-
-                            detailData.push({
-                                variabel: variabel.deskripsi,
-                                klasifikasi: klasifikasi.deskripsi,
-                                satuan: variabel.satuan,
-                                values: rowValues
-                            });
-                        });
-                    });
-
-                    // Calculate regional totals
-                    selectedRegions.forEach(region => {
-                        const regionTotal = [];
-                        const totalColumns = yearGroups.length * months.length;
-                        
-                        for (let col = 0; col < totalColumns; col++) {
-                            const sum = detailData.reduce((acc, row) => acc + (row.values[col] || 0), 0);
-                            regionTotal.push(Math.floor(sum * (0.8 + Math.random() * 0.4))); // Vary regional totals
-                        }
-                        
-                        regionTotals.push({
-                            nama: region.nama,
-                            totals: regionTotal
-                        });
-                    });
-
-                    // Calculate grand totals
-                    const totalColumns = yearGroups.length * months.length;
-                    for (let col = 0; col < totalColumns; col++) {
-                        const grandTotal = regionTotals.reduce((acc, region) => acc + (region.totals[col] || 0), 0);
-                        grandTotals.push(grandTotal);
-                    }
-
-                    // Generate yearly data for Tipe 3
-                    const yearlyData = years.map(year => ({
-                        year: year,
-                        monthValues: months.flatMap(month => 
-                            selectedVariabels.map(() => Math.floor(Math.random() * 5000) + 1000)
-                        )
-                    }));
-
-                    // Calculate statistics
-                    const totalEntries = detailData.length * (yearGroups.length * months.length);
-                    const averageValue = allValues.length > 0 ? allValues.reduce((a, b) => a + b, 0) / allValues.length : 0;
-                    const maxValue = allValues.length > 0 ? Math.max(...allValues) : 0;
-                    const minValue = allValues.length > 0 ? Math.min(...allValues) : 0;
-
-                    // Generate simple headers and data for backward compatibility
-                    let headers = [];
-                    let data = [];
-                    
-                    if (queueItem.tata_letak === 'tipe_1') {
-                        headers = years.map(y => y.toString());
-                        data = selectedRegions.map(region => ({
-                            label: region.nama,
-                            values: years.map(() => Math.floor(Math.random() * 10000) + 1000)
-                        }));
-                    } else if (queueItem.tata_letak === 'tipe_2') {
-                        headers = years.map(y => y.toString());
-                        data = selectedKlasifikasis.map(klasifikasi => ({
-                            label: klasifikasi.deskripsi,
-                            values: years.map(() => Math.floor(Math.random() * 8000) + 2000)
-                        }));
-                    } else if (queueItem.tata_letak === 'tipe_3') {
-                        headers = months.map(m => m.nama.substring(0, 3));
-                        data = years.slice(0, 3).map(year => ({
-                            label: year.toString(),
-                            values: months.map(() => Math.floor(Math.random() * 5000) + 1000)
-                        }));
-                    }
-
-                    // Calculate totals for backward compatibility
-                    const totals = headers.map((_, index) => 
-                        data.reduce((sum, row) => sum + row.values[index], 0)
-                    );
-
-                    return {
-                        resultIndex: resultIndex,
-                        topik_nama: `${topikNama} - Hasil ${resultIndex}`,
-                        headers: headers,
-                        data: data,
-                        totals: totals,
-                        queueItem: queueItem,
-                        
-                        // Enhanced data structure
-                        yearGroups: yearGroups,
-                        monthGroups: monthGroups,
-                        detailData: detailData,
-                        regionTotals: regionTotals,
-                        grandTotals: grandTotals,
-                        selectedVariabels: selectedVariabels,
-                        selectedKlasifikasis: selectedKlasifikasis,
-                        yearlyData: yearlyData,
-                        
-                        // Statistics
-                        totalEntries: totalEntries,
-                        averageValue: averageValue,
-                        maxValue: maxValue,
-                        minValue: minValue
-                    };
-                },
-
-                createCharts() {
-                    this.searchResults.forEach((result, index) => {
-                        const ctx = document.getElementById(`chart-${index}`);
-                        if (!ctx) return;
-
-                        const colors = [
-                            'rgb(34, 197, 94)', 'rgb(59, 130, 246)', 'rgb(168, 85, 247)',
-                            'rgb(239, 68, 68)', 'rgb(245, 158, 11)', 'rgb(16, 185, 129)',
-                            'rgb(139, 92, 246)', 'rgb(236, 72, 153)', 'rgb(6, 182, 212)'
-                        ];
-
-                        new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: result.headers,
-                                datasets: result.data.map((row, idx) => ({
-                                    label: row.label,
-                                    data: row.values,
-                                    backgroundColor: colors[idx % colors.length] + '20',
-                                    borderColor: colors[idx % colors.length],
-                                    borderWidth: 2,
-                                    tension: 0.4
-                                }))
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    title: {
-                                        display: true,
-                                        text: result.topik_nama + ' - Trend Data'
-                                    },
-                                    legend: {
-                                        display: true,
-                                        position: 'top'
-                                    }
-                                },
-                                scales: {
-                                    x: {
-                                        title: {
-                                            display: true,
-                                            text: result.queueItem.tata_letak === 'tipe_3' ? 'Bulan' : 'Tahun'
-                                        }
-                                    },
-                                    y: {
-                                        title: {
-                                            display: true,
-                                            text: 'Nilai (Ton)'
-                                        },
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    });
-                },
-
-                resetAll() {
-                    this.filters = {
-                        topik: '',
-                        variabels: [],
-                        klasifikasis: [],
-                        selectedYears: [],
-                        tahun_awal: '2020',
-                        tahun_akhir: '2022',
-                        selectedMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                        bulan_awal: '',
-                        bulan_akhir: '',
-                        selectedRegions: [1, 2, 3, 4, 5],
-                        tata_letak: 'tipe_1'
-                    };
-                    
-                    this.yearMode = 'range';
-                    this.monthMode = 'all';
-                    this.availableVariabels = [];
-                    this.availableKlasifikasis = [];
-                    this.filterQueue = [];
-                    this.searchResults = [];
-                },
-
-                clearResults() {
-                    this.searchResults = [];
-                    // Reset processed status for all queue items so they can be reprocessed
-                    this.filterQueue.forEach(item => {
-                        item.processed = false;
-                    });
-                    console.log('Results cleared and queue items reset for reprocessing');
+                        return null;
+                    }).filter(Boolean);
                 },
 
                 getQueueSummary(queueItem) {
@@ -2311,35 +1513,54 @@
                     }).format(value);
                 },
 
-                exportToExcel() {
-                    if (this.searchResults.length === 0) return;
+                async exportToExcel() {
+                    if (!this.searchResults) return;
 
-                    const wb = XLSX.utils.book_new();
-                    
-                    this.searchResults.forEach((result, index) => {
-                        const wsData = [];
-                        
-                        // Add headers
-                        const headerRow = ['Label', ...result.headers];
-                        wsData.push(headerRow);
-                        
-                        // Add data
-                        result.data.forEach(row => {
-                            wsData.push([row.label, ...row.values]);
+                    try {
+                        const response = await fetch('/api/benih-pupuk/export-excel', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                headers: this.searchResults.headers,
+                                rows: this.searchResults.rows,
+                                config: this.config
+                            })
                         });
-                        
-                        // Add totals
-                        if (result.totals) {
-                            wsData.push(['TOTAL', ...result.totals]);
+
+                        if (!response.ok) {
+                            throw new Error('Gagal membuat file Excel di server.');
                         }
-                        
-                        const ws = XLSX.utils.aoa_to_sheet(wsData);
-                        XLSX.utils.book_append_sheet(wb, ws, `Hasil_${result.resultIndex}`);
-                    });
-                    
-                    XLSX.writeFile(wb, `laporan-benih-pupuk-${new Date().toISOString().split('T')[0]}.xlsx`);
+
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = 'laporan-benih-pupuk.xlsx';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+
+                    } catch (error) {
+                        console.error('Error exporting to Excel:', error);
+                        alert('Terjadi kesalahan saat mengekspor data. Silakan periksa konsol untuk detailnya.');
+                    }
                 }
             };
         }
-    </script>
+    </div>
+
+@push('scripts')
+<script>
+    // This script is intentionally left blank.
+    // The benihPupukForm() function is now defined within the main component script block.
+</script>
+@endpush
+</div>
+
 </x-layouts.landing>

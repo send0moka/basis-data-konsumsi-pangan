@@ -30,7 +30,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('id_kategori')->nullable();
                 $table->unsignedBigInteger('id_parent')->nullable();
                 $table->string('kode', 10)->nullable();
-                $table->string('deskripsi', 255)->nullable();
+                $table->string('nama', 255)->nullable();
                 $table->integer('sorter')->nullable();
                 
                 $table->foreign('id_kategori')

@@ -34,11 +34,16 @@ class LahanVariabelFactory extends Factory
         if ($counter < count($variabelData)) {
             $data = $variabelData[$counter];
             $counter++;
+            // Add id_topik to the data
+            $data['id_topik'] = \App\Models\LahanTopik::inRandomOrder()->first()->id ?? 
+                              \App\Models\LahanTopik::factory()->create()->id;
             return $data;
         }
         
         // Fallback jika sudah lebih dari data yang tersedia
         return [
+            'id_topik' => \App\Models\LahanTopik::inRandomOrder()->first()->id ?? 
+                         \App\Models\LahanTopik::factory()->create()->id,
             'nama' => 'Variabel ' . $this->faker->words(2, true),
             'satuan' => $this->faker->randomElement(['Hektar', 'Ton', 'Persen', 'Unit', 'Kg'])
         ];

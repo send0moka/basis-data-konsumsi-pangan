@@ -21,16 +21,20 @@ return new class extends Migration
         // Create lahan_variabel table
         Schema::create('lahan_variabel', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_topik')->constrained('lahan_topik')->onDelete('cascade');
             $table->string('nama');
             $table->string('satuan');
             $table->timestamps();
+            $table->index(['id_topik']);
         });
 
         // Create lahan_klasifikasi table
         Schema::create('lahan_klasifikasi', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_variabel')->constrained('lahan_variabel')->onDelete('cascade');
             $table->string('nama');
             $table->timestamps();
+            $table->index(['id_variabel']);
         });
 
         // Create lahan_data table

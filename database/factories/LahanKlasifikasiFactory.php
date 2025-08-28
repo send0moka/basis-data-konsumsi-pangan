@@ -34,11 +34,17 @@ class LahanKlasifikasiFactory extends Factory
         if ($counter < count($klasifikasiData)) {
             $nama = $klasifikasiData[$counter];
             $counter++;
-            return ['nama' => $nama];
+            return [
+                'id_variabel' => \App\Models\LahanVariabel::inRandomOrder()->first()->id ?? 
+                               \App\Models\LahanVariabel::factory()->create()->id,
+                'nama' => $nama
+            ];
         }
         
         // Fallback jika sudah lebih dari data yang tersedia
         return [
+            'id_variabel' => \App\Models\LahanVariabel::inRandomOrder()->first()->id ?? 
+                           \App\Models\LahanVariabel::factory()->create()->id,
             'nama' => 'Klasifikasi ' . $this->faker->words(2, true),
         ];
     }
