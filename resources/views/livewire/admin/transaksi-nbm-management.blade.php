@@ -8,11 +8,9 @@
                     Kelola data transaksi neraca bahan makanan
                 </p>
             </div>
-            @can('create transaksi_nbm')
             <flux:button wire:click="openCreateModal" variant="primary">
                 Tambah Transaksi NBM
             </flux:button>
-            @endcan
         </div>
     </div>
 
@@ -142,13 +140,14 @@
             <table class="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
                 <thead class="bg-neutral-50 dark:bg-neutral-800/50">
                     <tr>
-                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                            No
-                        </th>
+                        <th class="px-3 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">No</th>
                         <x-sortable-header field="id" :sort-field="$sortField" :sort-direction="$sortDirection" title="ID" class="px-3 py-3" />
-                        <x-sortable-header field="kode_kelompok" :sort-field="$sortField" :sort-direction="$sortDirection" title="Kelompok" class="px-3 py-3" />
-                        <x-sortable-header field="kode_komoditi" :sort-field="$sortField" :sort-direction="$sortDirection" title="Komoditi" class="px-3 py-3" />
+                        <x-sortable-header field="kelompok" :sort-field="$sortField" :sort-direction="$sortDirection" title="Kelompok" class="px-3 py-3" />
+                        <x-sortable-header field="komoditi" :sort-field="$sortField" :sort-direction="$sortDirection" title="Komoditi" class="px-3 py-3" />
                         <x-sortable-header field="tahun" :sort-field="$sortField" :sort-direction="$sortDirection" title="Tahun" class="px-3 py-3" />
+                        <x-sortable-header field="bulan" :sort-field="$sortField" :sort-direction="$sortDirection" title="Bulan" class="px-3 py-3" />
+                        <x-sortable-header field="kuartal" :sort-field="$sortField" :sort-direction="$sortDirection" title="Kuartal" class="px-3 py-3" />
+                        <x-sortable-header field="periode_data" :sort-field="$sortField" :sort-direction="$sortDirection" title="Periode Data" class="px-3 py-3" />
                         <x-sortable-header field="status_angka" :sort-field="$sortField" :sort-direction="$sortDirection" title="Status Angka" class="px-3 py-3" />
                         <x-sortable-header field="masukan" :sort-field="$sortField" :sort-direction="$sortDirection" title="Masukan" class="px-3 py-3" />
                         <x-sortable-header field="keluaran" :sort-field="$sortField" :sort-direction="$sortDirection" title="Keluaran" class="px-3 py-3" />
@@ -167,9 +166,28 @@
                         <x-sortable-header field="kalori_hari" :sort-field="$sortField" :sort-direction="$sortDirection" title="Kalori/Hari" class="px-3 py-3" />
                         <x-sortable-header field="protein_hari" :sort-field="$sortField" :sort-direction="$sortDirection" title="Protein/Hari" class="px-3 py-3" />
                         <x-sortable-header field="lemak_hari" :sort-field="$sortField" :sort-direction="$sortDirection" title="Lemak/Hari" class="px-3 py-3" />
-                        <th class="px-3 py-3 text-center text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider no-print">
-                            Aksi
-                        </th>
+                        <x-sortable-header field="harga_produsen" :sort-field="$sortField" :sort-direction="$sortDirection" title="Harga Produsen" class="px-3 py-3" />
+                        <x-sortable-header field="harga_konsumen" :sort-field="$sortField" :sort-direction="$sortDirection" title="Harga Konsumen" class="px-3 py-3" />
+                        <x-sortable-header field="inflasi_komoditi" :sort-field="$sortField" :sort-direction="$sortDirection" title="Inflasi Komoditi" class="px-3 py-3" />
+                        <x-sortable-header field="nilai_tukar_usd" :sort-field="$sortField" :sort-direction="$sortDirection" title="Nilai Tukar USD" class="px-3 py-3" />
+                        <x-sortable-header field="populasi_indonesia" :sort-field="$sortField" :sort-direction="$sortDirection" title="Populasi Indonesia" class="px-3 py-3" />
+                        <x-sortable-header field="gdp_per_kapita" :sort-field="$sortField" :sort-direction="$sortDirection" title="GDP Per Kapita" class="px-3 py-3" />
+                        <x-sortable-header field="tingkat_kemiskinan" :sort-field="$sortField" :sort-direction="$sortDirection" title="Tingkat Kemiskinan" class="px-3 py-3" />
+                        <x-sortable-header field="curah_hujan_mm" :sort-field="$sortField" :sort-direction="$sortDirection" title="Curah Hujan (mm)" class="px-3 py-3" />
+                        <x-sortable-header field="suhu_rata_celsius" :sort-field="$sortField" :sort-direction="$sortDirection" title="Suhu Rata-rata (C)" class="px-3 py-3" />
+                        <x-sortable-header field="indeks_el_nino" :sort-field="$sortField" :sort-direction="$sortDirection" title="Indeks El Nino" class="px-3 py-3" />
+                        <x-sortable-header field="luas_panen_ha" :sort-field="$sortField" :sort-direction="$sortDirection" title="Luas Panen (Ha)" class="px-3 py-3" />
+                        <x-sortable-header field="produktivitas_ton_ha" :sort-field="$sortField" :sort-direction="$sortDirection" title="Produktivitas (Ton/Ha)" class="px-3 py-3" />
+                        <x-sortable-header field="kebijakan_impor" :sort-field="$sortField" :sort-direction="$sortDirection" title="Kebijakan Impor" class="px-3 py-3" />
+                        <x-sortable-header field="subsidi_pemerintah" :sort-field="$sortField" :sort-direction="$sortDirection" title="Subsidi Pemerintah" class="px-3 py-3" />
+                        <x-sortable-header field="stok_bulog" :sort-field="$sortField" :sort-direction="$sortDirection" title="Stok Bulog" class="px-3 py-3" />
+                        <x-sortable-header field="confidence_score" :sort-field="$sortField" :sort-direction="$sortDirection" title="Confidence Score" class="px-3 py-3" />
+                        <x-sortable-header field="data_source" :sort-field="$sortField" :sort-direction="$sortDirection" title="Data Source" class="px-3 py-3" />
+                        <x-sortable-header field="validation_status" :sort-field="$sortField" :sort-direction="$sortDirection" title="Validation Status" class="px-3 py-3" />
+                        <x-sortable-header field="outlier_flag" :sort-field="$sortField" :sort-direction="$sortDirection" title="Outlier" class="px-3 py-3" />
+                        <x-sortable-header field="created_at" :sort-field="$sortField" :sort-direction="$sortDirection" title="Created At" class="px-3 py-3" />
+                        <x-sortable-header field="updated_at" :sort-field="$sortField" :sort-direction="$sortDirection" title="Updated At" class="px-3 py-3" />
+                        <th class="px-3 py-3 text-center text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider no-print">Aksi</th>
                     </tr>
                 </thead>
                                 <tbody class="bg-white dark:bg-neutral-900 divide-y divide-neutral-200 dark:divide-neutral-700">
@@ -178,105 +196,63 @@
                             <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100 text-center">
                                 {{ ($transaksiNbms->currentPage() - 1) * $transaksiNbms->perPage() + $index + 1 }}
                             </td>
-                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ $transaksi->id }}
-                            </td>
-                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">
-                                <div class="flex flex-col">
-                                    <span class="font-medium">{{ $transaksi->kelompok->nama ?? 'N/A' }}</span>
-                                    <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ $transaksi->kode_kelompok }}</span>
-                                </div>
-                            </td>
-                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">
-                                <div class="flex flex-col">
-                                    <span class="font-medium">{{ $transaksi->komoditi->nama ?? 'N/A' }}</span>
-                                    <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ $transaksi->kode_komoditi }}</span>
-                                </div>
-                            </td>
-                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ $transaksi->tahun }}
-                            </td>
-                            <td class="px-3 py-3 text-sm">
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
-                                    @if($transaksi->status_angka === 'tetap') bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
-                                    @elseif($transaksi->status_angka === 'sementara') bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300
-                                    @else bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300
-                                    @endif">
-                                    {{ ucfirst($transaksi->status_angka) }}
-                                </span>
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->masukan ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->keluaran ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->impor ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->ekspor ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->perubahan_stok ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->pakan ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->bibit ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->makanan ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->bukan_makanan ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->tercecer ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->penggunaan_lain ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->bahan_makanan ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->kg_tahun ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->gram_hari ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->kalori_hari ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->protein_hari ?? 0, 4) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
-                                {{ number_format($transaksi->lemak_hari ?? 0, 6) }}
-                            </td>
-                            <td class="px-3 py-4 whitespace-nowrap text-right text-sm font-medium no-print">
-                                <div class="flex items-center justify-end space-x-2">
-                                    <flux:button wire:key="view-{{ $transaksi->id }}" wire:click="view({{ $transaksi->id }})" variant="ghost" size="sm">
-                                        Lihat
-                                    </flux:button>
-                                    @can('edit transaksi_nbm')
-                                    <flux:button wire:key="edit-{{ $transaksi->id }}" wire:click="openEditModal({{ $transaksi->id }})" variant="ghost" size="sm">
-                                        Edit
-                                    </flux:button>
-                                    @endcan
-                                    @can('delete transaksi_nbm')
-                                    <flux:button wire:key="delete-{{ $transaksi->id }}" wire:click="openDeleteModal({{ $transaksi->id }})" variant="danger" size="sm">
-                                        Hapus
-                                    </flux:button>
-                                    @endcan
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->id }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->kelompok->nama ?? $transaksi->kode_kelompok }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->komoditi->nama ?? $transaksi->kode_komoditi }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->tahun }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->bulan }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->kuartal }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->periode_data }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ ucfirst($transaksi->status_angka) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->masukan ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->keluaran ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->impor ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->ekspor ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->perubahan_stok ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->pakan ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->bibit ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->makanan ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->bukan_makanan ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->tercecer ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->penggunaan_lain ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->bahan_makanan ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->kg_tahun ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->gram_hari ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->kalori_hari ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->protein_hari ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->lemak_hari ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->harga_produsen ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->harga_konsumen ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->inflasi_komoditi ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->nilai_tukar_usd ?? 0, 4) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->populasi_indonesia ?? 0, 0) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->gdp_per_kapita ?? 0, 0) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->tingkat_kemiskinan ?? 0, 2) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->curah_hujan_mm ?? 0, 2) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->suhu_rata_celsius ?? 0, 2) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->indeks_el_nino ?? 0, 2) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->luas_panen_ha ?? 0, 2) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->produktivitas_ton_ha ?? 0, 2) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->kebijakan_impor }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->subsidi_pemerintah ?? 0, 2) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->stok_bulog ?? 0, 2) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ number_format($transaksi->confidence_score ?? 0, 2) }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->data_source }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->validation_status }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->outlier_flag ? 'Ya' : 'Tidak' }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->created_at ? $transaksi->created_at->format('d/m/Y H:i') : '' }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100">{{ $transaksi->updated_at ? $transaksi->updated_at->format('d/m/Y H:i') : '' }}</td>
+                            <td class="px-3 py-3 text-sm text-neutral-900 dark:text-neutral-100 no-print">
+                                <div class="flex space-x-2">
+                                    <flux:button wire:click="openEditModal({{ $transaksi->id }})" variant="ghost" size="sm">Edit</flux:button>
+                                    <flux:button wire:click="openDeleteModal({{ $transaksi->id }})" variant="danger" size="sm">Hapus</flux:button>
+                                    <flux:button wire:click="view({{ $transaksi->id }})" variant="ghost" size="sm">Detail</flux:button>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="24" class="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
+                            <td colspan="48" class="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
                                 @if($search)
                                     Tidak ada transaksi NBM yang ditemukan untuk pencarian "{{ $search }}".
                                 @else
@@ -488,6 +464,124 @@
                                 <input type="number" step="0.000001" wire:model="lemak_hari" placeholder="0.000000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
                                 @error('lemak_hari') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
+
+                            <!-- Field Lengkap Edit Transaksi NBM -->
+                            <div class="lg:col-span-3">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-6">Field Lengkap Edit Transaksi NBM</h4>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Bulan</label>
+                                <input type="number" wire:model="bulan" min="1" max="12" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('bulan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kuartal</label>
+                                <input type="number" wire:model="kuartal" min="1" max="4" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('kuartal') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Periode Data</label>
+                                <input type="text" wire:model="periode_data" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('periode_data') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Harga Produsen</label>
+                                <input type="number" step="0.0001" wire:model="harga_produsen" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('harga_produsen') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Harga Konsumen</label>
+                                <input type="number" step="0.0001" wire:model="harga_konsumen" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('harga_konsumen') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Inflasi Komoditi</label>
+                                <input type="number" step="0.0001" wire:model="inflasi_komoditi" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('inflasi_komoditi') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Nilai Tukar USD</label>
+                                <input type="number" step="0.0001" wire:model="nilai_tukar_usd" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('nilai_tukar_usd') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Populasi Indonesia</label>
+                                <input type="number" step="0.01" wire:model="populasi_indonesia" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('populasi_indonesia') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">GDP Per Kapita</label>
+                                <input type="number" step="0.01" wire:model="gdp_per_kapita" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('gdp_per_kapita') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Tingkat Kemiskinan</label>
+                                <input type="number" step="0.01" wire:model="tingkat_kemiskinan" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('tingkat_kemiskinan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Curah Hujan (mm)</label>
+                                <input type="number" step="0.01" wire:model="curah_hujan_mm" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('curah_hujan_mm') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Suhu Rata-rata (C)</label>
+                                <input type="number" step="0.01" wire:model="suhu_rata_celsius" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('suhu_rata_celsius') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Indeks El Nino</label>
+                                <input type="number" step="0.001" wire:model="indeks_el_nino" placeholder="0.000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('indeks_el_nino') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Luas Panen (Ha)</label>
+                                <input type="number" step="0.01" wire:model="luas_panen_ha" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('luas_panen_ha') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Produktivitas (Ton/Ha)</label>
+                                <input type="number" step="0.0001" wire:model="produktivitas_ton_ha" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('produktivitas_ton_ha') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kebijakan Impor</label>
+                                <input type="text" wire:model="kebijakan_impor" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('kebijakan_impor') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Subsidi Pemerintah</label>
+                                <input type="number" step="0.01" wire:model="subsidi_pemerintah" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('subsidi_pemerintah') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Stok Bulog</label>
+                                <input type="number" step="0.0001" wire:model="stok_bulog" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('stok_bulog') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Confidence Score</label>
+                                <input type="number" step="0.01" wire:model="confidence_score" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('confidence_score') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Data Source</label>
+                                <input type="text" wire:model="data_source" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('data_source') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Validation Status</label>
+                                <input type="text" wire:model="validation_status" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('validation_status') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Outlier</label>
+                                <select wire:model="outlier_flag" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                    <option value="0">Tidak</option>
+                                    <option value="1">Ya</option>
+                                </select>
+                                @error('outlier_flag') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
                         </div>
                     </div>
                     
@@ -582,7 +676,7 @@
                             
                             <!-- Data Produksi & Perdagangan -->
                             <div class="lg:col-span-3">
-                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-6">Data Produksi & Perdagangan</h4>
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-4">Data Produksi & Perdagangan</h4>
                             </div>
 
                             <div class="space-y-1">
@@ -618,7 +712,7 @@
                             <!-- Data Penggunaan -->
                             <div class="lg:col-span-3">
                                 <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-6">Data Penggunaan</h4>
-                            </div>
+                                                       </div>
 
                             <div class="space-y-1">
                                 <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Pakan</label>
@@ -696,6 +790,124 @@
                                 <input type="number" step="0.000001" wire:model="lemak_hari" placeholder="0.000000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
                                 @error('lemak_hari') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
+
+                            <!-- Field Tambahan: Pastikan semua field model tampil di form -->
+                            <div class="lg:col-span-3">
+                                <h4 class="font-medium text-neutral-900 dark:text-white border-b pb-2 mb-2 mt-6">Field Lengkap Transaksi NBM</h4>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Bulan</label>
+                                <input type="number" wire:model="bulan" min="1" max="12" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('bulan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kuartal</label>
+                                <input type="number" wire:model="kuartal" min="1" max="4" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('kuartal') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Periode Data</label>
+                                <input type="text" wire:model="periode_data" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('periode_data') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Harga Produsen</label>
+                                <input type="number" step="0.0001" wire:model="harga_produsen" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('harga_produsen') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Harga Konsumen</label>
+                                <input type="number" step="0.0001" wire:model="harga_konsumen" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('harga_konsumen') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Inflasi Komoditi</label>
+                                <input type="number" step="0.0001" wire:model="inflasi_komoditi" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('inflasi_komoditi') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Nilai Tukar USD</label>
+                                <input type="number" step="0.0001" wire:model="nilai_tukar_usd" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('nilai_tukar_usd') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Populasi Indonesia</label>
+                                <input type="number" step="0.01" wire:model="populasi_indonesia" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('populasi_indonesia') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">GDP Per Kapita</label>
+                                <input type="number" step="0.01" wire:model="gdp_per_kapita" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('gdp_per_kapita') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Tingkat Kemiskinan</label>
+                                <input type="number" step="0.01" wire:model="tingkat_kemiskinan" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('tingkat_kemiskinan') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Curah Hujan (mm)</label>
+                                <input type="number" step="0.01" wire:model="curah_hujan_mm" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('curah_hujan_mm') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Suhu Rata-rata (C)</label>
+                                <input type="number" step="0.01" wire:model="suhu_rata_celsius" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('suhu_rata_celsius') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Indeks El Nino</label>
+                                <input type="number" step="0.001" wire:model="indeks_el_nino" placeholder="0.000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('indeks_el_nino') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Luas Panen (Ha)</label>
+                                <input type="number" step="0.01" wire:model="luas_panen_ha" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('luas_panen_ha') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Produktivitas (Ton/Ha)</label>
+                                <input type="number" step="0.0001" wire:model="produktivitas_ton_ha" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('produktivitas_ton_ha') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Kebijakan Impor</label>
+                                <input type="text" wire:model="kebijakan_impor" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('kebijakan_impor') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Subsidi Pemerintah</label>
+                                <input type="number" step="0.01" wire:model="subsidi_pemerintah" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('subsidi_pemerintah') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Stok Bulog</label>
+                                <input type="number" step="0.0001" wire:model="stok_bulog" placeholder="0.0000" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('stok_bulog') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Confidence Score</label>
+                                <input type="number" step="0.01" wire:model="confidence_score" placeholder="0.00" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm placeholder-neutral-400" />
+                                @error('confidence_score') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Data Source</label>
+                                <input type="text" wire:model="data_source" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('data_source') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Validation Status</label>
+                                <input type="text" wire:model="validation_status" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm" />
+                                @error('validation_status') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Outlier</label>
+                                <select wire:model="outlier_flag" class="w-full px-4 py-3 rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent text-sm appearance-none">
+                                    <option value="0">Tidak</option>
+                                    <option value="1">Ya</option>
+                                </select>
+                                @error('outlier_flag') <span class="text-red-500 dark:text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
                         </div>
                     </div>
                     
@@ -764,7 +976,7 @@
                         <div class="lg:col-span-3">
                             <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4">
                                 <svg class="inline w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2h-2a2 2 0 01-2-2v-6a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                                 </svg>
                                 Informasi Identitas
                             </h4>
@@ -911,7 +1123,7 @@
                         <div class="lg:col-span-3">
                             <h4 class="font-semibold text-neutral-900 dark:text-white border-b border-neutral-200 dark:border-neutral-600 pb-2 mb-4 mt-6">
                                 <svg class="inline w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2v-6a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                                 </svg>
                                 Data Penggunaan
                             </h4>

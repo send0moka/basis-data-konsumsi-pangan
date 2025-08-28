@@ -23,6 +23,19 @@ class KomoditiManagement extends Component
     public $kode_kelompok = '';
     public $kode_komoditi = '';
     public $nama = '';
+    public $satuan_dasar = '';
+    public $kalori_per_100g = '';
+    public $protein_per_100g = '';
+    public $lemak_per_100g = '';
+    public $karbohidrat_per_100g = '';
+    public $serat_per_100g = '';
+    public $vitamin_c_per_100g = '';
+    public $zat_besi_per_100g = '';
+    public $kalsium_per_100g = '';
+    public $musim_panen = '';
+    public $asal_produksi = '';
+    public $shelf_life_hari = '';
+    public $harga_rata_per_kg = '';
     public $editingKomoditi = null;
     public $deletingKomoditi = null;
     public $exportFormat = 'xlsx';
@@ -40,6 +53,19 @@ class KomoditiManagement extends Component
         'kode_kelompok' => 'required|exists:kelompok,kode',
         'kode_komoditi' => 'required|unique:komoditi,kode_komoditi',
         'nama' => 'required|min:3',
+        'satuan_dasar' => 'required|string',
+        'kalori_per_100g' => 'nullable|numeric',
+        'protein_per_100g' => 'nullable|numeric',
+        'lemak_per_100g' => 'nullable|numeric',
+        'karbohidrat_per_100g' => 'nullable|numeric',
+        'serat_per_100g' => 'nullable|numeric',
+        'vitamin_c_per_100g' => 'nullable|numeric',
+        'zat_besi_per_100g' => 'nullable|numeric',
+        'kalsium_per_100g' => 'nullable|numeric',
+        'musim_panen' => 'nullable|string',
+        'asal_produksi' => 'nullable|string',
+        'shelf_life_hari' => 'nullable|integer',
+        'harga_rata_per_kg' => 'nullable|numeric',
     ];
 
     public function updatingSearch()
@@ -75,11 +101,24 @@ class KomoditiManagement extends Component
 
     public function openEditModal($komoditiId)
     {
-        $this->editingKomoditi = Komoditi::findOrFail($komoditiId);
-        $this->kode_kelompok = $this->editingKomoditi->kode_kelompok;
-        $this->kode_komoditi = $this->editingKomoditi->kode_komoditi;
-        $this->nama = $this->editingKomoditi->nama;
-        $this->showEditModal = true;
+    $this->editingKomoditi = Komoditi::findOrFail($komoditiId);
+    $this->kode_kelompok = $this->editingKomoditi->kode_kelompok;
+    $this->kode_komoditi = $this->editingKomoditi->kode_komoditi;
+    $this->nama = $this->editingKomoditi->nama;
+    $this->satuan_dasar = $this->editingKomoditi->satuan_dasar;
+    $this->kalori_per_100g = $this->editingKomoditi->kalori_per_100g;
+    $this->protein_per_100g = $this->editingKomoditi->protein_per_100g;
+    $this->lemak_per_100g = $this->editingKomoditi->lemak_per_100g;
+    $this->karbohidrat_per_100g = $this->editingKomoditi->karbohidrat_per_100g;
+    $this->serat_per_100g = $this->editingKomoditi->serat_per_100g;
+    $this->vitamin_c_per_100g = $this->editingKomoditi->vitamin_c_per_100g;
+    $this->zat_besi_per_100g = $this->editingKomoditi->zat_besi_per_100g;
+    $this->kalsium_per_100g = $this->editingKomoditi->kalsium_per_100g;
+    $this->musim_panen = $this->editingKomoditi->musim_panen;
+    $this->asal_produksi = $this->editingKomoditi->asal_produksi;
+    $this->shelf_life_hari = $this->editingKomoditi->shelf_life_hari;
+    $this->harga_rata_per_kg = $this->editingKomoditi->harga_rata_per_kg;
+    $this->showEditModal = true;
     }
 
     public function closeEditModal()
@@ -108,6 +147,19 @@ class KomoditiManagement extends Component
             'kode_kelompok' => $this->kode_kelompok,
             'kode_komoditi' => $this->kode_komoditi,
             'nama' => $this->nama,
+            'satuan_dasar' => $this->satuan_dasar,
+            'kalori_per_100g' => $this->kalori_per_100g,
+            'protein_per_100g' => $this->protein_per_100g,
+            'lemak_per_100g' => $this->lemak_per_100g,
+            'karbohidrat_per_100g' => $this->karbohidrat_per_100g,
+            'serat_per_100g' => $this->serat_per_100g,
+            'vitamin_c_per_100g' => $this->vitamin_c_per_100g,
+            'zat_besi_per_100g' => $this->zat_besi_per_100g,
+            'kalsium_per_100g' => $this->kalsium_per_100g,
+            'musim_panen' => $this->musim_panen,
+            'asal_produksi' => $this->asal_produksi,
+            'shelf_life_hari' => $this->shelf_life_hari,
+            'harga_rata_per_kg' => $this->harga_rata_per_kg,
         ]);
 
         session()->flash('message', 'Komoditi berhasil dibuat.');
@@ -128,6 +180,19 @@ class KomoditiManagement extends Component
             'kode_kelompok' => $this->kode_kelompok,
             'kode_komoditi' => $this->kode_komoditi,
             'nama' => $this->nama,
+            'satuan_dasar' => $this->satuan_dasar,
+            'kalori_per_100g' => $this->kalori_per_100g,
+            'protein_per_100g' => $this->protein_per_100g,
+            'lemak_per_100g' => $this->lemak_per_100g,
+            'karbohidrat_per_100g' => $this->karbohidrat_per_100g,
+            'serat_per_100g' => $this->serat_per_100g,
+            'vitamin_c_per_100g' => $this->vitamin_c_per_100g,
+            'zat_besi_per_100g' => $this->zat_besi_per_100g,
+            'kalsium_per_100g' => $this->kalsium_per_100g,
+            'musim_panen' => $this->musim_panen,
+            'asal_produksi' => $this->asal_produksi,
+            'shelf_life_hari' => $this->shelf_life_hari,
+            'harga_rata_per_kg' => $this->harga_rata_per_kg,
         ]);
 
         session()->flash('message', 'Komoditi berhasil diupdate.');
@@ -145,11 +210,24 @@ class KomoditiManagement extends Component
 
     private function resetForm()
     {
-        $this->kode_kelompok = '';
-        $this->kode_komoditi = '';
-        $this->nama = '';
-        $this->editingKomoditi = null;
-        $this->resetErrorBag();
+    $this->kode_kelompok = '';
+    $this->kode_komoditi = '';
+    $this->nama = '';
+    $this->satuan_dasar = '';
+    $this->kalori_per_100g = '';
+    $this->protein_per_100g = '';
+    $this->lemak_per_100g = '';
+    $this->karbohidrat_per_100g = '';
+    $this->serat_per_100g = '';
+    $this->vitamin_c_per_100g = '';
+    $this->zat_besi_per_100g = '';
+    $this->kalsium_per_100g = '';
+    $this->musim_panen = '';
+    $this->asal_produksi = '';
+    $this->shelf_life_hari = '';
+    $this->harga_rata_per_kg = '';
+    $this->editingKomoditi = null;
+    $this->resetErrorBag();
     }
 
     public function render()
