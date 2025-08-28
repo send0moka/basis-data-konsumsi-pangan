@@ -4,10 +4,23 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     
     <style>
-        #alamatMap { height: 350px; width: 100%; border-radius: 12px; margin-bottom: 2rem; }
+        #alamatMap { height: 500px; width: 100%; border-radius: 12px; margin-bottom: 2rem; }
         .search-input { border-radius: 8px; border: 1px solid #ccc; padding: 8px 12px; width: 100%; }
         .alamat-table th, .alamat-table td { font-size: 14px; padding: 8px 10px; }
         .alamat-table tr:hover { background: #f3f4f6; }
+        
+        /* Custom popup styling */
+        .custom-popup .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .custom-popup .leaflet-popup-content {
+            margin: 0;
+            border-radius: 12px;
+        }
+        .custom-popup .leaflet-popup-tip {
+            background-color: white;
+        }
     </style>
 
     <div class="py-12 bg-white" x-data="daftarAlamat()" x-init="init()">
@@ -126,6 +139,7 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Lokasi</th>
+                            <th>Gambar</th>
                             <th>Alamat</th>
                             <th>Wilayah</th>
                             <th>Jenis</th>
@@ -138,6 +152,16 @@
                             <tr>
                                 <td x-text="idx + 1"></td>
                                 <td x-text="alamat.nama"></td>
+                                <td>
+                                    <template x-if="alamat.gambar">
+                                        <img :src="alamat.gambar" :alt="alamat.nama" 
+                                             class="w-16 h-12 object-cover rounded shadow-sm"
+                                             onerror="this.style.display='none'">
+                                    </template>
+                                    <template x-if="!alamat.gambar">
+                                        <span class="text-xs text-gray-400">Tidak ada gambar</span>
+                                    </template>
+                                </td>
                                 <td x-text="alamat.alamat"></td>
                                 <td x-text="alamat.wilayah"></td>
                                 <td x-text="alamat.jenis"></td>
@@ -151,7 +175,7 @@
                         </template>
                         <template x-if="filteredAlamat.length === 0">
                             <tr>
-                                <td colspan="7" class="text-center py-8 text-gray-500">
+                                <td colspan="8" class="text-center py-8 text-gray-500">
                                     <div class="flex flex-col items-center">
                                         <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.467-.881-6.08-2.33"></path>
@@ -173,6 +197,7 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Lokasi</th>
+                            <th>Gambar</th>
                             <th>Alamat</th>
                             <th>Wilayah</th>
                             <th>Jenis</th>
@@ -182,7 +207,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="7" class="text-center py-12">
+                            <td colspan="8" class="text-center py-12">
                                 <div class="flex items-center justify-center">
                                     <svg class="animate-spin h-8 w-8 text-blue-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -422,8 +447,47 @@
 
                     this.filteredAlamat.forEach(alamat => {
                         if (alamat.lat && alamat.lng) {
+                            // Create popup content with image if available
+                            let popupContent = `<div class="max-w-sm p-4">`;
+                            
+                            if (alamat.gambar) {
+                                popupContent += `
+                                    <div class="mb-1">
+                                        <img src="${alamat.gambar}" alt="${alamat.nama}" 
+                                             class="w-full h-32 object-cover rounded-lg shadow-md"
+                                             onerror="this.style.display='none'">
+                                    </div>
+                                `;
+                            }
+                            
+                            popupContent += `
+                                <div class="">
+                                    <h3 class="p-0 font-bold text-gray-900 text-sm">${alamat.nama}</h3>
+                                    <p class="!m-0 text-xs text-gray-600">${alamat.alamat}</p>
+                                    <p class="!m-0 text-xs text-blue-600 font-medium">${alamat.wilayah}</p>
+                                    <p class="!m-0 text-xs text-green-600">${alamat.jenis}</p>
+                            `;
+                            
+                            if (alamat.telp) {
+                                popupContent += `<p class="!m-0 text-xs text-gray-500">📞 ${alamat.telp}</p>`;
+                            }
+                            
+                            if (alamat.email) {
+                                popupContent += `<p class="!m-0 text-xs text-gray-500">✉️ ${alamat.email}</p>`;
+                            }
+                            
+                            if (alamat.website) {
+                                popupContent += `<p class="!m-0 text-xs text-blue-500"><a href="${alamat.website}" target="_blank" class="hover:underline">🌐 Website</a></p>`;
+                            }
+                            
+                            popupContent += `</div></div>`;
+
                             const marker = L.marker([alamat.lat, alamat.lng]).addTo(this.map)
-                                .bindPopup(`<strong>${alamat.nama}</strong><br>${alamat.alamat}<br><em>${alamat.wilayah}</em>`);
+                                .bindPopup(popupContent, {
+                                    maxWidth: 300,
+                                    className: 'custom-popup'
+                                });
+                            
                             this.markers.push(marker);
                         }
                     });
