@@ -137,6 +137,10 @@
                                        class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">
                                         Iklim, dan OPT DPI
                                     </a>
+                                    <a href="{{ route('pertanian.daftar-alamat') }}"
+                                       class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100">
+                                        Daftar Alamat
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -261,6 +265,7 @@
                         <li><a href="{{ route('home') }}" class="hover:text-white">Home</a></li>
                         <li><a href="{{ route('admin.konsep-metode') }}" class="hover:text-white">Ketersediaan</a></li>
                         <li><a href="{{ route('admin.konsumsi.konsep-metode') }}" class="hover:text-white">Konsumsi</a></li>
+                        <li><a href="{{ route('pertanian.daftar-alamat') }}" class="hover:text-white">Daftar Alamat</a></li>
                         <li><a href="{{ route('login') }}" class="hover:text-white">Manajemen Data</a></li>
                     </ul>
                 </div>

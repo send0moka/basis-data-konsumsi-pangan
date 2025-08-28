@@ -201,6 +201,9 @@ Route::middleware(['auth'])->prefix('admin/konsumsi-pangan')->name('admin.')->gr
 Route::prefix('pertanian')->name('pertanian.')->group(function () {
     Route::get('benih-pupuk', [App\Http\Controllers\BenihPupukController::class, 'index'])->name('benih-pupuk');
     Route::get('iklim-opt-dpi', [App\Http\Controllers\IklimOptDpiController::class, 'index'])->name('iklim-opt-dpi');
+    Route::get('daftar-alamat', function () {
+        return view('pertanian.daftar-alamat');
+    })->name('daftar-alamat');
 });
 
 // API Routes for Benih Pupuk
@@ -217,14 +220,9 @@ Route::prefix('api/benih-pupuk')->name('api.benih-pupuk.')->group(function () {
     Route::get('sample-data', [App\Http\Controllers\BenihPupukController::class, 'getSampleData'])->name('sample-data');
 });
 
-// API Routes for Iklim OPT DPI
-Route::prefix('api/iklim-opt-dpi')->name('api.iklim-opt-dpi.')->group(function () {
-    Route::get('topiks', [App\Http\Controllers\IklimOptDpiController::class, 'getTopiks'])->name('topiks');
-    Route::get('variabels/{topik}', [App\Http\Controllers\IklimOptDpiController::class, 'getVariabelsByTopik'])->name('variabels');
-    Route::post('klasifikasis', [App\Http\Controllers\IklimOptDpiController::class, 'getKlasifikasiByVariabels'])->name('klasifikasis');
-    Route::get('provinces', [App\Http\Controllers\IklimOptDpiController::class, 'getProvinces'])->name('provinces');
-    Route::get('years', [App\Http\Controllers\IklimOptDpiController::class, 'getAvailableYears'])->name('years');
-    Route::post('search', [App\Http\Controllers\IklimOptDpiController::class, 'search'])->name('search');
+// API Routes for Public Daftar Alamat
+Route::prefix('api')->name('api.')->group(function () {
+    Route::get('daftar-alamat/data', [App\Http\Controllers\PublicDaftarAlamatController::class, 'getData'])->name('daftar-alamat.data');
 });
 
 require __DIR__.'/auth.php';
