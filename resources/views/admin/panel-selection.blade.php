@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,20 +15,20 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- @fluxStyles --}}
 </head>
-<body class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-black min-h-screen">
+<body class="bg-gradient-to-br from-neutral-900 via-neutral-800 to-black dark:from-neutral-900 dark:via-neutral-800 dark:to-black min-h-screen">
     <div class="min-h-screen flex items-center justify-center p-4">
         <div class="w-full max-w-6xl">
             <!-- Header -->
             <div class="text-center mb-12">
                 <div class="flex items-center justify-between mb-8">
                     <a href="/">
-                        <flux:button variant="primary" class="text-white hover:text-red-500">
+                        <flux:button variant="ghost" class="text-white hover:text-red-500 hover:bg-neutral-800 border border-neutral-600">
                             ← Kembali
                         </flux:button>
                     </a>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
-                        <flux:button type="submit" variant="primary" class="text-white hover:text-red-500">
+                        <flux:button type="submit" variant="ghost" class="text-white hover:text-red-500 hover:bg-neutral-800 border border-neutral-600">
                             Keluar
                         </flux:button>
                     </form>
