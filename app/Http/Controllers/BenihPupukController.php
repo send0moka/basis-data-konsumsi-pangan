@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class BenihPupukController extends Controller
 {
@@ -15,7 +20,21 @@ class BenihPupukController extends Controller
      */
     public function index()
     {
-        return view('pertanian.benih-pupuk');
+        $topiks = DB::table('benih_pupuk_topik')->select('id', 'deskripsi as nama')->orderBy('id')->get();
+        $variabels = DB::table('benih_pupuk_variabel')->select('id', 'id_topik as topik_id', 'deskripsi as nama', 'satuan')->orderBy('sorter')->get();
+        $klasifikasis = DB::table('benih_pupuk_klasifikasi')->select('id', 'id_variabel as variabel_id', 'deskripsi as nama')->orderBy('id')->get();
+        $tahuns = DB::table('benih_pupuk_data')->select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun');
+        $bulans = DB::table('bulan')->select('id', 'nama as nama')->where('id', '>', 0)->orderBy('id')->get();
+        
+        $provinsis = DB::table('wilayah')->whereNull('id_parent')->orderBy('sorter')->get(['id', 'nama']);
+        $kabupatens = DB::table('wilayah')->whereNotNull('id_parent')->orderBy('sorter')->get(['id', 'nama', 'id_parent']);
+
+        $wilayahs = $provinsis->map(function ($provinsi) use ($kabupatens) {
+            $provinsi->kabupaten = $kabupatens->where('id_parent', $provinsi->id)->values();
+            return $provinsi;
+        });
+
+        return view('pertanian.benih-pupuk', compact('topiks', 'variabels', 'klasifikasis', 'tahuns', 'bulans', 'wilayahs'));
     }
 
     /**
@@ -24,7 +43,7 @@ class BenihPupukController extends Controller
     public function getTopiks()
     {
         $topiks = DB::table('benih_pupuk_topik')
-            ->select('id', 'deskripsi')
+            ->select('id', 'deskripsi as nama')
             ->orderBy('id')
             ->get();
             
@@ -37,7 +56,7 @@ class BenihPupukController extends Controller
     public function getVariabelsByTopik($topikId)
     {
         $variabels = DB::table('benih_pupuk_variabel')
-            ->select('id', 'id_topik', 'deskripsi', 'satuan', 'sorter')
+            ->select('id', 'id_topik', 'deskripsi as nama', 'satuan', 'sorter')
             ->where('id_topik', $topikId)
             ->orderBy('sorter')
             ->get();
@@ -57,7 +76,7 @@ class BenihPupukController extends Controller
         }
         
         $klasifikasis = DB::table('benih_pupuk_klasifikasi as k')
-            ->select('k.id', 'k.deskripsi')
+            ->select('k.id', 'k.deskripsi as nama')
             ->whereIn('k.id_variabel', $variabelIds)
             ->distinct()
             ->orderBy('k.id')
@@ -113,7 +132,7 @@ class BenihPupukController extends Controller
     public function getBulans()
     {
         $bulans = DB::table('bulan')
-            ->select('id', 'nama_bulan as nama')
+            ->select('id', 'nama as nama')
             ->where('id', '>', 0) // Exclude id=0 ("-")
             ->orderBy('id')
             ->get();
@@ -138,573 +157,218 @@ class BenihPupukController extends Controller
     /**
      * Search data based on filters
      */
-    public function search(Request $request)
+    public function filter(Request $request)
     {
-        Log::info('=== SEARCH METHOD CALLED ===');
-        Log::info('Request method: ' . $request->method());
-        Log::info('Request URL: ' . $request->fullUrl());
-        Log::info('Request headers: ' . json_encode($request->headers->all()));
-        Log::info('Raw request body: ' . $request->getContent());
-        Log::info('All request data: ' . json_encode($request->all()));
-        
         try {
-            // Get filters from request
-            $filters = $request->all();
-            
-            Log::info('Search request received', $filters);
-
-            // Extract parameters from request
-            $topik = $filters['topik'] ?? null;
-            $variabels = is_array($filters['variabels']) ? $filters['variabels'] : [];
-            $klasifikasis = is_array($filters['klasifikasis']) ? $filters['klasifikasis'] : [];
-            $selectedRegions = is_array($filters['selectedRegions']) ? $filters['selectedRegions'] : [];
-            $selectedMonths = is_array($filters['selectedMonths']) ? $filters['selectedMonths'] : [];
-
-            Log::info('Parsed parameters', [
-                'topik' => $topik,
-                'variabels' => $variabels,
-                'klasifikasis' => $klasifikasis,
-                'selectedRegions' => count($selectedRegions),
-                'selectedMonths' => count($selectedMonths)
+            $payload = $request->validate([
+                'selections' => 'required|array',
+                'config' => 'required|array',
+                'config.tata_letak' => 'required|string',
+                'config.provinsi_ids' => 'nullable|array',
+                'config.kabupaten_ids' => 'nullable|array',
+                'selections.*.variabel_id' => 'required',
+                'selections.*.tahun_ids' => 'required|array',
+                'selections.*.klasifikasi_ids' => 'required|array',
+                'selections.*.bulan_ids' => 'required|array',
             ]);
 
-            // Handle year filtering
-            $years = [];
-            $yearMode = $filters['yearMode'] ?? 'range';
-            
-            if ($yearMode === 'specific' && !empty($filters['selectedYears'])) {
-                // Use specific years when yearMode is "specific"
-                $years = array_map('intval', $filters['selectedYears']);
-            } elseif (!empty($filters['tahun_awal']) && !empty($filters['tahun_akhir'])) {
-                // Use range when yearMode is "range" or as fallback
-                for ($year = (int)$filters['tahun_awal']; $year <= (int)$filters['tahun_akhir']; $year++) {
-                    $years[] = $year;
-                }
-            } elseif (!empty($filters['selectedYears'])) {
-                // Final fallback to selectedYears
-                $years = array_map('intval', $filters['selectedYears']);
+            $tataLetak = $payload['config']['tata_letak'];
+            $wilayahIds = array_unique(array_merge($payload['config']['provinsi_ids'] ?? [], $payload['config']['kabupaten_ids'] ?? []));
+            $selections = $payload['selections'];
+
+            if (empty($wilayahIds) || empty($selections)) {
+                return response()->json(['headers' => [], 'rows' => [], 'columnOrder' => [], 'data' => []]);
             }
 
-            Log::info('Year filtering result', [
-                'yearMode' => $yearMode,
-                'selectedYears' => $filters['selectedYears'] ?? null,
-                'tahun_awal' => $filters['tahun_awal'] ?? null,
-                'tahun_akhir' => $filters['tahun_akhir'] ?? null,
-                'final_years' => $years
-            ]);
-
-            // If no filters are provided, return empty result
-            if (empty($topik) || empty($variabels) || empty($klasifikasis) || 
-                empty($selectedRegions) || empty($years) || empty($selectedMonths)) {
-                Log::warning('Missing required parameters', [
-                    'topik' => $topik,
-                    'variabels' => count($variabels),
-                    'klasifikasis' => count($klasifikasis),
-                    'selectedRegions' => count($selectedRegions),
-                    'years' => count($years),
-                    'selectedMonths' => count($selectedMonths)
-                ]);
-                
-                return response()->json([
-                    'success' => true,
-                    'resultIndex' => 1,
-                    'topik_nama' => 'No Data - Missing Parameters',
-                    'headers' => [],
-                    'data' => [],
-                    'totals' => [],
-                    'queueItem' => $filters,
-                    'selectedVariabels' => [],
-                    'selectedKlasifikasis' => [],
-                    'selectedRegions' => [],
-                    'yearGroups' => []
-                ]);
-            }
-
-            // Build the query
             $query = DB::table('benih_pupuk_data as d')
-                ->join('benih_pupuk_variabel as v', 'd.id_variabel', '=', 'v.id')
-                ->join('benih_pupuk_klasifikasi as k', 'd.id_klasifikasi', '=', 'k.id')
-                ->join('wilayah as w', 'd.id_wilayah', '=', 'w.id')
                 ->join('bulan as b', 'd.id_bulan', '=', 'b.id')
-                ->join('benih_pupuk_topik as t', 'v.id_topik', '=', 't.id')
-                ->select(
-                    'd.tahun',
-                    'd.id_bulan',
-                    'b.nama as bulan_nama',
-                    'd.id_wilayah',
-                    'w.nama as wilayah_nama',
-                    'd.id_variabel',
-                    'v.deskripsi as variabel_nama',
-                    'v.satuan',
-                    'd.id_klasifikasi',
-                    'k.deskripsi as klasifikasi_nama',
-                    'd.nilai',
-                    't.deskripsi as topik_nama'
-                )
-                ->where('v.id_topik', $topik)
-                ->whereIn('d.id_variabel', $variabels)
-                ->whereIn('d.id_klasifikasi', $klasifikasis)
-                ->whereIn('d.id_wilayah', $selectedRegions)
-                ->whereIn('d.tahun', $years)
-                ->whereIn('d.id_bulan', $selectedMonths)
-                ->orderBy('d.tahun')
-                ->orderBy('d.id_bulan')
-                ->orderBy('w.sorter')
-                ->orderBy('v.sorter')
-                ->orderBy('k.id');
-
-            $rawData = $query->get();
-
-            // Debug: Log what data we found
-            Log::info('Search query found ' . $rawData->count() . ' records');
-            if ($rawData->count() > 0) {
-                Log::info('Sample data: ' . json_encode($rawData->first()));
-            } else {
-                Log::warning('No data found. Let\'s check what records exist');
-                // Check if data exists with these parameters
-                $checkQuery = DB::table('benih_pupuk_data as d')
-                    ->join('benih_pupuk_variabel as v', 'd.id_variabel', '=', 'v.id')
-                    ->select('d.id_variabel', 'v.deskripsi', 'v.id_topik')
-                    ->where('v.id_topik', $topik)
-                    ->whereIn('d.id_variabel', $variabels)
-                    ->distinct()
-                    ->get();
-                Log::info('Available variabel data for topik: ' . json_encode($checkQuery));
-                
-                // Also check if regions exist
-                $regionCheck = DB::table('wilayah')
-                    ->whereIn('id', $selectedRegions)
-                    ->get(['id', 'nama']);
-                Log::info('Available regions: ' . json_encode($regionCheck));
-                
-                // Check available years
-                $yearCheck = DB::table('benih_pupuk_data')
-                    ->select('tahun')
-                    ->distinct()
-                    ->orderBy('tahun')
-                    ->get();
-                Log::info('Available years: ' . json_encode($yearCheck));
-                
-                // Let's check what data actually exists for our specific combination
-                Log::info('Checking data for specific combination...');
-                
-                // First check: just the data table
-                $dataCheck = DB::table('benih_pupuk_data')
-                    ->where('id_wilayah', 1)
-                    ->where('tahun', 2015)
-                    ->where('id_bulan', 1)
-                    ->limit(5)
-                    ->get(['id_wilayah', 'id_variabel', 'id_klasifikasi', 'id_bulan', 'tahun', 'nilai']);
-                Log::info('Data table records for region 1, year 2015, month 1: ' . json_encode($dataCheck));
-                
-                // Check foreign key relationships
-                $variabelCheck = DB::table('benih_pupuk_variabel')
-                    ->where('id', 1)
-                    ->first(['id', 'id_topik', 'deskripsi']);
-                Log::info('Variabel 1 details: ' . json_encode($variabelCheck));
-                
-                $klasifikasiCheck = DB::table('benih_pupuk_klasifikasi')
-                    ->where('id', 1)
-                    ->first(['id', 'nama', 'deskripsi']);
-                Log::info('Klasifikasi 1 details: ' . json_encode($klasifikasiCheck));
-            }
-            Log::info('Search query found ' . $rawData->count() . ' records');
-            if ($rawData->count() > 0) {
-                Log::info('Sample data: ' . json_encode($rawData->first()));
-            }
-
-            // Process data based on layout type
-            $layoutType = $filters['tata_letak'] ?? 'tipe_1';
-            $processedData = $this->formatDataForFrontend($rawData, $years, $selectedMonths, $layoutType, $filters);
-
-            return response()->json($processedData);
-
-        } catch (\Exception $e) {
-            Log::error('Search error: ' . $e->getMessage());
-            
-            // Return fallback data structure
-            return response()->json([
-                'success' => false,
-                'resultIndex' => 1,
-                'topik_nama' => 'Error - Fallback Data',
-                'headers' => ['2020', '2021', '2022'],
-                'data' => [
-                    ['label' => 'Sample Region', 'values' => [1000, 1200, 1400]]
-                ],
-                'totals' => [1000, 1200, 1400],
-                'queueItem' => $filters,
-                'error' => $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * Format data for frontend consumption
-     */
-    private function formatDataForFrontend($rawData, $years, $selectedMonths, $layoutType, $filters)
-    {
-        $topikNama = $rawData->first()->topik_nama ?? 'Data Result';
-        
-        $headers = [];
-        $data = [];
-        $totals = [];
-
-        if ($layoutType === 'tipe_1') {
-            // Years as columns, regions as rows
-            $headers = array_map('strval', $years);
-            
-            // Group by regions
-            $regionData = [];
-            $regionCounts = [];
-            foreach ($rawData as $row) {
-                if (!isset($regionData[$row->wilayah_nama])) {
-                    $regionData[$row->wilayah_nama] = [];
-                    $regionCounts[$row->wilayah_nama] = [];
-                }
-                if (!isset($regionData[$row->wilayah_nama][$row->tahun])) {
-                    $regionData[$row->wilayah_nama][$row->tahun] = 0;
-                    $regionCounts[$row->wilayah_nama][$row->tahun] = 0;
-                }
-                $regionData[$row->wilayah_nama][$row->tahun] += $row->nilai;
-                $regionCounts[$row->wilayah_nama][$row->tahun]++;
-            }
-            
-            // Convert sums to averages to avoid unrealistic high values
-            foreach ($regionData as $regionName => $yearData) {
-                foreach ($yearData as $year => $sum) {
-                    $count = $regionCounts[$regionName][$year];
-                    $regionData[$regionName][$year] = $count > 0 ? round($sum / $count, 2) : 0;
-                }
-            }
-
-            // Get ALL selected regions from database, not just ones with data
-            $allSelectedRegions = DB::table('wilayah')
-                ->whereIn('id', $filters['selectedRegions'])
-                ->orderBy('sorter')
-                ->pluck('nama', 'id');
-
-            // Create data for all selected regions
-            foreach ($allSelectedRegions as $regionId => $regionName) {
-                $values = [];
-                foreach ($years as $year) {
-                    $values[] = $regionData[$regionName][$year] ?? 0;
-                }
-                $data[] = [
-                    'label' => $regionName,
-                    'values' => $values
-                ];
-            }
-
-        } elseif ($layoutType === 'tipe_2') {
-            // Years as columns, classifications as rows
-            $headers = array_map('strval', $years);
-            
-            Log::info('Processing tipe_2 layout', [
-                'years' => $years,
-                'headers' => $headers,
-                'rawDataCount' => $rawData->count(),
-                'sampleRawData' => $rawData->take(3)->toArray()
-            ]);
-            
-            // Group by classifications and years, but average across regions and months
-            $klasifikasiData = [];
-            $klasifikasiCounts = [];
-            foreach ($rawData as $row) {
-                if (!isset($klasifikasiData[$row->klasifikasi_nama])) {
-                    $klasifikasiData[$row->klasifikasi_nama] = [];
-                    $klasifikasiCounts[$row->klasifikasi_nama] = [];
-                }
-                if (!isset($klasifikasiData[$row->klasifikasi_nama][$row->tahun])) {
-                    $klasifikasiData[$row->klasifikasi_nama][$row->tahun] = 0;
-                    $klasifikasiCounts[$row->klasifikasi_nama][$row->tahun] = 0;
-                }
-                $klasifikasiData[$row->klasifikasi_nama][$row->tahun] += $row->nilai;
-                $klasifikasiCounts[$row->klasifikasi_nama][$row->tahun]++;
-            }
-            
-            Log::info('Tipe_2 grouped data', [
-                'klasifikasiData' => $klasifikasiData,
-                'klasifikasiCounts' => $klasifikasiCounts
-            ]);
-            
-            // Convert sums to averages to avoid unrealistic high values
-            foreach ($klasifikasiData as $klasifikasiName => $yearData) {
-                foreach ($yearData as $year => $sum) {
-                    $count = $klasifikasiCounts[$klasifikasiName][$year];
-                    $klasifikasiData[$klasifikasiName][$year] = $count > 0 ? round($sum / $count, 2) : 0;
-                }
-            }
-
-            // Get ALL selected klasifikasis from database
-            $allSelectedKlasifikasis = DB::table('benih_pupuk_klasifikasi')
-                ->whereIn('id', $filters['klasifikasis'] ?? [])
-                ->pluck('deskripsi', 'id');
-
-            Log::info('All selected klasifikasis', [
-                'filters_klasifikasis' => $filters['klasifikasis'] ?? [],
-                'allSelectedKlasifikasis' => $allSelectedKlasifikasis->toArray()
-            ]);
-
-            // Create data for all selected klasifikasis
-            foreach ($allSelectedKlasifikasis as $klasifikasiId => $klasifikasiName) {
-                $values = [];
-                foreach ($years as $year) {
-                    $values[] = $klasifikasiData[$klasifikasiName][$year] ?? 0;
-                }
-                $data[] = [
-                    'label' => $klasifikasiName,
-                    'values' => $values
-                ];
-            }
-
-        } else {
-            // tipe_3: Months as columns, years as rows
-            $monthNames = DB::table('bulan')
-                ->whereIn('id', $selectedMonths)
-                ->orderBy('id')
-                ->pluck('nama')
-                ->toArray();
-            
-            $headers = array_map(function($name) {
-                return substr($name, 0, 3); // Shorten month names
-            }, $monthNames);
-            
-            Log::info('Processing tipe_3 layout', [
-                'selectedMonths' => $selectedMonths,
-                'monthNames' => $monthNames,
-                'headers' => $headers,
-                'years' => $years,
-                'rawDataCount' => $rawData->count(),
-                'sampleRawData' => $rawData->take(3)->toArray()
-            ]);
-            
-            // Group by years
-            $yearData = [];
-            $yearCounts = [];
-            foreach ($rawData as $row) {
-                if (!isset($yearData[$row->tahun])) {
-                    $yearData[$row->tahun] = [];
-                    $yearCounts[$row->tahun] = [];
-                }
-                if (!isset($yearData[$row->tahun][$row->id_bulan])) {
-                    $yearData[$row->tahun][$row->id_bulan] = 0;
-                    $yearCounts[$row->tahun][$row->id_bulan] = 0;
-                }
-                $yearData[$row->tahun][$row->id_bulan] += $row->nilai;
-                $yearCounts[$row->tahun][$row->id_bulan]++;
-            }
-            
-            Log::info('Tipe_3 grouped data', [
-                'yearData' => $yearData,
-                'yearCounts' => $yearCounts
-            ]);
-            
-            // Convert sums to averages  
-            foreach ($yearData as $year => $monthData) {
-                foreach ($monthData as $monthId => $sum) {
-                    $count = $yearCounts[$year][$monthId];
-                    $yearData[$year][$monthId] = $count > 0 ? round($sum / $count, 2) : 0;
-                }
-            }
-
-            // Create data for all years (ensure all years are shown)
-            foreach ($years as $year) {
-                $values = [];
-                foreach ($selectedMonths as $monthId) {
-                    $values[] = $yearData[$year][$monthId] ?? 0;
-                }
-                $data[] = [
-                    'label' => (string)$year,
-                    'values' => $values
-                ];
-            }
-        }
-
-        // Calculate column totals
-        for ($i = 0; $i < count($headers); $i++) {
-            $total = 0;
-            foreach ($data as $row) {
-                $total += $row['values'][$i] ?? 0;
-            }
-            $totals[] = $total;
-        }
-
-        Log::info('Final API response structure', [
-            'layoutType' => $layoutType,
-            'headersCount' => count($headers),
-            'headers' => $headers,
-            'dataCount' => count($data),
-            'sampleDataItem' => count($data) > 0 ? $data[0] : null,
-            'totalsCount' => count($totals)
-        ]);
-
-        return [
-            'resultIndex' => 1,
-            'topik_nama' => $topikNama,
-            'headers' => $headers,
-            'data' => $data,
-            'totals' => $totals,
-            'queueItem' => $filters,
-            'selectedVariabels' => DB::table('benih_pupuk_variabel')
-                ->whereIn('id', $filters['variabels'] ?? [])
-                ->select('id', 'deskripsi', 'satuan')
-                ->get()->toArray(),
-            'selectedKlasifikasis' => DB::table('benih_pupuk_klasifikasi')
-                ->whereIn('id', $filters['klasifikasis'] ?? [])
-                ->select('id', 'deskripsi')
-                ->get()->toArray(),
-            'selectedRegions' => DB::table('wilayah')
-                ->whereIn('id', $filters['selectedRegions'] ?? [])
-                ->select('id', 'nama')
-                ->orderBy('sorter')
-                ->get()->toArray(),
-            'yearGroups' => collect($years)->map(function($year) use ($selectedMonths) {
-                return [
-                    'year' => $year,
-                    'months' => DB::table('bulan')
-                        ->whereIn('id', $selectedMonths)
-                        ->orderBy('id')
-                        ->select('id', 'nama')
-                        ->get()->toArray()
-                ];
-            })->toArray(),
-            'statistics' => [
-                'totalRecords' => $rawData->count(),
-                'totalValue' => $rawData->sum('nilai'),
-                'averageValue' => $rawData->count() > 0 ? $rawData->avg('nilai') : 0
-            ],
-            // Add raw data for frontend dataMap creation
-            'raw_data' => $rawData->map(function($item) {
-                return [
-                    'id_wilayah' => $item->id_wilayah,
-                    'tahun' => $item->tahun,
-                    'id_bulan' => $item->id_bulan,
-                    'id_variabel' => $item->id_variabel,
-                    'id_klasifikasi' => $item->id_klasifikasi,
-                    'nilai' => $item->nilai
-                ];
-            })->toArray()
-        ];
-    }
-
-    /**
-     * Get sample data for testing
-     */
-    public function getSampleData()
-    {
-        try {
-            $sampleData = DB::table('benih_pupuk_data as d')
                 ->join('benih_pupuk_variabel as v', 'd.id_variabel', '=', 'v.id')
                 ->join('benih_pupuk_klasifikasi as k', 'd.id_klasifikasi', '=', 'k.id')
                 ->join('wilayah as w', 'd.id_wilayah', '=', 'w.id')
-                ->join('benih_pupuk_topik as t', 'v.id_topik', '=', 't.id')
                 ->select(
-                    't.id as topik_id',
-                    't.deskripsi as topik_nama',
-                    'v.id as variabel_id', 
-                    'v.deskripsi as variabel_nama',
-                    'k.id as klasifikasi_id',
-                    'k.deskripsi as klasifikasi_nama',
-                    'w.id as wilayah_id',
-                    'w.nama as wilayah_nama',
+                    'd.nilai',
+                    'v.deskripsi as variabel',
+                    'k.deskripsi as klasifikasi',
                     'd.tahun',
-                    'd.id_bulan',
-                    'd.nilai'
+                    'b.nama as bulan',
+                    'w.nama as wilayah'
                 )
-                ->limit(10)
-                ->get();
+                ->whereIn('d.id_wilayah', $wilayahIds)
+                ->where(function ($q) use ($selections) {
+                    foreach ($selections as $selection) {
+                        $q->orWhere(function ($sq) use ($selection) {
+                            $sq->where('d.id_variabel', $selection['variabel_id'])
+                               ->whereIn('d.tahun', $selection['tahun_ids'])
+                               ->whereIn('d.id_klasifikasi', $selection['klasifikasi_ids'])
+                               ->whereIn('d.id_bulan', $selection['bulan_ids']);
+                        });
+                    }
+                });
+
+            
+            // Log the query and bindings for debugging
+            Log::info('BenihPupuk Filter SQL: ' . $query->toSql());
+            Log::info('BenihPupuk Filter Bindings: ', $query->getBindings());
+
+            $data = $query->get();
+
+            Log::info('BenihPupuk Filter Results Count: ' . $data->count());
+
+            // Always process data to ensure consistent response structure
+            // This prevents UI flickering when results are empty
+
+            $columnOrder = $this->getColumnOrder($tataLetak);
+            $result = $this->processDataForLayout($data, $tataLetak, $columnOrder);
 
             return response()->json([
-                'success' => true,
-                'sample_data' => $sampleData,
-                'valid_params' => [
-                    'topik' => $sampleData->first()->topik_id ?? null,
-                    'variabels' => $sampleData->pluck('variabel_id')->unique()->take(2)->values()->toArray(),
-                    'klasifikasis' => $sampleData->pluck('klasifikasi_id')->unique()->take(2)->values()->toArray(),
-                    'regions' => $sampleData->pluck('wilayah_id')->unique()->take(5)->values()->toArray(),
-                    'years' => $sampleData->pluck('tahun')->unique()->sort()->take(3)->values()->toArray()
-                ]
+                'data' => $result,
+                'columnOrder' => $columnOrder,
+                'config' => ['tata_letak' => $tataLetak]
             ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Filter validation error: ' . $e->getMessage(), ['errors' => $e->errors()]);
+            return response()->json(['message' => 'Data input tidak valid.', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => $e->getMessage()
-            ]);
+            Log::error('Error in filter method: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
+            return response()->json(['message' => 'Terjadi kesalahan pada server saat memproses data.'], 500);
         }
     }
 
-    /**
-     * Export benih pupuk data to Excel
-     */
     public function exportExcel(Request $request)
     {
-        $filters = $request->all();
-        
-        return Excel::download(new \App\Exports\BenihPupukExport($filters), 
-            'benih-pupuk-report-' . date('Y-m-d') . '.xlsx');
+        try {
+            $data = $request->validate([
+                'headers' => 'required|json',
+                'rows' => 'required|json',
+                'title' => 'required|string',
+            ]);
+
+            $headers = json_decode($data['headers'], true);
+            $rows = json_decode($data['rows'], true);
+            $title = $data['title'];
+
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Set Title
+            $sheet->mergeCells('A1:' . Coordinate::stringFromColumnIndex(count($headers[count($headers) - 1]) + 1) . '1');
+            $sheet->setCellValue('A1', $title);
+            $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
+            $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+            // Set Headers
+            $headerRowIndex = 3;
+            foreach ($headers as $headerGroup) {
+                $colIndex = 1;
+                foreach ($headerGroup as $header) {
+                    $colLetter = Coordinate::stringFromColumnIndex($colIndex);
+                    $endColLetter = Coordinate::stringFromColumnIndex($colIndex + ($header['span'] ?? 1) - 1);
+                    $rowspan = $header['rowspan'] ?? 1;
+
+                    if (($header['span'] ?? 1) > 1 || $rowspan > 1) {
+                        $sheet->mergeCells($colLetter . $headerRowIndex . ':' . $endColLetter . ($headerRowIndex + $rowspan - 1));
+                    }
+                    
+                    $sheet->setCellValue($colLetter . $headerRowIndex, $header['name']);
+                    $style = $sheet->getStyle($colLetter . $headerRowIndex . ':' . $endColLetter . ($headerRowIndex + $rowspan - 1));
+                    $style->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
+                    $style->getFont()->setBold(true);
+                    $style->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+                    $colIndex += ($header['span'] ?? 1);
+                }
+                $headerRowIndex++;
+            }
+
+            // Set Rows
+            $dataRowIndex = $headerRowIndex;
+            foreach ($rows as $row) {
+                $sheet->setCellValue('A' . $dataRowIndex, $row['wilayah']);
+                $sheet->getStyle('A' . $dataRowIndex)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+                $colIndex = 2;
+                foreach ($row['values'] as $value) {
+                    $colLetter = Coordinate::stringFromColumnIndex($colIndex);
+                    $sheet->setCellValue($colLetter . $dataRowIndex, $value);
+                    $sheet->getStyle($colLetter . $dataRowIndex)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+                    $sheet->getStyle($colLetter . $dataRowIndex)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+                    $colIndex++;
+                }
+                $dataRowIndex++;
+            }
+
+            // Auto-size columns
+            foreach (range('A', $sheet->getHighestDataColumn()) as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'Laporan Benih dan Pupuk - ' . date('Y-m-d His') . '.xlsx';
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName);
+
+        } catch (\Exception $e) {
+            Log::error('Export error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Gagal mengekspor data: ' . $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Export benih pupuk data to CSV
-     */
-    public function exportCsv(Request $request)
+    private function getColumnOrder($tataLetak)
     {
-        $filters = $request->all();
-        
-        return Excel::download(new \App\Exports\BenihPupukExport($filters), 
-            'benih-pupuk-report-' . date('Y-m-d') . '.csv');
+        switch ($tataLetak) {
+            case 'master-header-variabel':
+                return ['wilayah', 'variabel', 'klasifikasi', 'tahun', 'bulan'];
+            case 'master-header-klasifikasi':
+                return ['wilayah', 'klasifikasi', 'variabel', 'tahun', 'bulan'];
+            case 'master-header-waktu':
+                return ['wilayah', 'tahun', 'bulan', 'variabel', 'klasifikasi'];
+            case 'data-series':
+            default:
+                return ['variabel', 'klasifikasi', 'tahun', 'bulan'];
+        }
     }
 
-    /**
-     * Export benih pupuk data to PDF
-     */
-    public function exportPdf(Request $request)
+    private function processDataForLayout($data, $layout, $columnOrder)
     {
-        $filters = $request->all();
-        
-        // Get filtered data
-        $query = DB::table('benih_pupuk_data as d')
-            ->join('benih_pupuk_variabel as v', 'd.id_variabel', '=', 'v.id')
-            ->join('benih_pupuk_klasifikasi as k', 'd.id_klasifikasi', '=', 'k.id')
-            ->join('benih_pupuk_wilayah as w', 'd.id_wilayah', '=', 'w.id')
-            ->join('benih_pupuk_bulan as b', 'd.id_bulan', '=', 'b.id')
-            ->select(
-                'd.tahun',
-                'b.deskripsi as bulan',
-                'w.nama as wilayah',
-                'v.deskripsi as variabel',
-                'k.deskripsi as klasifikasi',
-                'd.nilai',
-                'd.status'
-            );
+        $pivotData = [];
+        $rowKeys = $data->pluck('wilayah')->unique()->sort()->values();
 
-        // Apply filters
-        if (!empty($filters['tahun'])) {
-            $query->where('d.tahun', $filters['tahun']);
-        }
-        if (!empty($filters['bulan'])) {
-            $query->where('d.id_bulan', $filters['bulan']);
-        }
-        if (!empty($filters['wilayah'])) {
-            $query->where('d.id_wilayah', $filters['wilayah']);
-        }
-        if (!empty($filters['variabel'])) {
-            $query->where('d.id_variabel', $filters['variabel']);
-        }
-        if (!empty($filters['klasifikasi'])) {
-            $query->where('d.id_klasifikasi', $filters['klasifikasi']);
-        }
-        if (!empty($filters['status'])) {
-            $query->where('d.status', $filters['status']);
+        $colKeys = $data->map(function ($item) {
+            return $item->variabel . '|' . $item->klasifikasi . '|' . $item->tahun . '|' . $item->bulan;
+        })->unique()->sort()->values();
+
+        // Initialize pivot table with nulls
+        foreach ($rowKeys as $rowKey) {
+            foreach ($colKeys as $colKey) {
+                $pivotData[$rowKey][$colKey] = '-';
+            }
         }
 
-        $data = $query->orderBy('d.tahun', 'desc')
-            ->orderBy('d.id_bulan')
-            ->orderBy('w.nama')
-            ->get();
+        // Populate with actual values
+        foreach ($data as $item) {
+            $rowKey = $item->wilayah;
+            $colKey = $item->variabel . '|' . $item->klasifikasi . '|' . $item->tahun . '|' . $item->bulan;
+            $pivotData[$rowKey][$colKey] = $item->nilai;
+        }
 
-        $pdf = Pdf::loadView('exports.benih-pupuk-pdf', compact('data', 'filters'));
-        
-        return $pdf->download('benih-pupuk-report-' . date('Y-m-d') . '.pdf');
+        // Format for frontend
+        $result = [];
+        foreach ($pivotData as $wilayah => $values) {
+            $result[] = [
+                'wilayah' => $wilayah,
+                'values' => array_values($values)
+            ];
+        }
+
+        return $result;
     }
+
+
+
+
+
+
 }

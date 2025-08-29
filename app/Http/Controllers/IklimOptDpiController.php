@@ -44,18 +44,12 @@ class IklimOptDpiController extends Controller
     }
 
     /**
-     * Get classifications (klasifikasi) by selected variables
+     * Get classifications (klasifikasi) by a single variable
      */
-    public function getKlasifikasiByVariabels(Request $request)
+    public function getKlasifikasiByVariabel($variabelId)
     {
-        $variabelIds = $request->input('variabel_ids', []);
-        
-        if (empty($variabelIds)) {
-            return response()->json([]);
-        }
-        
         $klasifikasis = DB::table('iklimoptdpi_klasifikasi')
-            ->whereIn('id_variabel', $variabelIds)
+            ->where('id_variabel', $variabelId)
             ->select('id', 'deskripsi as nama')
             ->orderBy('id')
             ->get();
@@ -133,9 +127,9 @@ class IklimOptDpiController extends Controller
     }
 
     /**
-     * Search data based on filters
+     * Filter data based on frontend request
      */
-    public function search(Request $request)
+    public function filter(Request $request)
     {
         Log::info('=== IKLIM OPT DPI SEARCH METHOD CALLED ===');
         Log::info('Request method: ' . $request->method());
@@ -266,209 +260,46 @@ class IklimOptDpiController extends Controller
     }
 
     /**
-     * Format data for frontend consumption
+     * Format data for the new frontend structure
      */
     private function formatDataForFrontend($rawData, $years, $layoutType, $filters)
     {
-        $topikNama = $rawData->first()->topik_nama ?? 'Iklim & OPT DPI Data';
-        
         $headers = [];
-        $data = [];
-        $totals = [];
+        $rows = [];
+        $pivotData = [];
 
-        if ($layoutType === 'tipe_1') {
-            // Years as columns, regions as rows
-            $headers = array_map('strval', $years);
+        if ($layoutType === 'tipe_1') { // Variabel sebagai Kolom (Wilayah vs Tahun)
+            $headerLabel = 'Wilayah';
+            $colNames = $years;
+            $rowNames = DB::table('wilayah')->whereIn('id', $filters['selectedRegions'])->orderBy('sorter')->pluck('nama')->toArray();
             
-            // Group by regions
-            $regionData = [];
-            $regionCounts = [];
-            foreach ($rawData as $row) {
-                if (!isset($regionData[$row->wilayah_nama])) {
-                    $regionData[$row->wilayah_nama] = [];
-                    $regionCounts[$row->wilayah_nama] = [];
-                }
-                if (!isset($regionData[$row->wilayah_nama][$row->tahun])) {
-                    $regionData[$row->wilayah_nama][$row->tahun] = 0;
-                    $regionCounts[$row->wilayah_nama][$row->tahun] = 0;
-                }
-                $regionData[$row->wilayah_nama][$row->tahun] += $row->nilai;
-                $regionCounts[$row->wilayah_nama][$row->tahun]++;
-            }
-            
-            // Convert sums to averages
-            foreach ($regionData as $regionName => $yearData) {
-                foreach ($yearData as $year => $sum) {
-                    $count = $regionCounts[$regionName][$year];
-                    $regionData[$regionName][$year] = $count > 0 ? round($sum / $count, 2) : 0;
-                }
+            foreach ($rawData as $item) {
+                $pivotData[$item->wilayah_nama][(string)$item->tahun] = ($pivotData[$item->wilayah_nama][(string)$item->tahun] ?? 0) + $item->nilai;
             }
 
-            // Get ALL selected regions from database
-            $allSelectedRegions = DB::table('wilayah')
-                ->whereIn('id', $filters['selectedRegions'])
-                ->orderBy('sorter')
-                ->pluck('nama', 'id');
+        } else { // Wilayah sebagai Kolom (Klasifikasi vs Tahun)
+            $headerLabel = 'Klasifikasi';
+            $colNames = $years;
+            $rowNames = DB::table('iklimoptdpi_klasifikasi')->whereIn('id', $filters['klasifikasis'])->orderBy('id')->pluck('deskripsi')->toArray();
 
-            // Create data for all selected regions
-            foreach ($allSelectedRegions as $regionId => $regionName) {
-                $values = [];
-                foreach ($years as $year) {
-                    $values[] = $regionData[$regionName][$year] ?? 0;
-                }
-                $data[] = [
-                    'label' => $regionName,
-                    'values' => $values
-                ];
-            }
-
-        } elseif ($layoutType === 'tipe_2') {
-            // Years as columns, classifications as rows
-            $headers = array_map('strval', $years);
-            
-            // Group by classifications
-            $klasifikasiData = [];
-            $klasifikasiCounts = [];
-            foreach ($rawData as $row) {
-                if (!isset($klasifikasiData[$row->klasifikasi_nama])) {
-                    $klasifikasiData[$row->klasifikasi_nama] = [];
-                    $klasifikasiCounts[$row->klasifikasi_nama] = [];
-                }
-                if (!isset($klasifikasiData[$row->klasifikasi_nama][$row->tahun])) {
-                    $klasifikasiData[$row->klasifikasi_nama][$row->tahun] = 0;
-                    $klasifikasiCounts[$row->klasifikasi_nama][$row->tahun] = 0;
-                }
-                $klasifikasiData[$row->klasifikasi_nama][$row->tahun] += $row->nilai;
-                $klasifikasiCounts[$row->klasifikasi_nama][$row->tahun]++;
-            }
-            
-            // Convert sums to averages
-            foreach ($klasifikasiData as $klasifikasiName => $yearData) {
-                foreach ($yearData as $year => $sum) {
-                    $count = $klasifikasiCounts[$klasifikasiName][$year];
-                    $klasifikasiData[$klasifikasiName][$year] = $count > 0 ? round($sum / $count, 2) : 0;
-                }
-            }
-
-            // Get ALL selected klasifikasis from database
-            $allSelectedKlasifikasis = DB::table('iklimoptdpi_klasifikasi')
-                ->whereIn('id', $filters['klasifikasis'] ?? [])
-                ->pluck('nama', 'id');
-
-            // Create data for all selected klasifikasis
-            foreach ($allSelectedKlasifikasis as $klasifikasiId => $klasifikasiName) {
-                $values = [];
-                foreach ($years as $year) {
-                    $values[] = $klasifikasiData[$klasifikasiName][$year] ?? 0;
-                }
-                $data[] = [
-                    'label' => $klasifikasiName,
-                    'values' => $values
-                ];
-            }
-
-        } else {
-            // tipe_3: Variables as columns, years as rows (simplified since iklim doesn't have months)
-            $variabelNames = DB::table('iklimoptdpi_variabel')
-                ->whereIn('id', $filters['variabels'] ?? [])
-                ->orderBy('id')
-                ->pluck('nama')
-                ->toArray();
-            
-            $headers = $variabelNames;
-            
-            // Group by years
-            $yearData = [];
-            $yearCounts = [];
-            foreach ($rawData as $row) {
-                if (!isset($yearData[$row->tahun])) {
-                    $yearData[$row->tahun] = [];
-                    $yearCounts[$row->tahun] = [];
-                }
-                if (!isset($yearData[$row->tahun][$row->variabel_nama])) {
-                    $yearData[$row->tahun][$row->variabel_nama] = 0;
-                    $yearCounts[$row->tahun][$row->variabel_nama] = 0;
-                }
-                $yearData[$row->tahun][$row->variabel_nama] += $row->nilai;
-                $yearCounts[$row->tahun][$row->variabel_nama]++;
-            }
-
-            // Convert to averages
-            foreach ($yearData as $year => $variabelData) {
-                foreach ($variabelData as $variabelName => $sum) {
-                    $count = $yearCounts[$year][$variabelName];
-                    $yearData[$year][$variabelName] = $count > 0 ? round($sum / $count, 2) : 0;
-                }
-            }
-
-            // Create data for each year
-            foreach ($years as $year) {
-                $values = [];
-                foreach ($variabelNames as $variabelName) {
-                    $values[] = $yearData[$year][$variabelName] ?? 0;
-                }
-                $data[] = [
-                    'label' => (string)$year,
-                    'values' => $values
-                ];
+            foreach ($rawData as $item) {
+                $pivotData[$item->klasifikasi_nama][(string)$item->tahun] = ($pivotData[$item->klasifikasi_nama][(string)$item->tahun] ?? 0) + $item->nilai;
             }
         }
 
-        // Calculate totals
-        if (!empty($data)) {
-            $totals = array_fill(0, count($headers), 0);
-            foreach ($data as $row) {
-                foreach ($row['values'] as $index => $value) {
-                    $totals[$index] += $value;
-                }
+        $headers = array_merge([$headerLabel], $colNames);
+
+        foreach ($rowNames as $rowName) {
+            $rowData = [$rowName];
+            foreach ($colNames as $colName) {
+                $rowData[] = $pivotData[$rowName][(string)$colName] ?? '-';
             }
-            // Convert totals to averages
-            $totalRows = count($data);
-            if ($totalRows > 0) {
-                $totals = array_map(function($total) use ($totalRows) {
-                    return round($total / $totalRows, 2);
-                }, $totals);
-            }
+            $rows[] = $rowData;
         }
-
-        // Get detailed references for enhanced data structure
-        $selectedVariabels = DB::table('iklimoptdpi_variabel')
-            ->whereIn('id', $filters['variabels'] ?? [])
-            ->get(['id', 'nama', 'satuan']);
-            
-        $selectedKlasifikasis = DB::table('iklimoptdpi_klasifikasi')
-            ->whereIn('id', $filters['klasifikasis'] ?? [])
-            ->get(['id', 'nama']);
-            
-        $selectedRegions = DB::table('wilayah')
-            ->whereIn('id', $filters['selectedRegions'] ?? [])
-            ->get(['id', 'nama']);
-
-        // Create year groups (no months for iklim data)
-        $yearGroups = array_map(function($year) {
-            return [
-                'year' => $year,
-                'months' => [] // Empty for iklim data
-            ];
-        }, $years);
 
         return [
-            'success' => true,
-            'resultIndex' => $filters['resultIndex'] ?? 1,
-            'topik_nama' => $topikNama,
             'headers' => $headers,
-            'data' => $data,
-            'totals' => $totals,
-            'queueItem' => $filters,
-            'selectedVariabels' => $selectedVariabels,
-            'selectedKlasifikasis' => $selectedKlasifikasis,
-            'selectedRegions' => $selectedRegions,
-            'yearGroups' => $yearGroups,
-            'raw_data' => $rawData->toArray(),
-            'totalEntries' => $rawData->count(),
-            'averageValue' => !empty($totals) ? array_sum($totals) / count($totals) : 0,
-            'maxValue' => !empty($totals) ? max($totals) : 0,
-            'minValue' => !empty($totals) ? min($totals) : 0
+            'rows' => $rows,
         ];
     }
 }
