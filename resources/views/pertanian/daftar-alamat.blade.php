@@ -4,7 +4,15 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     
     <style>
-        #alamatMap { height: 500px; width: 100%; border-radius: 12px; margin-bottom: 2rem; }
+        #alamatMap {
+            height: 500px;
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            min-height: 400px; /* Ensure minimum height */
+            position: relative; /* Ensure proper positioning */
+            z-index: 10; /* Lower than header z-50 */
+        }
         .search-input { border-radius: 8px; border: 1px solid #ccc; padding: 8px 12px; width: 100%; }
         .alamat-table th, .alamat-table td { font-size: 14px; padding: 8px 10px; }
         .alamat-table tr:hover { background: #f3f4f6; }
@@ -21,9 +29,38 @@
         .custom-popup .leaflet-popup-tip {
             background-color: white;
         }
-    </style>
 
-    <div class="py-12 bg-white" x-data="daftarAlamat()" x-init="init()">
+        /* Ensure map container is visible */
+        .leaflet-container {
+            background: #f8f9fa !important;
+        }
+
+        /* Ensure popup appears above map but below header */
+        .leaflet-popup-pane {
+            z-index: 20;
+        }
+
+        /* Ensure all Leaflet controls are properly layered */
+        .leaflet-control-container {
+            z-index: 15;
+        }
+
+        .leaflet-tile-pane {
+            z-index: 5;
+        }
+
+        .leaflet-overlay-pane {
+            z-index: 10;
+        }
+
+        .leaflet-shadow-pane {
+            z-index: 12;
+        }
+
+        .leaflet-marker-pane {
+            z-index: 13;
+        }
+    </style>    <div class="py-12 bg-white" x-data="daftarAlamat()" x-init="init()">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-8">
                 <h1 class="text-3xl md:text-4xl font-bold text-neutral-900 mb-2">Daftar Alamat Pertanian</h1>
@@ -224,6 +261,16 @@
     </div>
 
     <script>
+        // Ensure DOM is fully loaded before initializing Alpine
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded, initializing Alpine components...');
+        });
+
+        // Also listen for window load to ensure all resources are loaded
+        window.addEventListener('load', function() {
+            console.log('Window fully loaded, all resources ready');
+        });
+
         document.addEventListener('alpine:init', () => {
             Alpine.data('daftarAlamat', () => ({
                 alamatList: [],
@@ -326,6 +373,15 @@
                         this.dataInitialized = true;
                         this.updateStats();
                         console.log('Initialization complete');
+
+                        // Add window resize listener to handle map resizing
+                        window.addEventListener('resize', () => {
+                            if (this.map && this.mapInitialized) {
+                                setTimeout(() => {
+                                    this.map.invalidateSize();
+                                }, 100);
+                            }
+                        });
                     } catch (error) {
                         console.error('Error loading data:', error);
                         this.error = error.message;
@@ -412,6 +468,13 @@
 
                         this.updateMapMarkers();
                         this.updateStats();
+
+                        // Invalidate map size after filtering to ensure proper display
+                        if (this.map) {
+                            setTimeout(() => {
+                                this.map.invalidateSize();
+                            }, 50);
+                        }
                     }, 300); // 300ms debounce
                 },
 
@@ -423,14 +486,49 @@
                     }
 
                     console.log('Initializing map...');
-                    this.map = L.map('alamatMap').setView([-2.5, 118], 5.2);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '© OpenStreetMap contributors'
-                    }).addTo(this.map);
 
-                    this.mapInitialized = true;
-                    console.log('Map initialized successfully');
-                    this.updateMapMarkers();
+                    // Wait for DOM to be fully ready and container to have proper dimensions
+                    const initMapWithRetry = () => {
+                        const mapContainer = document.getElementById('alamatMap');
+
+                        if (!mapContainer) {
+                            console.log('Map container not found, retrying in 100ms...');
+                            setTimeout(initMapWithRetry, 100);
+                            return;
+                        }
+
+                        // Check if container has proper dimensions
+                        const rect = mapContainer.getBoundingClientRect();
+                        if (rect.width === 0 || rect.height === 0) {
+                            console.log('Map container has no dimensions, retrying in 100ms...');
+                            setTimeout(initMapWithRetry, 100);
+                            return;
+                        }
+
+                        console.log('Map container dimensions:', rect.width, 'x', rect.height);
+
+                        // Initialize the map
+                        this.map = L.map('alamatMap').setView([-2.5, 118], 5.2);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors'
+                        }).addTo(this.map);
+
+                        this.mapInitialized = true;
+                        console.log('Map initialized successfully');
+
+                        // Force map to recalculate its size after initialization
+                        setTimeout(() => {
+                            if (this.map) {
+                                this.map.invalidateSize();
+                                console.log('Map size invalidated');
+                            }
+                        }, 100);
+
+                        this.updateMapMarkers();
+                    };
+
+                    // Use setTimeout to ensure DOM is ready
+                    setTimeout(initMapWithRetry, 50);
                 },
 
                 updateMapMarkers() {
@@ -493,6 +591,13 @@
                     });
 
                     console.log('Map markers updated:', this.markers.length, 'markers added');
+
+                    // Invalidate map size after adding markers to ensure proper rendering
+                    if (this.map) {
+                        setTimeout(() => {
+                            this.map.invalidateSize();
+                        }, 50);
+                    }
                 },
 
                 focusMap(alamat) {
