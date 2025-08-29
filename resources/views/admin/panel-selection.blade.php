@@ -38,91 +38,69 @@
             </div>
 
             <!-- Panel Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                <!-- Panel Konsumsi Pangan -->
-                <div class="group cursor-pointer" onclick="window.location.href='/admin/konsumsi-pangan'">
-                    <div class="relative rounded-lg overflow-hidden transition-all">
-                        <div class="aspect-square bg-gradient-to-br from-blue-600 to-blue-800 p-6 flex flex-col items-center justify-center text-white">
-                            <div class="text-4xl mb-4">🍽️</div>
-                            <div class="text-center">
-                                <h3 class="font-semibold text-lg mb-1">Konsumsi Pangan</h3>
-                                <p class="text-sm opacity-80">Data & Analisis</p>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
-                            <img src="{{ asset('konsumsi-pangan.jpg') }}" alt="Konsumsi Pangan" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Konsumsi Pangan</p>
-                </div>
+            <div class="container mx-auto flex gap-6 items-center justify-center flex-wrap">
+                @php
+                    $panelItems = [
+                        [
+                            'url' => '/admin/konsumsi-pangan',
+                            'img' => 'konsumsi-pangan.jpg',
+                            'emoji' => '🍽️',
+                            'title' => 'Konsumsi Pangan',
+                            'desc' => 'Data & Analisis',
+                            'bg' => 'from-blue-600 to-blue-800',
+                        ],
+                        [
+                            'url' => '/admin/lahan',
+                            'img' => 'lahan.jpg',
+                            'emoji' => '🌾',
+                            'title' => 'Lahan',
+                            'desc' => 'Data & Analisis',
+                            'bg' => 'from-green-600 to-green-800',
+                        ],
+                        [
+                            'url' => route('admin.iklim-opt-dpi.dashboard'),
+                            'img' => 'iklim-opt-dpi.jpg',
+                            'emoji' => '📈',
+                            'title' => 'Iklim OPT-DPI',
+                            'desc' => 'Monitoring dan Peramalan',
+                            'bg' => 'from-purple-600 to-purple-800',
+                        ],
+                        [
+                            'url' => route('admin.daftar-alamat.dashboard'),
+                            'img' => 'daftar-alamat.jpg',
+                            'emoji' => '🔍',
+                            'title' => 'Daftar Alamat',
+                            'desc' => 'Daftar Alamat',
+                            'bg' => 'from-orange-600 to-orange-800',
+                        ],
+                        [
+                            'url' => route('admin.benih-pupuk.dashboard'),
+                            'img' => 'benih-pupuk.jpg',
+                            'emoji' => '⚙️',
+                            'title' => 'Benih Pupuk',
+                            'desc' => 'Benih Pupuk',
+                            'bg' => 'from-red-600 to-red-800',
+                        ],
+                    ];
+                @endphp
 
-                <!-- Panel Lahan -->
-                <div class="group cursor-pointer" onclick="window.location.href='/admin/lahan'">
-                    <div class="relative rounded-lg overflow-hidden transition-all">
-                        <div class="aspect-square bg-gradient-to-br from-green-600 to-green-800 p-6 flex flex-col items-center justify-center text-white">
-                            <div class="text-4xl mb-4">🌾</div>
+                @foreach($panelItems as $item)
+                <div class="group cursor-pointer w-40 h-40 flex-shrink-0" onclick="window.location.href='{{ $item['url'] }}'">
+                    <div class="relative rounded-lg overflow-hidden transition-all w-full h-full">
+                        <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br {{ $item['bg'] }} p-6 text-white">
+                            <div class="text-4xl mb-4">{{ $item['emoji'] }}</div>
                             <div class="text-center">
-                                <h3 class="font-semibold text-lg mb-1">Lahan</h3>
-                                <p class="text-sm opacity-80">Data & Analisis</p>
+                                <h3 class="font-semibold text-lg mb-1">{{ $item['title'] }}</h3>
+                                <p class="text-sm opacity-80">{{ $item['desc'] }}</p>
                             </div>
                         </div>
                         <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
-                            <img src="{{ asset('lahan.jpg') }}" alt="Lahan" class="w-full h-full object-cover">
+                            <img src="{{ asset($item['img']) }}" alt="{{ $item['title'] }}" class="w-full h-full object-cover">
                         </div>
                     </div>
-                    <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Lahan</p>
+                    <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">{{ $item['title'] }}</p>
                 </div>
-
-                <!-- Panel Iklim OPT-DPI -->
-                <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.iklim-opt-dpi.dashboard') }}'">
-                    <div class="relative rounded-lg overflow-hidden transition-all">
-                        <div class="aspect-square bg-gradient-to-br from-purple-600 to-purple-800 p-6 flex flex-col items-center justify-center text-white">
-                            <div class="text-4xl mb-4">📈</div>
-                            <div class="text-center">
-                                <h3 class="font-semibold text-lg mb-1">Iklim OPT-DPI</h3>
-                                <p class="text-sm opacity-80">Monitoring dan Peramalan</p>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
-                            <img src="{{ asset('iklim-opt-dpi.jpg') }}" alt="Monitoring dan Peramalan Iklim OPT-DPI" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Iklim OPT-DPI</p>
-                </div>
-
-                <!-- Panel Daftar Alamat -->
-                <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.daftar-alamat.dashboard') }}'">
-                    <div class="relative rounded-lg overflow-hidden transition-all">
-                        <div class="aspect-square bg-gradient-to-br from-orange-600 to-orange-800 p-6 flex flex-col items-center justify-center text-white">
-                            <div class="text-4xl mb-4">🔍</div>
-                            <div class="text-center">
-                                <h3 class="font-semibold text-lg mb-1">Daftar Alamat</h3>
-                                <p class="text-sm opacity-80">Daftar Alamat</p>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
-                            <img src="{{ asset('daftar-alamat.jpg') }}" alt="Daftar Alamat" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Daftar Alamat</p>
-                </div>
-
-                <!-- Panel Benih Pupuk -->
-                <div class="group cursor-pointer" onclick="window.location.href='{{ route('admin.benih-pupuk.dashboard') }}'">
-                    <div class="relative rounded-lg overflow-hidden transition-all">
-                        <div class="aspect-square bg-gradient-to-br from-red-600 to-red-800 p-6 flex flex-col items-center justify-center text-white">
-                            <div class="text-4xl mb-4">⚙️</div>
-                            <div class="text-center">
-                                <h3 class="font-semibold text-lg mb-1">Benih Pupuk</h3>
-                                <p class="text-sm opacity-80">Benih Pupuk</p>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition-all">
-                            <img src="{{ asset('benih-pupuk.jpg') }}" alt="Benih Pupuk" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <p class="text-center text-neutral-400 mt-3 group-hover:text-white transition-colors">Benih Pupuk</p>
-                </div>
+                @endforeach
             </div>
 
             <!-- User Info -->

@@ -10,9 +10,11 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libzip-dev \
-    # nodejs \
-    # npm \
     && docker-php-ext-install zip pdo_mysql mbstring exif pcntl bcmath gd
+
+# Install Node.js and npm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -25,9 +27,10 @@ RUN git config --global --add safe.directory /var/www/html
 
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# RUN if [ -f package.json ]; then \
-#       npm install && npm run build; \
-#     fi
+# Install npm dependencies and build assets
+RUN if [ -f package.json ]; then \
+      npm install && npm run build; \
+    fi
 
 RUN rm -rf public/storage && ln -s /var/www/html/storage/app/public /var/www/html/public/storage
 
