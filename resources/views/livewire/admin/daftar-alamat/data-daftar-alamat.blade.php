@@ -99,10 +99,10 @@
                                 @endif
                             </div>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors" wire:click="sortByField('no')">
+                        <th class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors" wire:click="sortByField('provinsi')">
                             <div class="flex items-center space-x-1">
-                                <span>No</span>
-                                @if($sortBy === 'no')
+                                <span>Provinsi</span>
+                                @if($sortBy === 'provinsi')
                                     @if($sortDirection === 'asc')
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
@@ -119,10 +119,10 @@
                                 @endif
                             </div>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors" wire:click="sortByField('wilayah')">
+                        <th class="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider cursor-pointer hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors" wire:click="sortByField('kabupaten_kota')">
                             <div class="flex items-center space-x-1">
-                                <span>Wilayah</span>
-                                @if($sortBy === 'wilayah')
+                                <span>Kabupaten/Kota</span>
+                                @if($sortBy === 'kabupaten_kota')
                                     @if($sortDirection === 'asc')
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
@@ -234,10 +234,10 @@
                                 {{ $alamat->id }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-white">
-                                {{ $alamat->no }}
+                                {{ $alamat->provinsi }}
                             </td>
                             <td class="px-6 py-4 text-sm text-neutral-900 dark:text-white">
-                                <div class="max-w-xs truncate">{{ $alamat->wilayah }}</div>
+                                <div class="max-w-xs truncate">{{ $alamat->kabupaten_kota }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($alamat->gambar)
@@ -344,7 +344,7 @@
     @if($showModal)
     <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <!-- Backdrop -->
-        <div class="fixed inset-0 bg-neutral-500 bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="$set('showModal', false)"></div>
+        <div class="fixed inset-0 transition-opacity" style="background-color: rgba(0, 0, 0, 0.5);" aria-hidden="true" wire:click="$set('showModal', false)"></div>
         
         <!-- Modal container -->
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -368,21 +368,21 @@
                         <div class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">No</label>
-                        <input wire:model="no" placeholder="Nomor urut" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
-                        @error('no') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+                        <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Provinsi *</label>
+                        <input wire:model="provinsi" placeholder="Nama provinsi" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        @error('provinsi') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kabupaten/Kota *</label>
+                        <input wire:model="kabupaten_kota" placeholder="Nama kabupaten/kota" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        @error('kabupaten_kota') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Urut</label>
                         <input wire:model="urut" type="number" placeholder="Urutan" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                         @error('urut') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Wilayah *</label>
-                        <input wire:model="wilayah" placeholder="Nama wilayah/provinsi" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
-                        @error('wilayah') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="md:col-span-2">

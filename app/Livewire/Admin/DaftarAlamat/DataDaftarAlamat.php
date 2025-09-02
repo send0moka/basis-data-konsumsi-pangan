@@ -41,7 +41,8 @@ class DataDaftarAlamat extends Component
 
     // Form properties
     public $no = '';
-    public $wilayah = '';
+    public $provinsi = '';
+    public $kabupaten_kota = '';
     public $nama_dinas = '';
     public $alamat = '';
     public $telp = '';
@@ -59,7 +60,8 @@ class DataDaftarAlamat extends Component
     public $existingGambar = null;
 
     protected $rules = [
-        'wilayah' => 'required|string|max:255',
+        'provinsi' => 'required|string|max:255',
+        'kabupaten_kota' => 'required|string|max:255',
         'nama_dinas' => 'required|string|max:255',
         'alamat' => 'required|string',
         'telp' => 'nullable|string|max:255',
@@ -130,8 +132,8 @@ class DataDaftarAlamat extends Component
             $this->validate();
 
             $data = [
-                'no' => $this->no,
-                'wilayah' => $this->wilayah,
+                'provinsi' => $this->provinsi,
+                'kabupaten_kota' => $this->kabupaten_kota,
                 'nama_dinas' => $this->nama_dinas,
                 'alamat' => $this->alamat,
                 'telp' => $this->telp,
@@ -232,7 +234,7 @@ class DataDaftarAlamat extends Component
     public function resetForm()
     {
         $this->reset([
-            'no', 'wilayah', 'nama_dinas', 'alamat', 'telp', 'faks', 
+            'provinsi', 'kabupaten_kota', 'nama_dinas', 'alamat', 'telp', 'faks', 
             'email', 'website', 'posisi', 'urut', 'status', 'kategori', 
             'keterangan', 'latitude', 'longitude', 'gambar', 'existingGambar'
         ]);
@@ -251,7 +253,8 @@ class DataDaftarAlamat extends Component
 
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('wilayah', 'like', '%' . $this->search . '%')
+                $q->where('provinsi', 'like', '%' . $this->search . '%')
+                  ->orWhere('kabupaten_kota', 'like', '%' . $this->search . '%')
                   ->orWhere('nama_dinas', 'like', '%' . $this->search . '%')
                   ->orWhere('alamat', 'like', '%' . $this->search . '%')
                   ->orWhere('email', 'like', '%' . $this->search . '%');
@@ -267,7 +270,10 @@ class DataDaftarAlamat extends Component
         }
 
         if ($this->wilayahFilter) {
-            $query->where('wilayah', 'like', '%' . $this->wilayahFilter . '%');
+            $query->where(function ($q) {
+                $q->where('provinsi', 'like', '%' . $this->wilayahFilter . '%')
+                  ->orWhere('kabupaten_kota', 'like', '%' . $this->wilayahFilter . '%');
+            });
         }
 
         $alamats = $query->orderBy($this->sortBy, $this->sortDirection)
@@ -276,10 +282,14 @@ class DataDaftarAlamat extends Component
         $statusOptions = DaftarAlamat::getStatusOptions();
         $kategoriOptions = DaftarAlamat::getKategoriOptions();
         
-        $wilayahOptions = DaftarAlamat::distinct('wilayah')
-                                   ->orderBy('wilayah')
-                                   ->pluck('wilayah')
-                                   ->toArray();
+        $wilayahOptions = collect()
+            ->merge(DaftarAlamat::distinct('provinsi')->orderBy('provinsi')->pluck('provinsi'))
+            ->merge(DaftarAlamat::distinct('kabupaten_kota')->orderBy('kabupaten_kota')->pluck('kabupaten_kota'))
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
 
         return view('livewire.admin.daftar-alamat.data-daftar-alamat', compact(
             'alamats', 'statusOptions', 'kategoriOptions', 'wilayahOptions'
