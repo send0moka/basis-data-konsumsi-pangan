@@ -79,7 +79,7 @@
                 </div>
                 <div class="bg-yellow-50 rounded-lg p-4 text-center">
                     <div class="text-2xl font-bold text-yellow-700" id="totalJenis">0</div>
-                    <div class="text-sm text-yellow-900">Jenis Lokasi</div>
+                    <div class="text-sm text-yellow-900">Jenis Instansi</div>
                 </div>
             </div>
 
@@ -102,7 +102,7 @@
                 </select>
                 
                 <select class="search-input md:w-48" x-model="selectedJenis" @change="filterAlamat()">
-                    <option value="">Semua Jenis</option>
+                    <option value="">Semua Jenis Instansi</option>
                     <template x-for="jenis in jenisLokasi" :key="jenis">
                         <option :value="jenis" x-text="jenis"></option>
                     </template>
@@ -159,7 +159,7 @@
                         </template>
                         <template x-if="selectedJenis">
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                                Jenis: <span x-text="selectedJenis"></span>
+                                Jenis Instansi: <span x-text="selectedJenis"></span>
                             </span>
                         </template>
                     </div>
@@ -192,7 +192,7 @@
                             <th>Alamat</th>
                             <th>Provinsi</th>
                             <th>Kabupaten/Kota</th>
-                            <th>Jenis</th>
+                            <th>Jenis Instansi</th>
                             <th>Koordinat</th>
                             <th>Aksi</th>
                         </tr>
@@ -252,7 +252,7 @@
                             <th>Alamat</th>
                             <th>Provinsi</th>
                             <th>Kabupaten/Kota</th>
-                            <th>Jenis</th>
+                            <th>Jenis Instansi</th>
                             <th>Koordinat</th>
                             <th>Aksi</th>
                         </tr>
@@ -368,14 +368,23 @@
                         this.alamatList = data;
                         this.provinsiList = [...new Set(data.map(a => a.provinsi))].filter(p => p).sort();
                         this.kabupatenList = [...new Set(data.map(a => a.kabupaten_kota))].filter(k => k).sort();
-                        this.jenisLokasi = [...new Set(data.map(a => a.jenis))].sort();
+                        
+                        // Extract individual jenis instansi from arrays
+                        const allJenisInstansi = [];
+                        data.forEach(item => {
+                            if (item.jenis_instansi && Array.isArray(item.jenis_instansi)) {
+                                allJenisInstansi.push(...item.jenis_instansi);
+                            }
+                        });
+                        this.jenisLokasi = [...new Set(allJenisInstansi)].sort();
+                        
                         this.filteredAlamat = [...data]; // Initialize filtered list
 
                         console.log('Processed data:');
                         console.log('- Total records:', data.length);
                         console.log('- Provinsi:', this.provinsiList);
                         console.log('- Kabupaten/Kota:', this.kabupatenList);
-                        console.log('- Jenis Lokasi:', this.jenisLokasi);
+                        console.log('- Jenis Instansi:', this.jenisLokasi);
                         console.log('- Sample record:', data[0]);
 
                         // Validate processed data
@@ -386,7 +395,7 @@
                             console.warn('Warning: No kabupaten/kota found in data');
                         }
                         if (this.jenisLokasi.length === 0) {
-                            console.warn('Warning: No jenis lokasi found in data');
+                            console.warn('Warning: No jenis instansi found in data');
                         }
 
                         this.$nextTick(() => {
@@ -418,7 +427,8 @@
                                 provinsi: 'DKI Jakarta',
                                 kabupaten_kota: 'Jakarta Selatan',
                                 wilayah: 'Jakarta Selatan, DKI Jakarta',
-                                jenis: 'Kantor Pusat',
+                                jenis: 'Dinas Pertanian',
+                                jenis_instansi: ['Dinas Pertanian'],
                                 lat: -6.3056,
                                 lng: 106.8200
                             },
@@ -429,14 +439,24 @@
                                 provinsi: 'Jawa Barat',
                                 kabupaten_kota: 'Kabupaten Subang',
                                 wilayah: 'Kabupaten Subang, Jawa Barat',
-                                jenis: 'Balai Penelitian',
+                                jenis: 'Balai Pengkajian Teknologi Pertanian',
+                                jenis_instansi: ['Balai Pengkajian Teknologi Pertanian'],
                                 lat: -6.5833,
                                 lng: 107.5833
                             }
                         ];
                         this.provinsiList = [...new Set(this.alamatList.map(a => a.provinsi))].filter(p => p).sort();
                         this.kabupatenList = [...new Set(this.alamatList.map(a => a.kabupaten_kota))].filter(k => k).sort();
-                        this.jenisLokasi = [...new Set(this.alamatList.map(a => a.jenis))].sort();
+                        
+                        // Extract individual jenis instansi from arrays for fallback data
+                        const allJenisInstansi = [];
+                        this.alamatList.forEach(item => {
+                            if (item.jenis_instansi && Array.isArray(item.jenis_instansi)) {
+                                allJenisInstansi.push(...item.jenis_instansi);
+                            }
+                        });
+                        this.jenisLokasi = [...new Set(allJenisInstansi)].sort();
+                        
                         this.filteredAlamat = [...this.alamatList];
 
                         this.dataInitialized = true;
@@ -491,7 +511,11 @@
                                 a.jenis.toLowerCase().includes(this.searchQuery.toLowerCase());
                             const matchProvinsi = this.selectedProvinsi === '' || a.provinsi === this.selectedProvinsi;
                             const matchKabupaten = this.selectedKabupaten === '' || a.kabupaten_kota === this.selectedKabupaten;
-                            const matchJenis = this.selectedJenis === '' || a.jenis === this.selectedJenis;
+                            
+                            // Check if selected jenis exists in jenis_instansi array
+                            const matchJenis = this.selectedJenis === '' || 
+                                (a.jenis_instansi && Array.isArray(a.jenis_instansi) && a.jenis_instansi.includes(this.selectedJenis));
+                            
                             return matchQuery && matchProvinsi && matchKabupaten && matchJenis;
                         });
 
