@@ -124,14 +124,14 @@
             </div>
         </div>
 
-        <!-- Top Kategori -->
+        <!-- Top Provinsi -->
         <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-700">
             <div class="p-6">
-                <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Top Kategori</h3>
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Top Provinsi</h3>
                 <div class="space-y-3">
-                    @foreach($kategoriStats as $kategori => $count)
+                    @foreach($kategoriStats as $provinsi => $count)
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-neutral-600 dark:text-neutral-400">{{ $kategori }}</span>
+                            <span class="text-sm text-neutral-600 dark:text-neutral-400">{{ $provinsi }}</span>
                             <span class="text-sm font-medium text-neutral-900 dark:text-white">{{ number_format($count) }}</span>
                         </div>
                     @endforeach
@@ -161,10 +161,10 @@
                                     {{ $alamat->nama_dinas }}
                                 </p>
                                 <p class="text-sm text-neutral-500 dark:text-neutral-400 truncate">
-                                    {{ $alamat->wilayah }}
+                                    {{ $alamat->kabupaten_kota }}, {{ $alamat->provinsi }}
                                 </p>
                                 <p class="text-xs text-neutral-400 dark:text-neutral-500">
-                                    {{ $alamat->created_at->diffForHumans() }}
+                                    {{ $alamat->created_at ? $alamat->created_at->diffForHumans() : 'Data lama' }}
                                 </p>
                             </div>
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $alamat->status_badge }}">
@@ -178,14 +178,14 @@
             </div>
         </div>
 
-        <!-- Top Wilayah -->
+        <!-- Top Kabupaten/Kota -->
         <div class="bg-white dark:!bg-neutral-800 overflow-hidden shadow-lg rounded-lg border border-neutral-200 dark:border-neutral-700">
             <div class="p-6">
-                <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Top Wilayah</h3>
+                <h3 class="text-lg font-medium text-neutral-900 dark:text-white mb-4">Top Kabupaten/Kota</h3>
                 <div class="space-y-3">
-                    @foreach($wilayahStats as $wilayah => $count)
+                    @foreach($wilayahStats as $kabupatenKota => $count)
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-neutral-600 dark:text-neutral-400 truncate">{{ $wilayah }}</span>
+                            <span class="text-sm text-neutral-600 dark:text-neutral-400 truncate">{{ $kabupatenKota }}</span>
                             <span class="text-sm font-medium text-neutral-900 dark:text-white">{{ number_format($count) }}</span>
                         </div>
                     @endforeach

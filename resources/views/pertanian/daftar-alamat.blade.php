@@ -85,12 +85,19 @@
 
             <!-- Search & Filter -->
             <div x-show="!isLoading" class="mb-6 flex flex-col md:flex-row gap-4 items-center">
-                <input type="text" class="search-input" placeholder="Cari alamat, wilayah, atau jenis..." x-model="searchQuery" @input="filterAlamat()">
+                <input type="text" class="search-input" placeholder="Cari alamat, nama, atau wilayah..." x-model="searchQuery" @input="filterAlamat()">
                 
-                <select class="search-input md:w-48" x-model="selectedRegion" @change="filterAlamat()">
-                    <option value="">Semua Wilayah</option>
-                    <template x-for="region in regions" :key="region">
-                        <option :value="region" x-text="region"></option>
+                <select class="search-input md:w-48" x-model="selectedProvinsi" @change="filterAlamat()">
+                    <option value="">Semua Provinsi</option>
+                    <template x-for="provinsi in provinsiList" :key="provinsi">
+                        <option :value="provinsi" x-text="provinsi"></option>
+                    </template>
+                </select>
+                
+                <select class="search-input md:w-48" x-model="selectedKabupaten" @change="filterAlamat()">
+                    <option value="">Semua Kabupaten/Kota</option>
+                    <template x-for="kabupaten in kabupatenList" :key="kabupaten">
+                        <option :value="kabupaten" x-text="kabupaten"></option>
                     </template>
                 </select>
                 
@@ -140,9 +147,14 @@
                                 Pencarian: "<span x-text="searchQuery"></span>"
                             </span>
                         </template>
-                        <template x-if="selectedRegion">
+                        <template x-if="selectedProvinsi">
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                                Wilayah: <span x-text="selectedRegion"></span>
+                                Provinsi: <span x-text="selectedProvinsi"></span>
+                            </span>
+                        </template>
+                        <template x-if="selectedKabupaten">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                                Kabupaten/Kota: <span x-text="selectedKabupaten"></span>
                             </span>
                         </template>
                         <template x-if="selectedJenis">
@@ -178,7 +190,8 @@
                             <th>Nama Lokasi</th>
                             <th>Gambar</th>
                             <th>Alamat</th>
-                            <th>Wilayah</th>
+                            <th>Provinsi</th>
+                            <th>Kabupaten/Kota</th>
                             <th>Jenis</th>
                             <th>Koordinat</th>
                             <th>Aksi</th>
@@ -200,7 +213,8 @@
                                     </template>
                                 </td>
                                 <td x-text="alamat.alamat"></td>
-                                <td x-text="alamat.wilayah"></td>
+                                <td x-text="alamat.provinsi"></td>
+                                <td x-text="alamat.kabupaten_kota"></td>
                                 <td x-text="alamat.jenis"></td>
                                 <td>
                                     <span x-text="alamat.lat + ', ' + alamat.lng"></span>
@@ -212,7 +226,7 @@
                         </template>
                         <template x-if="filteredAlamat.length === 0">
                             <tr>
-                                <td colspan="8" class="text-center py-8 text-gray-500">
+                                <td colspan="9" class="text-center py-8 text-gray-500">
                                     <div class="flex flex-col items-center">
                                         <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.467-.881-6.08-2.33"></path>
@@ -236,7 +250,8 @@
                             <th>Nama Lokasi</th>
                             <th>Gambar</th>
                             <th>Alamat</th>
-                            <th>Wilayah</th>
+                            <th>Provinsi</th>
+                            <th>Kabupaten/Kota</th>
                             <th>Jenis</th>
                             <th>Koordinat</th>
                             <th>Aksi</th>
@@ -244,7 +259,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="8" class="text-center py-12">
+                            <td colspan="9" class="text-center py-12">
                                 <div class="flex items-center justify-center">
                                     <svg class="animate-spin h-8 w-8 text-blue-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -274,10 +289,12 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('daftarAlamat', () => ({
                 alamatList: [],
-                regions: [],
+                provinsiList: [],
+                kabupatenList: [],
                 jenisLokasi: [],
                 searchQuery: '',
-                selectedRegion: '',
+                selectedProvinsi: '',
+                selectedKabupaten: '',
                 selectedJenis: '',
                 filteredAlamat: [],
                 map: null,
@@ -349,19 +366,24 @@
                         }
 
                         this.alamatList = data;
-                        this.regions = [...new Set(data.map(a => a.wilayah))].sort();
+                        this.provinsiList = [...new Set(data.map(a => a.provinsi))].filter(p => p).sort();
+                        this.kabupatenList = [...new Set(data.map(a => a.kabupaten_kota))].filter(k => k).sort();
                         this.jenisLokasi = [...new Set(data.map(a => a.jenis))].sort();
                         this.filteredAlamat = [...data]; // Initialize filtered list
 
                         console.log('Processed data:');
                         console.log('- Total records:', data.length);
-                        console.log('- Regions:', this.regions);
+                        console.log('- Provinsi:', this.provinsiList);
+                        console.log('- Kabupaten/Kota:', this.kabupatenList);
                         console.log('- Jenis Lokasi:', this.jenisLokasi);
                         console.log('- Sample record:', data[0]);
 
                         // Validate processed data
-                        if (this.regions.length === 0) {
-                            console.warn('Warning: No regions found in data');
+                        if (this.provinsiList.length === 0) {
+                            console.warn('Warning: No provinsi found in data');
+                        }
+                        if (this.kabupatenList.length === 0) {
+                            console.warn('Warning: No kabupaten/kota found in data');
                         }
                         if (this.jenisLokasi.length === 0) {
                             console.warn('Warning: No jenis lokasi found in data');
@@ -393,7 +415,9 @@
                                 id: 1,
                                 nama: 'Kantor Pusat Pertanian',
                                 alamat: 'Jl. Harsono RM. No. 3, Ragunan, Jakarta Selatan',
-                                wilayah: 'DKI Jakarta',
+                                provinsi: 'DKI Jakarta',
+                                kabupaten_kota: 'Jakarta Selatan',
+                                wilayah: 'Jakarta Selatan, DKI Jakarta',
                                 jenis: 'Kantor Pusat',
                                 lat: -6.3056,
                                 lng: 106.8200
@@ -402,13 +426,16 @@
                                 id: 2,
                                 nama: 'Balai Penelitian Tanaman Padi',
                                 alamat: 'Jl. Raya 9, Sukamandi, Subang',
-                                wilayah: 'Jawa Barat',
+                                provinsi: 'Jawa Barat',
+                                kabupaten_kota: 'Kabupaten Subang',
+                                wilayah: 'Kabupaten Subang, Jawa Barat',
                                 jenis: 'Balai Penelitian',
                                 lat: -6.5833,
                                 lng: 107.5833
                             }
                         ];
-                        this.regions = [...new Set(this.alamatList.map(a => a.wilayah))].sort();
+                        this.provinsiList = [...new Set(this.alamatList.map(a => a.provinsi))].filter(p => p).sort();
+                        this.kabupatenList = [...new Set(this.alamatList.map(a => a.kabupaten_kota))].filter(k => k).sort();
                         this.jenisLokasi = [...new Set(this.alamatList.map(a => a.jenis))].sort();
                         this.filteredAlamat = [...this.alamatList];
 
@@ -459,11 +486,13 @@
                             const matchQuery = this.searchQuery === '' ||
                                 a.nama.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
                                 a.alamat.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                                a.wilayah.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                                a.provinsi.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                                a.kabupaten_kota.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
                                 a.jenis.toLowerCase().includes(this.searchQuery.toLowerCase());
-                            const matchRegion = this.selectedRegion === '' || a.wilayah === this.selectedRegion;
+                            const matchProvinsi = this.selectedProvinsi === '' || a.provinsi === this.selectedProvinsi;
+                            const matchKabupaten = this.selectedKabupaten === '' || a.kabupaten_kota === this.selectedKabupaten;
                             const matchJenis = this.selectedJenis === '' || a.jenis === this.selectedJenis;
-                            return matchQuery && matchRegion && matchJenis;
+                            return matchQuery && matchProvinsi && matchKabupaten && matchJenis;
                         });
 
                         this.updateMapMarkers();
@@ -513,6 +542,17 @@
                             attribution: '© OpenStreetMap contributors'
                         }).addTo(this.map);
 
+                        // Add event listeners to handle zoom and pan events
+                        this.map.on('zoomstart', () => {
+                            // Close any open popups before zoom
+                            this.map.closePopup();
+                        });
+
+                        this.map.on('movestart', () => {
+                            // Close any open popups before move
+                            this.map.closePopup();
+                        });
+
                         this.mapInitialized = true;
                         console.log('Map initialized successfully');
 
@@ -539,8 +579,16 @@
 
                     console.log('Updating map markers for', this.filteredAlamat.length, 'locations');
 
-                    // Remove old markers
-                    this.markers.forEach(m => this.map.removeLayer(m));
+                    // Close any open popups first
+                    this.map.closePopup();
+
+                    // Remove old markers with proper cleanup
+                    this.markers.forEach(m => {
+                        if (m.getPopup()) {
+                            m.unbindPopup();
+                        }
+                        this.map.removeLayer(m);
+                    });
                     this.markers = [];
 
                     this.filteredAlamat.forEach(alamat => {
@@ -562,7 +610,8 @@
                                 <div class="">
                                     <h3 class="p-0 font-bold text-gray-900 text-sm">${alamat.nama}</h3>
                                     <p class="!m-0 text-xs text-gray-600">${alamat.alamat}</p>
-                                    <p class="!m-0 text-xs text-blue-600 font-medium">${alamat.wilayah}</p>
+                                    <p class="!m-0 text-xs text-blue-600 font-medium">${alamat.provinsi}</p>
+                                    <p class="!m-0 text-xs text-blue-600 font-medium">${alamat.kabupaten_kota}</p>
                                     <p class="!m-0 text-xs text-green-600">${alamat.jenis}</p>
                             `;
                             
@@ -580,12 +629,17 @@
                             
                             popupContent += `</div></div>`;
 
-                            const marker = L.marker([alamat.lat, alamat.lng]).addTo(this.map)
+                            const marker = L.marker([alamat.lat, alamat.lng])
                                 .bindPopup(popupContent, {
                                     maxWidth: 300,
-                                    className: 'custom-popup'
+                                    className: 'custom-popup',
+                                    closeOnClick: true,
+                                    autoClose: true,
+                                    autoPan: false
                                 });
                             
+                            // Add marker to map
+                            marker.addTo(this.map);
                             this.markers.push(marker);
                         }
                     });
@@ -602,25 +656,37 @@
 
                 focusMap(alamat) {
                     if (this.map && alamat.lat && alamat.lng) {
-                        this.map.setView([alamat.lat, alamat.lng], 14);
-                        this.markers.forEach(m => {
-                            if (m.getLatLng().lat === alamat.lat && m.getLatLng().lng === alamat.lng) {
-                                m.openPopup();
-                            }
+                        // Close any open popups first
+                        this.map.closePopup();
+                        
+                        // Set view with smooth transition
+                        this.map.setView([alamat.lat, alamat.lng], 14, {
+                            animate: true,
+                            duration: 1
                         });
+                        
+                        // Find and open the corresponding marker popup
+                        setTimeout(() => {
+                            this.markers.forEach(m => {
+                                if (m.getLatLng().lat === alamat.lat && m.getLatLng().lng === alamat.lng) {
+                                    m.openPopup();
+                                }
+                            });
+                        }, 500); // Wait for zoom animation to complete
                     }
                 },
 
                 resetFilters() {
                     console.log('=== RESET FILTERS ===');
                     this.searchQuery = '';
-                    this.selectedRegion = '';
+                    this.selectedProvinsi = '';
+                    this.selectedKabupaten = '';
                     this.selectedJenis = '';
                     this.filterAlamat();
                 },
 
                 hasActiveFilters() {
-                    return this.searchQuery !== '' || this.selectedRegion !== '' || this.selectedJenis !== '';
+                    return this.searchQuery !== '' || this.selectedProvinsi !== '' || this.selectedKabupaten !== '' || this.selectedJenis !== '';
                 }
             }));
         });

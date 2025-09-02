@@ -16,8 +16,8 @@ class PublicDaftarAlamatController extends Controller
                 'id',
                 'nama_dinas as nama',
                 'alamat',
-                'wilayah',
-                'kategori as jenis',
+                'provinsi',
+                'kabupaten_kota',
                 'latitude as lat',
                 'longitude as lng',
                 'gambar',
@@ -31,8 +31,10 @@ class PublicDaftarAlamatController extends Controller
                     'id' => $item->id,
                     'nama' => $item->nama,
                     'alamat' => $item->alamat,
-                    'wilayah' => $item->wilayah,
-                    'jenis' => $item->jenis,
+                    'provinsi' => $item->provinsi,
+                    'kabupaten_kota' => $item->kabupaten_kota,
+                    'wilayah' => $item->kabupaten_kota . ', ' . $item->provinsi, // Keep for backward compatibility
+                    'jenis' => 'Dinas Pertanian', // Default value for backward compatibility
                     'lat' => (float) $item->lat,
                     'lng' => (float) $item->lng,
                     'gambar' => $item->gambar_url, // This will use the getGambarUrlAttribute accessor
