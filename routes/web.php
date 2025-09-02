@@ -222,6 +222,8 @@ Route::prefix('api/benih-pupuk')->name('api.benih-pupuk.')->group(function () {
     Route::get('sample-data', [App\Http\Controllers\BenihPupukController::class, 'getSampleData'])->name('sample-data');
 });
 
+
+
 // API Routes for Iklim OPT DPI
 Route::prefix('api/iklim-opt-dpi')->name('api.iklim-opt-dpi.')->group(function () {
     Route::get('topiks', [App\Http\Controllers\IklimOptDpiController::class, 'getTopiks'])->name('topiks');

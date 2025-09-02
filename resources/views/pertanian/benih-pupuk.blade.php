@@ -23,6 +23,200 @@
             font-size: 10px;
             padding: 4px 6px;
         }
+
+        /* ======================================================= */
+        /* == KODE CSS FINAL UNTUK TABEL HEADER BERTINGKAT == */
+        /* ======================================================= */
+
+        /* Container parent untuk membatasi overflow */
+        .table-tab-content {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Tambahan CSS untuk memastikan tidak ada element yang keluar dari container */
+        .table-tab-content * {
+            box-sizing: border-box;
+        }
+
+        /* CSS untuk flex container utama */
+        .main-content-flex {
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .sticky-table-container {
+            position: relative;
+            /* FIX 1: Mengatasi overflow dengan scrollbar horizontal & vertikal */
+            overflow: auto;
+            max-height: 500px; /* Atur tinggi maksimal tabel sebelum scroll */
+            max-width: 100%;
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            /* Tambahan untuk memastikan container tidak melampaui parent */
+            box-sizing: border-box;
+            /* Tambahan constraint untuk memaksa scroll horizontal */
+            contain: layout paint;
+            /* Promote to its own layer for smoother scrolling */
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        .sticky-table {
+            /* FIX 3: Mengubah cara render border agar tidak hilang saat scroll */
+            border-collapse: separate;
+            border-spacing: 0;
+            /* Menggunakan min-width untuk memastikan tabel bisa scroll horizontal */
+            width: 100%;
+            min-width: max-content;
+            /* Menghapus table-layout fixed agar kolom bisa auto-size */
+            table-layout: auto;
+        }
+
+        /* Mengatur border & padding individual untuk setiap sel */
+        .sticky-table th,
+        .sticky-table td {
+            border-bottom: 1px solid #e5e7eb;
+            border-right: 1px solid #e5e7eb;
+            white-space: nowrap;
+            padding: 0.5rem 0.75rem;
+            text-align: center;
+            vertical-align: middle;
+            /* Tambahan untuk memastikan border konsisten */
+            box-sizing: border-box;
+        }
+        
+        .sticky-table td {
+            text-align: right;
+        }
+        .sticky-table th:first-child,
+        .sticky-table td:first-child {
+            text-align: left;
+        }
+
+        /* Hapus border kanan di kolom paling akhir agar rapi */
+        .sticky-table th:last-child,
+        .sticky-table td:last-child {
+            border-right: none;
+        }
+
+
+        /* === LOGIKA STICKY YANG SUDAH DISEMPURNAKAN === */
+
+        /* Pengaturan umum untuk semua header di <thead> */
+        .sticky-table thead th {
+            position: sticky;
+            background-color: #f9fafb;
+            z-index: 2; /* keep minimal to reduce compositing cost */
+            will-change: top;
+            backface-visibility: hidden;
+            /* Memastikan border tetap konsisten saat sticky */
+            border-bottom: 1px solid #e5e7eb;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        /* PERBAIKAN: CSS untuk memastikan border tidak hilang saat scroll */
+        .sticky-table thead th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 1px;
+            background-color: #e5e7eb;
+            z-index: 1;
+        }
+
+        .sticky-table thead th::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #e5e7eb;
+            z-index: 1;
+        }
+
+        /* CSS khusus untuk header Wilayah yang sticky */
+        .sticky-table .sticky-wilayah-header {
+            position: sticky !important;
+            left: 0 !important;
+            background-color: #f9fafb !important;
+            z-index: 4 !important; /* slightly above other headers */
+            border-right: 1px solid #e5e7eb !important;
+            font-weight: 600 !important;
+            /* Remove shadow to reduce paint work */
+            box-shadow: none !important;
+            will-change: left, top;
+            backface-visibility: hidden;
+        }
+
+        /* CSS untuk kolom data wilayah (kolom pertama dalam tbody) */
+        .sticky-table tbody td:first-child {
+            position: sticky !important;
+            left: 0 !important;
+            background-color: #ffffff !important;
+            z-index: 1 !important; /* under headers */
+            font-weight: 500 !important;
+            border-right: 1px solid #e5e7eb !important;
+            box-shadow: none !important;
+            will-change: left;
+            backface-visibility: hidden;
+        }
+
+        /* FIX 2 (Dinamis): posisi 'top' tiap baris header memakai CSS variables */
+        /* Variabel akan di-set via JS berdasarkan tinggi aktual tiap baris thead */
+        .sticky-table-container { 
+            --row-top-1: 0px; 
+            --row-top-2: 0px; 
+            --row-top-3: 0px; 
+            --row-top-4: 0px; 
+            --row-top-5: 0px; 
+            --row-top-6: 0px; 
+            --row-top-7: 0px; 
+            --row-top-8: 0px; 
+        }
+        .sticky-table thead th[data-row-index="1"] { top: var(--row-top-1, 0px); }
+        .sticky-table thead th[data-row-index="2"] { top: var(--row-top-2, 0px); }
+        .sticky-table thead th[data-row-index="3"] { top: var(--row-top-3, 0px); }
+        .sticky-table thead th[data-row-index="4"] { top: var(--row-top-4, 0px); }
+        .sticky-table thead th[data-row-index="5"] { top: var(--row-top-5, 0px); }
+        .sticky-table thead th[data-row-index="6"] { top: var(--row-top-6, 0px); }
+        .sticky-table thead th[data-row-index="7"] { top: var(--row-top-7, 0px); }
+        .sticky-table thead th[data-row-index="8"] { top: var(--row-top-8, 0px); }
+
+        /* Pastikan header Wilayah mengikuti barisnya sendiri */
+    .sticky-table .sticky-wilayah-header[data-row-index="1"] { top: var(--row-top-1, 0px) !important; }
+    .sticky-table .sticky-wilayah-header[data-row-index="2"] { top: var(--row-top-2, 0px) !important; }
+    .sticky-table .sticky-wilayah-header[data-row-index="3"] { top: var(--row-top-3, 0px) !important; }
+    .sticky-table .sticky-wilayah-header[data-row-index="4"] { top: var(--row-top-4, 0px) !important; }
+    .sticky-table .sticky-wilayah-header[data-row-index="5"] { top: var(--row-top-5, 0px) !important; }
+    .sticky-table .sticky-wilayah-header[data-row-index="6"] { top: var(--row-top-6, 0px) !important; }
+    .sticky-table .sticky-wilayah-header[data-row-index="7"] { top: var(--row-top-7, 0px) !important; }
+    .sticky-table .sticky-wilayah-header[data-row-index="8"] { top: var(--row-top-8, 0px) !important; }
+
+        /* Fallback untuk header kolom pertama yang bukan header Wilayah */
+        .sticky-table thead th:first-child:not(.sticky-wilayah-header) {
+            position: sticky;
+            left: 0;
+            background-color: #f9fafb;
+            z-index: 80;
+            border-right: 1px solid #e5e7eb;
+            box-shadow: 1px 0 2px rgba(0, 0, 0, 0.06);
+        }
+
+
+        /* Efek hover agar lebih jelas */
+        .sticky-table tbody tr:hover td {
+            background-color: #f3f4f6;
+        }
+        .sticky-table tbody tr:hover td:first-child {
+            background-color: #eff6ff; /* Warna hover berbeda untuk kolom sticky */
+        }
     </style>
     
     <div class="py-12 bg-white">
@@ -116,7 +310,7 @@
                 },
             },
 
-            wilayahLevel: 'provinsi', // 'nasional' or 'provinsi'
+            wilayahLevel: 'nasional', // 'nasional' or 'provinsi'
             selectedProvinsiId: null,
 
             // Search inputs
@@ -132,9 +326,15 @@
             // UI state
             isProcessing: false,
             activeTab: 'tabel',
+            activeResultTab: 'tabel',
             selections: [],
             selectedForRemoval: [],
             searchResults: [],
+            storedResults: [],
+            selectedResultIndex: null,
+            // Grafik helpers
+            selectedProvinceForScroll: null,
+            showLegend: false,
 
             // Methods
             selectTopik(id) {
@@ -148,8 +348,15 @@
                 this.selection.klasifikasi_ids = [];
             },
 
-            isSelectionValid() {
-                return this.selection.topik_id && this.selection.variabel_id && this.selection.tahun_ids.length > 0 && this.selection.bulan_ids.length > 0;
+                        isSelectionValid() {
+                const hasKlasifikasiOptions = this.filteredKlasifikasi.length > 0;
+                const isKlasifikasiValid = !hasKlasifikasiOptions || (hasKlasifikasiOptions && this.selection.klasifikasi_ids.length > 0);
+
+                return this.selection.topik_id &&
+                    this.selection.variabel_id &&
+                    this.selection.tahun_ids.length > 0 &&
+                    this.selection.bulan_ids.length > 0 &&
+                    isKlasifikasiValid;
             },
 
             addSelection() {
@@ -172,13 +379,18 @@
                     bulan_ids: [...this.selection.bulan_ids],
                     display: {
                         variabel_nama: variabel ? `${topik.nama} - ${variabel.nama}` : topik.nama,
-                        klasifikasi_nama: this.selection.klasifikasi_ids.length > 0 ? 'Terpilih' : 'Semua',
+                                                klasifikasi_nama: this.selection.klasifikasi_ids.length > 0 
+                            ? this.allData.klasifikasis
+                                                                .filter(k => this.selection.klasifikasi_ids.includes(String(k.id)))
+                                .map(k => k.nama)
+                                .join(', ')
+                            : 'Semua',
                         tahun: this.selection.tahun_ids.length > 1 ? `${tahun_awal} - ${tahun_akhir}` : tahun_awal,
                         bulan: this.selection.bulan_ids.length > 1 ? `${bulan_awal} - ${bulan_akhir}` : bulan_awal
                     }
                 };
 
-                this.selections.push(newSelection);
+                                this.selections.push(newSelection);
                 this.resetSelection();
             },
 
@@ -221,6 +433,15 @@
                 this.selectedForRemoval = [];
                 this.wilayahLevel = 'nasional';
                 this.selectedProvinsiId = null;
+            },
+
+            selectStoredResult(index) {
+                this.selectedResultIndex = index;
+                this.searchResults = this.storedResults[index].results;
+                // Re-render chart if grafik tab is active
+                if (this.activeResultTab === 'grafik') {
+                    this.$nextTick(() => this.renderChart());
+                }
             },
 
             async fetchData() {
@@ -267,6 +488,17 @@
                     const results = await response.json();
                     console.log('Received results:', results);
                     this.searchResults = results;
+                    
+                    // Store result with timestamp and selections info
+                    const resultData = {
+                        id: Date.now(),
+                        timestamp: new Date().toLocaleString('id-ID'),
+                        results: results,
+                        selections: [...this.selections],
+                        config: { ...this.selection }
+                    };
+                    this.storedResults.push(resultData);
+                    this.selectedResultIndex = this.storedResults.length - 1;
                     // Optional: render chart if you have chart data
                     // this.renderChart(results); 
 
@@ -278,48 +510,209 @@
                 }
             },
 
-            renderChart(data) {
-                const ctx = document.getElementById('chart-container').getContext('2d');
+            renderChart() {
+                const currentResult = this.selectedResultIndex !== null ? this.storedResults[this.selectedResultIndex] : null;
+                if (!currentResult || !currentResult.results || !currentResult.results.data || currentResult.results.data.length === 0) {
+                    return;
+                }
+
+                const ctx = document.getElementById('chart-container');
+                if (!ctx) return;
+                
+                const context = ctx.getContext('2d');
                 if (window.myChart instanceof Chart) {
                     window.myChart.destroy();
                 }
 
-                if (!data || !data.chart || !data.chart.labels || !data.chart.datasets) {
-                    return;
+                // Prepare chart data from table data
+                const data = currentResult.results.data;
+                const labels = data.map(row => row.wilayah);
+                // default selected province value
+                if (!this.selectedProvinceForScroll && labels.length) {
+                    this.selectedProvinceForScroll = labels[0];
+                }
+                
+                // Create datasets for each data column
+                const datasets = [];
+                const colors = [
+                    '#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6',
+                    '#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6366F1'
+                ];
+                
+                if (data.length > 0 && data[0].values) {
+                    // Get unique combinations from selections for dataset labels
+                    const selections = currentResult.selections;
+                    let datasetLabels = [];
+                    
+                    selections.forEach(sel => {
+                        const variabel = this.allData.variabels.find(v => v.id === sel.variabel_id);
+                        sel.klasifikasi_ids.forEach(kid => {
+                            const klasifikasi = this.allData.klasifikasis.find(k => String(k.id) === String(kid));
+                            sel.tahun_ids.forEach(tid => {
+                                sel.bulan_ids.forEach(bid => {
+                                    const bulan = this.allData.bulans.find(b => String(b.id) === String(bid));
+                                    if (variabel && klasifikasi && bulan) {
+                                        datasetLabels.push(`${variabel.nama} - ${klasifikasi.nama} - ${tid} - ${bulan.nama}`);
+                                    }
+                                });
+                            });
+                        });
+                    });
+                    
+                    // Create datasets for each value column
+                    data[0].values.forEach((_, valueIndex) => {
+                        datasets.push({
+                            label: datasetLabels[valueIndex] || `Data ${valueIndex + 1}`,
+                            data: data.map(row => parseFloat(row.values[valueIndex]) || 0),
+                            backgroundColor: colors[valueIndex % colors.length] + '80',
+                            borderColor: colors[valueIndex % colors.length],
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            borderSkipped: false,
+                        });
+                    });
                 }
 
-                window.myChart = new Chart(ctx, {
+        // Ensure canvas is wide enough to show all provinces; enables horizontal scroll
+        const scrollWrap = document.getElementById('chart-scroll');
+        const containerWidth = scrollWrap ? scrollWrap.clientWidth : 800;
+        const containerHeight = scrollWrap ? scrollWrap.clientHeight : 384;
+        const perLabelWidth = Math.max(70, (datasets.length || 1) * 18 + 40);
+        const desiredWidth = Math.max(containerWidth, (labels.length || 1) * perLabelWidth);
+        ctx.style.width = desiredWidth + 'px';
+        ctx.style.height = containerHeight + 'px';
+        ctx.width = desiredWidth; // important when responsive:false
+        ctx.height = containerHeight;
+
+        window.myChart = new Chart(context, {
                     type: 'bar',
                     data: {
-                        labels: data.chart.labels,
-                        datasets: data.chart.datasets.map(dataset => ({
-                            label: dataset.label,
-                            data: dataset.data,
-                            backgroundColor: dataset.backgroundColor || 'rgba(54, 162, 235, 0.6)',
-                            borderColor: dataset.borderColor || 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }))
+                        labels: labels,
+                        datasets: datasets
                     },
                     options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        },
-                        responsive: true,
+            // Use fixed sizing so canvas width drives horizontal scroll
+            responsive: false,
                         maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
                         plugins: {
+                            title: {
+                                display: true,
+                                text: 'Data Benih dan Pupuk',
+                                font: {
+                                    size: 16,
+                                    weight: 'bold'
+                                }
+                            },
                             legend: {
                                 position: 'top',
+                                align: 'start',
+                                display: this.showLegend,
+                                labels: {
+                                    boxWidth: 10,
+                                    padding: 10,
+                                    font: {
+                                        size: 10
+                                    }
+                                }
                             },
                             tooltip: {
-                                mode: 'index',
-                                intersect: false,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                borderColor: 'rgba(255, 255, 255, 0.1)',
+                                borderWidth: 1,
+                                cornerRadius: 6,
+                                displayColors: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.parsed.y.toLocaleString('id-ID');
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 45,
+                                    minRotation: 0,
+                                    font: {
+                                        size: 10
+                                    }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value.toLocaleString('id-ID');
+                                    },
+                                    font: {
+                                        size: 10
+                                    }
+                                }
                             }
                         }
                     }
                 });
             },
+
+            toggleLegend() {
+                this.showLegend = !this.showLegend;
+                if (window.myChart instanceof Chart) {
+                    window.myChart.options.plugins.legend.display = this.showLegend;
+                    window.myChart.update();
+                } else {
+                    // If chart doesn't exist yet, just render with new state
+                    this.$nextTick(() => this.renderChart());
+                }
+            },
+
+            scrollToProvince() {
+                const scrollWrap = document.getElementById('chart-scroll');
+                const canvas = document.getElementById('chart-container');
+                if (!scrollWrap || !canvas || !(window.myChart instanceof Chart)) return;
+                const chart = window.myChart;
+                const xScale = chart.scales.x;
+                const labels = chart.data.labels || [];
+                const target = this.selectedProvinceForScroll;
+                const idx = labels.indexOf(target);
+                if (idx === -1 || !xScale) return;
+                // Get pixel for the center of the bar cluster at index
+                const xCenter = xScale.getPixelForValue(idx);
+                // Compute ideal scroll so the target is centered; clamp to bounds
+                const desired = xCenter - scrollWrap.clientWidth / 2;
+                const max = canvas.clientWidth - scrollWrap.clientWidth;
+                const next = Math.max(0, Math.min(max, desired));
+                scrollWrap.scrollTo({ left: next, behavior: 'smooth' });
+            },
+
+            // Keep chart sizing responsive to viewport changes while preserving horizontal scroll
+            initChartResizeHandlerOnce: (function() {
+                let bound = false;
+                return function() {
+                    if (bound) return;
+                    bound = true;
+                    window.addEventListener('resize', () => {
+                        const grafikTab = document.querySelector('[x-show*="\'grafik\'"]');
+                        const isHidden = grafikTab && (grafikTab.style.display === 'none' || grafikTab.getAttribute('aria-hidden') === 'true');
+                        if (!isHidden) {
+                            // defer until layout stable
+                            setTimeout(() => this.renderChart(), 100);
+                        }
+                    });
+                }
+            })(),
 
             exportExcel() {
                 if (this.dynamicRows.length === 0) {
@@ -449,36 +842,326 @@
             },
 
         get dynamicHeaders() {
-            if (!this.searchResults || !this.searchResults.data || this.searchResults.data.length === 0) {
+            const currentResult = this.selectedResultIndex !== null ? this.storedResults[this.selectedResultIndex] : null;
+            if (!currentResult || !currentResult.results || !currentResult.results.data || currentResult.results.data.length === 0) {
                 return [];
             }
 
-            const { columnOrder } = this.searchResults;
+            const { columnOrder, config } = currentResult.results;
+            const layout = config?.tata_letak || currentResult.config.tata_letak;
             
-            // Create simple headers based on columnOrder from backend
-            const headers = [];
+            // Process selections in the EXACT same order as backend
+            const processedSelections = [];
+            currentResult.selections.forEach((sel, selIndex) => {
+                const variabel = this.allData.variabels.find(v => v.id === sel.variabel_id);
+                if (!variabel) return;
+                
+                // Get klasifikasis for this selection, sorted by ID (same as backend)
+                const selKlasifikasis = sel.klasifikasi_ids
+                    .map(kid => this.allData.klasifikasis.find(k => String(k.id) === String(kid)))
+                    .filter(k => k !== undefined)
+                    .sort((a, b) => a.id - b.id); // Sort by ID to match backend
+                
+                // Get tahuns for this selection, sorted numerically (same as backend)
+                const selTahuns = sel.tahun_ids.sort((a, b) => Number(a) - Number(b));
+                
+                // Get bulans for this selection, sorted by bulan ID (same as backend)
+                const selBulans = sel.bulan_ids
+                    .map(bid => this.allData.bulans.find(b => String(b.id) === String(bid)))
+                    .filter(b => b !== undefined)
+                    .sort((a, b) => a.id - b.id); // Sort by ID to match backend
+                
+                processedSelections.push({
+                    index: selIndex,
+                    variabel: variabel.nama,
+                    klasifikasis: selKlasifikasis.map(k => k.nama),
+                    tahuns: selTahuns,
+                    bulans: selBulans.map(b => b.nama)
+                });
+            });
             
-            // Add main header row with column names
-            const mainHeaderRow = columnOrder.map(col => ({
-                name: col.charAt(0).toUpperCase() + col.slice(1), // Capitalize first letter
-                span: 1
-            }));
+            if (processedSelections.length === 0) return [];
             
-            headers.push([
+            // Generate headers based on layout - EXACT same logic as backend
+            if (layout === 'tipe_1') {
+                // Variabel » Klasifikasi » Tahun » Bulan
+                const headers = [];
+                
+                // Row 1: Variabel headers
+                const row1 = [{ name: 'Wilayah', span: 1, rowspan: 4 }];
+                processedSelections.forEach((sel) => {
+                    const span = sel.klasifikasis.length * sel.tahuns.length * sel.bulans.length;
+                    row1.push({ name: sel.variabel, span: span, rowspan: 1 });
+                });
+                headers.push(row1);
+                
+                // Row 2: Klasifikasi headers
+                const row2 = [];
+                processedSelections.forEach((sel) => {
+                    sel.klasifikasis.forEach(klasifikasi => {
+                        const span = sel.tahuns.length * sel.bulans.length;
+                        row2.push({ name: klasifikasi, span: span, rowspan: 1 });
+                    });
+                });
+                headers.push(row2);
+                
+                // Row 3: Tahun headers
+                const row3 = [];
+                processedSelections.forEach((sel) => {
+                    sel.klasifikasis.forEach(() => {
+                        sel.tahuns.forEach(tahun => {
+                            row3.push({ name: tahun, span: sel.bulans.length, rowspan: 1 });
+                        });
+                    });
+                });
+                headers.push(row3);
+                
+                // Row 4: Bulan headers
+                const row4 = [];
+                processedSelections.forEach((sel) => {
+                    sel.klasifikasis.forEach(() => {
+                        sel.tahuns.forEach(() => {
+                            sel.bulans.forEach(bulan => {
+                                row4.push({ name: bulan, span: 1, rowspan: 1 });
+                            });
+                        });
+                    });
+                });
+                headers.push(row4);
+                
+                return headers;
+            }
+            
+            if (layout === 'tipe_2') {
+                // Klasifikasi » Variabel » Tahun » Bulan - Group by klasifikasi first
+                const headers = [];
+                
+                // Get all unique klasifikasis in order
+                const allKlasifikasis = [];
+                processedSelections.forEach(sel => {
+                    sel.klasifikasis.forEach(k => {
+                        if (!allKlasifikasis.includes(k)) {
+                            allKlasifikasis.push(k);
+                        }
+                    });
+                });
+                
+                // Row 1: Klasifikasi headers
+                const row1 = [{ name: 'Wilayah', span: 1, rowspan: 4 }];
+                allKlasifikasis.forEach(klasifikasi => {
+                    let klasifikasiSpan = 0;
+                    processedSelections.forEach(sel => {
+                        if (sel.klasifikasis.includes(klasifikasi)) {
+                            klasifikasiSpan += sel.tahuns.length * sel.bulans.length;
+                        }
+                    });
+                    if (klasifikasiSpan > 0) {
+                        row1.push({ name: klasifikasi, span: klasifikasiSpan, rowspan: 1 });
+                    }
+                });
+                headers.push(row1);
+                
+                // Row 2: Variabel headers
+                const row2 = [];
+                allKlasifikasis.forEach(klasifikasi => {
+                    processedSelections.forEach(sel => {
+                        if (sel.klasifikasis.includes(klasifikasi)) {
+                            const span = sel.tahuns.length * sel.bulans.length;
+                            row2.push({ name: sel.variabel, span: span, rowspan: 1 });
+                        }
+                    });
+                });
+                headers.push(row2);
+                
+                // Row 3: Tahun headers
+                const row3 = [];
+                allKlasifikasis.forEach(klasifikasi => {
+                    processedSelections.forEach(sel => {
+                        if (sel.klasifikasis.includes(klasifikasi)) {
+                            sel.tahuns.forEach(tahun => {
+                                row3.push({ name: tahun, span: sel.bulans.length, rowspan: 1 });
+                            });
+                        }
+                    });
+                });
+                headers.push(row3);
+                
+                // Row 4: Bulan headers
+                const row4 = [];
+                allKlasifikasis.forEach(klasifikasi => {
+                    processedSelections.forEach(sel => {
+                        if (sel.klasifikasis.includes(klasifikasi)) {
+                            sel.tahuns.forEach(() => {
+                                sel.bulans.forEach(bulan => {
+                                    row4.push({ name: bulan, span: 1, rowspan: 1 });
+                                });
+                            });
+                        }
+                    });
+                });
+                headers.push(row4);
+                
+                return headers;
+            }
+            
+            if (layout === 'tipe_3') {
+                // Tahun » Bulan » Variabel » Klasifikasi
+                const headers = [];
+                
+                // Get all unique tahuns from all selections
+                const allTahuns = [];
+                processedSelections.forEach(sel => {
+                    sel.tahuns.forEach(t => {
+                        if (!allTahuns.includes(t)) {
+                            allTahuns.push(t);
+                        }
+                    });
+                });
+                allTahuns.sort((a, b) => Number(a) - Number(b));
+                
+                // Row 1: Tahun headers
+                const row1 = [{ name: 'Wilayah', span: 1, rowspan: 4 }];
+                allTahuns.forEach(tahun => {
+                    let tahunSpan = 0;
+                    processedSelections.forEach(sel => {
+                        if (sel.tahuns.includes(tahun)) {
+                            tahunSpan += sel.bulans.length * sel.klasifikasis.length;
+                        }
+                    });
+                    if (tahunSpan > 0) {
+                        row1.push({ name: tahun, span: tahunSpan, rowspan: 1 });
+                    }
+                });
+                headers.push(row1);
+                
+                // Row 2: Bulan headers
+                const row2 = [];
+                allTahuns.forEach(tahun => {
+                    const allBulans = [];
+                    processedSelections.forEach(sel => {
+                        if (sel.tahuns.includes(tahun)) {
+                            sel.bulans.forEach(b => {
+                                if (!allBulans.includes(b)) {
+                                    allBulans.push(b);
+                                }
+                            });
+                        }
+                    });
+                    // Sort bulans by their position in the master bulan list
+                    const sortedBulans = allBulans.sort((a, b) => {
+                        const indexA = this.allData.bulans.findIndex(bulan => bulan.nama === a);
+                        const indexB = this.allData.bulans.findIndex(bulan => bulan.nama === b);
+                        return indexA - indexB;
+                    });
+                    
+                    sortedBulans.forEach(bulan => {
+                        let bulanSpan = 0;
+                        processedSelections.forEach(sel => {
+                            if (sel.tahuns.includes(tahun) && sel.bulans.includes(bulan)) {
+                                bulanSpan += sel.klasifikasis.length;
+                            }
+                        });
+                        if (bulanSpan > 0) {
+                            row2.push({ name: bulan, span: bulanSpan, rowspan: 1 });
+                        }
+                    });
+                });
+                headers.push(row2);
+                
+                // Row 3: Variabel headers
+                const row3 = [];
+                allTahuns.forEach(tahun => {
+                    const allBulans = [];
+                    processedSelections.forEach(sel => {
+                        if (sel.tahuns.includes(tahun)) {
+                            sel.bulans.forEach(b => {
+                                if (!allBulans.includes(b)) {
+                                    allBulans.push(b);
+                                }
+                            });
+                        }
+                    });
+                    const sortedBulans = allBulans.sort((a, b) => {
+                        const indexA = this.allData.bulans.findIndex(bulan => bulan.nama === a);
+                        const indexB = this.allData.bulans.findIndex(bulan => bulan.nama === b);
+                        return indexA - indexB;
+                    });
+                    
+                    sortedBulans.forEach(bulan => {
+                        processedSelections.forEach(sel => {
+                            if (sel.tahuns.includes(tahun) && sel.bulans.includes(bulan)) {
+                                row3.push({ name: sel.variabel, span: sel.klasifikasis.length, rowspan: 1 });
+                            }
+                        });
+                    });
+                });
+                headers.push(row3);
+                
+                // Row 4: Klasifikasi headers
+                const row4 = [];
+                allTahuns.forEach(tahun => {
+                    const allBulans = [];
+                    processedSelections.forEach(sel => {
+                        if (sel.tahuns.includes(tahun)) {
+                            sel.bulans.forEach(b => {
+                                if (!allBulans.includes(b)) {
+                                    allBulans.push(b);
+                                }
+                            });
+                        }
+                    });
+                    const sortedBulans = allBulans.sort((a, b) => {
+                        const indexA = this.allData.bulans.findIndex(bulan => bulan.nama === a);
+                        const indexB = this.allData.bulans.findIndex(bulan => bulan.nama === b);
+                        return indexA - indexB;
+                    });
+                    
+                    sortedBulans.forEach(bulan => {
+                        processedSelections.forEach(sel => {
+                            if (sel.tahuns.includes(tahun) && sel.bulans.includes(bulan)) {
+                                sel.klasifikasis.forEach(klasifikasi => {
+                                    row4.push({ name: klasifikasi, span: 1, rowspan: 1 });
+                                });
+                            }
+                        });
+                    });
+                });
+                headers.push(row4);
+                
+                return headers;
+            }
+            
+            // Fallback to simple headers
+            return [[
                 { name: 'Wilayah', span: 1, rowspan: 1 },
-                ...mainHeaderRow
-            ]);
-            
-            return headers;
+                ...columnOrder.map(col => ({ name: col.charAt(0).toUpperCase() + col.slice(1), span: 1, rowspan: 1 }))
+            ]];
         },
 
         get dynamicRows() {
-            if (!this.searchResults || !this.searchResults.data || this.searchResults.data.length === 0) {
+            const currentResult = this.selectedResultIndex !== null ? this.storedResults[this.selectedResultIndex] : null;
+            if (!currentResult || !currentResult.results || !currentResult.results.data || currentResult.results.data.length === 0) {
                 return [];
             }
             
-            // Backend already returns data in the correct format: [{wilayah: "...", values: [...]}]
-            return this.searchResults.data;
+            // Sort by wilayah_sorter ascending if available, and format values to 2 decimals for display
+            const rows = [...currentResult.results.data];
+            rows.sort((a, b) => {
+                const sa = (a.wilayah_sorter ?? Number.MAX_SAFE_INTEGER);
+                const sb = (b.wilayah_sorter ?? Number.MAX_SAFE_INTEGER);
+                if (sa !== sb) return sa - sb;
+                // fallback stable by wilayah name
+                return String(a.wilayah).localeCompare(String(b.wilayah));
+            });
+            return rows.map(r => ({
+                ...r,
+                values: Array.isArray(r.values)
+                    ? r.values.map(v => {
+                        const num = typeof v === 'number' ? v : parseFloat(String(v).replace(/,/g, '.'));
+                        return isFinite(num) ? num.toFixed(2) : v;
+                      })
+                    : r.values
+            }));
         },
 
         // Helper function
@@ -500,59 +1183,67 @@
         <span class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">1</span>
         Pilih Data
     </h2>
-    <p class="text-neutral-600 mb-6 ml-11">Pilih Topik, Variabel dan Periode Waktu.</p>
+    <p class="text-neutral-600 mb-4 ml-11">Pilih Topik, Variabel, dan Periode Waktu.</p>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <!-- 1.1 Topik -->
-        <div class="bg-white p-4 rounded-lg border">
-            <h3 class="font-semibold text-neutral-900 mb-3">1.1 Topik</h3>
-            <input type="text" x-model="search.topik" placeholder="search..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
-            <div class="space-y-1 max-h-32 overflow-y-auto">
-                <template x-for="topik in filteredTopik" :key="topik.id">
-                    <div @click="selectTopik(topik.id)" class="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-md" :class="{'bg-blue-100 font-semibold': selection.topik_id === topik.id}">
-                        <span class="ml-2 text-sm text-neutral-700" x-text="topik.nama"></span>
-                    </div>
-                </template>
-            </div>
-        </div>
-
-        <!-- 1.2 Variabel -->
-        <div class="bg-white p-4 rounded-lg border">
-            <h3 class="font-semibold text-neutral-900 mb-3">1.2 Variabel</h3>
-            <div :class="!selection.topik_id ? 'opacity-50 pointer-events-none' : ''">
-                <input type="text" x-model="search.variabel" placeholder="search..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
-                <div class="max-h-24 overflow-y-auto mb-3 border rounded-md p-2">
-                    <template x-for="variabel in filteredVariabel" :key="variabel.id">
-                        <div @click="selectVariabel(variabel.id)" class="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-md" :class="{'bg-blue-100 font-semibold': selection.variabel_id === variabel.id}">
-                            <span class="ml-2 text-sm text-neutral-700" x-text="variabel.nama"></span>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Left column: Topik + Variabel stacked -->
+        <div class="space-y-4 h-full flex flex-col">
+            <!-- 1.1 Topik -->
+            <div class="bg-white p-4 rounded-lg border">
+                <h3 class="font-semibold text-neutral-900 mb-3">1.1 Topik</h3>
+                <div class="space-y-1 h-32 overflow-y-auto">
+                    <template x-for="topik in filteredTopik" :key="topik.id">
+                        <div @click="selectTopik(topik.id)" class="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-md" :class="{'bg-blue-100 font-semibold': selection.topik_id === topik.id}">
+                            <span class="ml-2 text-sm text-neutral-700" x-text="topik.nama"></span>
                         </div>
                     </template>
                 </div>
-                <h4 class="font-medium text-neutral-800 mb-2 text-sm">Klasifikasi Variabel</h4>
-                <input type="text" x-model="search.klasifikasi" placeholder="search..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
-                <div class="max-h-24 overflow-y-auto border rounded-md p-2">
-                    <template x-for="klasifikasi in filteredKlasifikasi" :key="klasifikasi.id">
-                        <label class="flex items-center cursor-pointer hover:bg-green-50 p-2 rounded-md">
-                            <input type="checkbox" :value="klasifikasi.id" x-model="selection.klasifikasi_ids">
-                            <span class="ml-2 text-sm text-neutral-700" x-text="klasifikasi.nama"></span>
-                        </label>
-                    </template>
+            </div>
+
+            <!-- 1.2 Variabel -->
+            <div class="bg-white p-4 rounded-lg border flex-1 flex flex-col">
+                <h3 class="font-semibold text-neutral-900 mb-3">1.2 Variabel</h3>
+                <div x-show="!selection.topik_id" class="text-center py-8 text-neutral-500">
+                    <p class="text-sm">Pilih topik dahulu</p>
+                </div>
+                <div x-show="selection.topik_id" :class="!selection.topik_id ? 'opacity-50 pointer-events-none' : ''" class="flex-1 flex flex-col">
+                    <div class="flex-1 overflow-y-auto mb-3 border rounded-md p-2">
+                        <template x-for="variabel in filteredVariabel" :key="variabel.id">
+                            <div @click="selectVariabel(variabel.id)" class="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-md" :class="{'bg-blue-100 font-semibold': selection.variabel_id === variabel.id}">
+                                <span class="ml-2 text-sm text-neutral-700" x-text="variabel.nama"></span>
+                            </div>
+                        </template>
+                    </div>
+                    <h4 class="font-medium text-neutral-800 mb-1 text-sm">Klasifikasi Variabel</h4>
+                    <div x-show="!selection.variabel_id" class="text-center py-4 text-neutral-500 border rounded-md">
+                        <p class="text-sm">Pilih variabel dahulu</p>
+                    </div>
+                    <div x-show="selection.variabel_id">
+                        <div class="border rounded-md p-2">
+                            <template x-for="klasifikasi in filteredKlasifikasi" :key="klasifikasi.id">
+                                <label class="flex items-center cursor-pointer hover:bg-green-50 p-2 rounded-md">
+                                    <input type="checkbox" :value="klasifikasi.id" x-model="selection.klasifikasi_ids">
+                                    <span class="ml-2 text-sm text-neutral-700" x-text="klasifikasi.nama"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 1.3 Waktu -->
-        <div class="bg-white p-4 rounded-lg border flex flex-col">
+        <!-- Right column: 1.3 Waktu with Tahun & Bulan stacked -->
+    <div class="bg-white p-4 rounded-lg border h-full">
             <h3 class="font-semibold text-neutral-900 mb-3">1.3 Waktu</h3>
-            <div class="grid grid-cols-2 gap-4 flex-grow">
-                <div class="flex flex-col">
+            <div class="grid grid-cols-1 gap-4">
+                <!-- Tahun box -->
+                <div class="flex flex-col border rounded-lg p-3">
                     <label class="block text-sm font-medium text-neutral-700 mb-1">Tahun</label>
                     <div class="flex justify-between items-center mb-1">
                         <button @click="selection.tahun_ids = filteredTahun.map(t => t)" class="text-xs text-blue-600 hover:underline">Select All</button>
                         <button @click="selection.tahun_ids = []" class="text-xs text-red-600 hover:underline">Clear</button>
                     </div>
-                    <input type="text" x-model="search.tahun" placeholder="search..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
-                    <div class="overflow-y-auto border rounded-md p-2 flex-grow">
+                    <div class="overflow-y-auto border rounded-md p-2 max-h-56">
                         <template x-for="year in filteredTahun" :key="year">
                             <label class="flex items-center cursor-pointer hover:bg-blue-50 p-2 rounded-md">
                                 <input type="checkbox" :value="year" x-model="selection.tahun_ids">
@@ -561,14 +1252,15 @@
                         </template>
                     </div>
                 </div>
-                <div class="flex flex-col">
+
+                <!-- Bulan box -->
+                <div class="flex flex-col border rounded-lg p-3">
                     <label class="block text-sm font-medium text-neutral-700 mb-1">Bulan</label>
-                     <div class="flex justify-between items-center mb-1">
+                    <div class="flex justify-between items-center mb-1">
                         <button @click="selection.bulan_ids = filteredBulan.map(b => b.id)" class="text-xs text-blue-600 hover:underline">Select All</button>
                         <button @click="selection.bulan_ids = []" class="text-xs text-red-600 hover:underline">Clear</button>
                     </div>
-                    <input type="text" x-model="search.bulan" placeholder="search..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
-                    <div class="overflow-y-auto border rounded-md p-2 flex-grow">
+                    <div class="overflow-y-auto border rounded-md p-2 max-h-56">
                         <template x-for="bulan in filteredBulan" :key="bulan.id">
                             <label class="flex items-center cursor-pointer hover:bg-green-50 p-2 rounded-md">
                                 <input type="checkbox" :value="bulan.id" x-model="selection.bulan_ids">
@@ -580,6 +1272,120 @@
             </div>
         </div>
     </div>
+
+    <script>
+    (function(){
+        const INIT_ATTR = 'data-sticky-init';
+        // Equalize data column widths to the widest data column for better readability
+        function equalizeColumns(table){
+            try{
+                if(!table.tHead || !table.tBodies || table.tBodies.length === 0) return;
+                const thead = table.tHead;
+                const lastHeadRow = thead.rows[thead.rows.length - 1];
+                if(!lastHeadRow) return;
+                const dataLeafHeaders = Array.from(lastHeadRow.cells);
+                const body = table.tBodies[0];
+                // Determine number of data columns (exclude the first body cell which is Wilayah)
+                const dataColCount = dataLeafHeaders.length;
+                if(dataColCount === 0) return;
+
+                // Measure each data column's natural width and find the global max among them
+                const LIMIT_ROWS = 200; // cap to avoid heavy reflow on huge tables
+                const rowSampleCount = Math.min(body.rows.length, LIMIT_ROWS);
+                const perColMax = new Array(dataColCount).fill(0);
+                const dpr = window.devicePixelRatio || 1;
+
+                for(let j=0; j<dataColCount; j++){
+                    // header leaf width
+                    let w = dataLeafHeaders[j].getBoundingClientRect().width;
+                    // body cells in column j (offset by +1 due to first Wilayah cell)
+                    for(let r=0; r<rowSampleCount; r++){
+                        const tr = body.rows[r];
+                        const td = tr && tr.cells && tr.cells[1 + j];
+                        if(td){
+                            const cw = td.getBoundingClientRect().width;
+                            if(cw > w) w = cw;
+                        }
+                    }
+                    // Snap to device pixels
+                    perColMax[j] = Math.round(w * dpr) / dpr;
+                }
+                const globalMax = Math.max.apply(null, perColMax);
+                if(!isFinite(globalMax) || globalMax <= 0) return;
+
+                // Build/replace a colgroup to enforce widths
+                let colgroup = table.querySelector('colgroup.equalized-cols');
+                if(colgroup) colgroup.remove();
+                colgroup = document.createElement('colgroup');
+                colgroup.className = 'equalized-cols';
+                // First col: Wilayah (auto width)
+                const colWilayah = document.createElement('col');
+                colWilayah.className = 'col-wilayah';
+                colgroup.appendChild(colWilayah);
+                // Data cols: set equal width based on the widest
+                for(let j=0; j<dataColCount; j++){
+                    const c = document.createElement('col');
+                    c.style.width = `${globalMax}px`;
+                    colgroup.appendChild(c);
+                }
+                table.insertBefore(colgroup, table.firstChild);
+            }catch(e){ /* noop */ }
+        }
+    function recalcFor(table){
+            try{
+                const wrap = table.closest('.sticky-table-container');
+                const thead = table.querySelector('thead');
+                if(!wrap || !thead) return;
+                // Ensure columns are equalized before computing sticky offsets
+                equalizeColumns(table);
+                const rows = Array.from(thead.querySelectorAll('tr'));
+                let acc = 0;
+        const dpr = window.devicePixelRatio || 1;
+        rows.forEach((row, idx)=>{
+            wrap.style.setProperty(`--row-top-${idx+1}` , `${acc}px`);
+            const rectH = row.getBoundingClientRect().height;
+            const snapped = Math.round(rectH * dpr) / dpr;
+            acc += snapped;
+                });
+            }catch(e){ /* noop */ }
+        }
+
+        function wire(table){
+            if(!table || table.hasAttribute(INIT_ATTR)) return;
+            table.setAttribute(INIT_ATTR,'1');
+            const doRecalc = ()=>recalcFor(table);
+            // Initial calc after fonts/layout paint
+            requestAnimationFrame(()=>requestAnimationFrame(doRecalc));
+            // Resize of the container or window
+            const ro = new ResizeObserver(doRecalc);
+            const wrap = table.closest('.sticky-table-container');
+            if(wrap) ro.observe(wrap);
+            ro.observe(table);
+            // Mutations inside the table (headers updated)
+            const mo = new MutationObserver(()=>requestAnimationFrame(doRecalc));
+            mo.observe(table, { childList:true, subtree:true, attributes:true });
+            // Visibility changes (tabs/results switching)
+            const io = new IntersectionObserver((entries)=>{
+                entries.forEach(e=>{ if(e.isIntersecting) doRecalc(); });
+            }, { root: null, threshold: 0 });
+            io.observe(table);
+            // Also recalc on window resize
+            window.addEventListener('resize', doRecalc);
+        }
+
+        function scan(){
+            document.querySelectorAll('table.sticky-table').forEach(wire);
+        }
+        // Initial scan and on DOM updates
+        scan();
+        const rootMO = new MutationObserver(()=>scan());
+        rootMO.observe(document.body, { childList:true, subtree:true });
+        // Alpine after-render hooks could be used; fallback to periodic micro task
+        setTimeout(scan, 0);
+        setTimeout(scan, 200);
+        setTimeout(scan, 500);
+    })();
+    </script>
 
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
@@ -602,7 +1408,7 @@
             <template x-for="item in selections" :key="item.id">
                 <div class="flex items-center bg-blue-50 p-2 rounded-md">
                     <input type="checkbox" :value="item.id" x-model="selectedForRemoval">
-                    <span class="ml-2 text-sm text-neutral-800" x-text="`${item.display.variabel_nama} - ${item.display.klasifikasi_nama} - ${item.display.tahun} - ${item.display.bulan}`"></span>
+                                        <span class="ml-2 text-sm text-neutral-800" x-text="`${item.display.variabel_nama}${item.display.klasifikasi_nama !== 'Semua' ? ' - ' + item.display.klasifikasi_nama : ''} - ${item.display.tahun} - ${item.display.bulan}`"></span>
                 </div>
             </template>
             <div x-show="selections.length === 0" class="text-center text-neutral-500 py-4">
@@ -636,8 +1442,7 @@
                     <button @click="selection.provinsi_ids = filteredWilayah.map(p => p.id)" class="text-xs text-blue-600 hover:underline">Select All</button>
                     <button @click="selection.provinsi_ids = []" class="text-xs text-red-600 hover:underline">Clear</button>
                 </div>
-                <input type="text" x-model="search.wilayah" placeholder="Cari provinsi..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
-                <div class="max-h-64 overflow-y-auto border rounded-md p-2">
+                <div class="overflow-y-auto border rounded-md p-2 max-h-[70vh]">
                     <template x-for="provinsi in filteredWilayah" :key="provinsi.id">
                         <label class="flex items-center cursor-pointer p-2 rounded-md hover:bg-blue-50">
                             <input type="checkbox" :value="provinsi.id" :checked="selection.provinsi_ids.includes(provinsi.id)" @click="toggleWilayah(provinsi.id)">
@@ -662,7 +1467,7 @@
                         <button @click="selection.kabupaten_ids = []" class="text-xs text-red-600 hover:underline">Clear</button>
                     </div>
                     <input type="text" x-model="search.wilayah" placeholder="Cari kabupaten/kota..." class="w-full px-3 py-2 border border-neutral-300 rounded-md mb-2 text-sm">
-                    <div class="max-h-64 overflow-y-auto border rounded-md p-2">
+                    <div class="overflow-y-auto border rounded-md p-2 max-h-[70vh]">
                         <template x-for="provinsi in filteredWilayah" :key="provinsi.id">
                             <div class="ml-6">
                                 <template x-for="kabupaten in provinsi.kabupaten" :key="kabupaten.id">
@@ -828,16 +1633,9 @@
     </button>
 </div>
 
-<!-- Step 3: Tampilan Hasil -->
-<section x-show="isProcessing || (searchResults.data && searchResults.data.length > 0)" class="bg-neutral-50 rounded-lg p-6 border border-neutral-200 mt-12">
-    <h2 class="text-2xl font-bold text-neutral-800 mb-1 flex items-center">
-        <span class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">3</span>
-        Tampilan Hasil
-    </h2>
-    <p class="text-neutral-600 mb-6 ml-11">Hasil dari data yang telah Anda pilih.</p>
-
-    <!-- Loading/Processing State -->
-    <div x-show="isProcessing" class="text-center py-12">
+<!-- Loading/Processing State -->
+<div x-show="isProcessing" class="fixed inset-0 flex items-center justify-center" style="z-index: 10000; backdrop-filter: blur(8px); background-color: rgba(255, 255, 255, 0.3);">
+    <div class="bg-white rounded-lg p-8 text-center shadow-2xl border border-neutral-200">
         <svg class="animate-spin w-12 h-12 text-blue-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -845,134 +1643,145 @@
         <h3 class="text-lg font-medium text-neutral-900 mb-2">Memproses Data...</h3>
         <p class="text-neutral-700">Mohon tunggu, kami sedang menyiapkan laporan untuk Anda.</p>
     </div>
+</div>
 
-    <!-- Results Container -->
-    <div x-show="!isProcessing && searchResults.length > 0">
-        <div class="flex justify-between items-center mb-4">
-            <div class="flex items-center gap-1">
-                <button @click="activeTab = 'tabel'" :class="{'bg-blue-600 text-white': activeTab === 'tabel', 'bg-neutral-200 text-neutral-700': activeTab !== 'tabel'}" class="px-4 py-2 rounded-l-md font-medium">Tabel</button>
-                <button @click="activeTab = 'grafik'" :class="{'bg-blue-600 text-white': activeTab === 'grafik', 'bg-neutral-200 text-neutral-700': activeTab !== 'grafik'}" class="px-4 py-2 rounded-r-md font-medium">Grafik</button>
-            </div>
-            <div class="flex justify-end mb-4">
-            <button @click="exportExcel()" class="px-4 py-2 bg-green-600 text-white rounded-md font-medium flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                Export (.xlsx)
-            </button>
-        </div>
+<!-- Step 3: Tampilan Hasil -->
+<section x-show="storedResults.length > 0" class="bg-neutral-50 rounded-lg p-6 border border-neutral-200 mt-12">
+    <h2 class="text-2xl font-bold text-neutral-800 mb-1 flex items-center">
+        <span class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">3</span>
+        Tampilan Hasil
+    </h2>
+    <p class="text-neutral-600 mb-6 ml-11">Hasil dari data yang telah Anda pilih.</p>
 
-        <!-- Tabel Section -->
-        <div x-show="activeTab === 'tabel'" class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-neutral-200 border">
-                                <thead>
-                                    <template x-for="(headerRow, rowIndex) in dynamicHeaders" :key="rowIndex">
-                                        <tr>
-                                            <template x-for="(header, headerIndex) in headerRow" :key="headerIndex">
-                                                <th class="px-4 py-2 border border-neutral-300 bg-neutral-100 text-center font-semibold text-neutral-700"
-                                                    :colspan="header.span"
-                                                    :rowspan="header.rowspan"
-                                                    x-text="header.name">
-                                                </th>
-                                            </template>
-                                        </tr>
-                                    </template>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-neutral-200">
-                                    <template x-if="!dynamicRows || dynamicRows.length === 0">
-                                        <tr>
-                                            <td :colspan="(dynamicHeaders[0] || []).length > 0 ? (dynamicHeaders[dynamicHeaders.length - 1] || []).length + 1 : 1" class="text-center py-8 text-neutral-500">
-                                                Tidak ada data yang sesuai dengan kriteria yang dipilih.
-                                            </td>
-                                        </tr>
-                                    </template>
-                                    <template x-for="row in dynamicRows" :key="row.wilayah">
-                                        <tr>
-                                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-neutral-800 border" x-text="row.wilayah"></td>
-                                            <template x-for="(value, valueIndex) in row.values" :key="valueIndex">
-                                                <td class="px-4 py-4 whitespace-nowrap text-sm text-neutral-700 border text-right" x-text="value"></td>
-                                            </template>
-                                        </tr>
-                                    </template>
-                                </tbody>
-                            </table>
-        </div>
-
-        <!-- Grafik Section -->
-        <div x-show="activeTab === 'grafik'" style="height: 500px;">
-            <canvas id="chart-container"></canvas>
-        </div>
-    </div>
-    <div x-show="searchResults" class="space-y-6">
-        <!-- Tabs -->
-        <div class="bg-white rounded-lg shadow-sm border">
-            <!-- Tab Navigation -->
-            <div class="border-b border-neutral-200">
-                <nav class="flex space-x-8 px-6" aria-label="Tabs">
-                    <button @click="activeTab = 'tabel'" 
-                            :class="activeTab === 'tabel' ? 'border-blue-500 text-blue-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
-                            class="py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap">
-                        Tabel
+    <!-- Results Layout with Vertical Tabs -->
+    <div class="flex gap-6">
+        <!-- Left Sidebar - Result Selection -->
+        <div class="w-48 flex-shrink-0">
+            <div class="bg-white rounded-lg border overflow-hidden">
+                <template x-for="(result, index) in storedResults" :key="result.id">
+                    <button @click="selectStoredResult(index)" 
+                            :class="{'bg-blue-600 text-white': selectedResultIndex === index, 'bg-white text-neutral-700 hover:bg-neutral-50': selectedResultIndex !== index}"
+                            class="w-full px-4 py-3 text-left border-b border-neutral-200 last:border-b-0 transition-colors">
+                        <div class="font-medium text-sm" x-text="`Result #${index + 1}`"></div>
+                        <div class="text-xs opacity-75 mt-1" x-text="result.timestamp"></div>
                     </button>
-                    <button @click="activeTab = 'grafik'" 
-                            :class="activeTab === 'grafik' ? 'border-blue-500 text-blue-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
-                            class="py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap">
-                        Grafik
-                    </button>
-                </nav>
+                </template>
             </div>
+        </div>
 
-            <!-- Tab Content -->
-            <div class="p-6">
-                <!-- Tabel Tab -->
-                <div x-show="activeTab === 'tabel'">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-lg font-semibold text-neutral-700">Tabel Hasil</h4>
-                        <template x-if="searchResults && searchResults.rows">
-                            <button @click="exportToExcel()" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 active:bg-green-900 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                Ekspor ke Excel
+        <!-- Main Content Area -->
+        <div class="flex-1 main-content-flex">
+            <div x-show="selectedResultIndex !== null" class="bg-white rounded-lg border">
+                <!-- Tab Navigation -->
+                <div class="border-b border-neutral-200">
+                    <nav class="flex" aria-label="Tabs">
+                        <button @click="activeResultTab = 'tabel'" 
+                                :class="activeResultTab === 'tabel' ? 'border-blue-500 text-blue-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+                                class="py-4 px-6 border-b-2 font-medium text-sm whitespace-nowrap">
+                            Tabel
+                        </button>
+                        <button @click="activeResultTab = 'grafik'" 
+                                :class="activeResultTab === 'grafik' ? 'border-blue-500 text-blue-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+                                class="py-4 px-6 border-b-2 font-medium text-sm whitespace-nowrap">
+                            Grafik
+                        </button>
+                        <button @click="activeResultTab = 'metodologi'" 
+                                :class="activeResultTab === 'metodologi' ? 'border-blue-500 text-blue-600' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'"
+                                class="py-4 px-6 border-b-2 font-medium text-sm whitespace-nowrap">
+                            Metodologi
+                        </button>
+                        <div class="ml-auto flex items-center px-6">
+                            <button @click="exportExcel()" class="px-4 py-2 bg-green-600 text-white rounded-md font-medium flex items-center gap-2 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Export (.xlsx)
                             </button>
-                        </template>
-                    </div>
-                    <!-- Results Content -->
-                    <div id="tabel-container" class="mt-4">
-                        <template x-if="searchResults && searchResults.rows && searchResults.rows.length > 0">
-                            <div>
-                                <!-- Table -->
-                                <div class="overflow-x-auto bg-white border border-neutral-200 rounded-lg">
-                                    <table class="min-w-full divide-y divide-neutral-200">
-                                        <thead class="bg-neutral-50">
+                        </div>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="p-6">
+                    <!-- Tabel Tab -->
+                    <div x-show="activeResultTab === 'tabel'" class="table-tab-content">
+                        <!-- Container dengan constraint yang sama seperti grafik -->
+                        <div class="w-full overflow-hidden">
+                            <div class="sticky-table-container">
+                                <table class="sticky-table">
+                                    <thead>
+                                        <template x-for="(headerRow, rowIndex) in dynamicHeaders" :key="rowIndex">
                                             <tr>
-                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider" x-text="config.tata_letak === 'tipe_1' ? 'Wilayah' : 'Variabel'"></th>
-                                                <template x-for="header in searchResults.headers">
-                                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider" x-text="header"></th>
+                                                <template x-for="(header, headerIndex) in headerRow" :key="headerIndex">
+                                                    <th :colspan="header.span || 1"
+                                                        :rowspan="header.rowspan || 1"
+                                                        :data-row-index="(rowIndex + 1)"
+                                                        :class="header.name === 'Wilayah' || header.name?.includes('Wilayah') ? 'sticky-wilayah-header' : ''"
+                                                        x-text="header.name">
+                                                    </th>
                                                 </template>
                                             </tr>
-                                        </thead>
-                                        <tbody class="bg-white divide-y divide-neutral-200">
-                                            <template x-for="row in searchResults.rows">
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900" x-text="row.label"></td>
-                                                    <template x-for="value in row.values">
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500" x-text="value !== null ? parseFloat(value).toFixed(2) : '-'"></td>
-                                                    </template>
-                                                </tr>
-                                            </template>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <!-- Metodologi Section -->
-                                <div class="mt-8">
-                                    @include('pertanian.partials.metodologi-benih-pupuk')
-                                </div>
+                                        </template>
+                                    </thead>
+                                    <tbody>
+                                        <template x-if="!dynamicRows || dynamicRows.length === 0">
+                                            <tr>
+                                                <td :colspan="(dynamicHeaders[0] || []).length > 0 ? (dynamicHeaders[dynamicHeaders.length - 1] || []).length : 1" class="text-center py-8 text-neutral-500">
+                                                    Tidak ada data yang sesuai dengan kriteria yang dipilih.
+                                                </td>
+                                            </tr>
+                                        </template>
+                                        <template x-for="row in dynamicRows" :key="row.wilayah">
+                                            <tr>
+                                                <td class="text-sm font-medium text-neutral-800"
+                                                    :title="row.wilayah"
+                                                    x-text="row.wilayah">
+                                                </td>
+                                                <template x-for="(value, valueIndex) in row.values" :key="valueIndex">
+                                                    <td class="text-sm text-neutral-700 text-right"
+                                                        :title="(Number.isFinite(parseFloat(value)) ? parseFloat(value).toFixed(2) : value)"
+                                                        x-text="(Number.isFinite(parseFloat(value)) ? parseFloat(value).toFixed(2) : value)">
+                                                    </td>
+                                                </template>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
                             </div>
-                        </template>
+                        </div>
                     </div>
-                </div>
-                <!-- Grafik Tab -->
-                <div x-show="activeTab === 'grafik'">
-                    <!-- Placeholder for Chart -->
-                    <canvas id="chart-container"></canvas>
+                    <!-- sticky headers are initialized with a global script below -->
+
+                    <!-- Grafik Tab -->
+                    <div x-show="activeResultTab === 'grafik'" x-init="initChartResizeHandlerOnce(); $watch('activeResultTab', value => { if (value === 'grafik') $nextTick(() => renderChart()) })">
+                        <!-- Controls: province selector and scroll button -->
+                        <div class="flex items-center gap-2 mb-3">
+                            <select x-model="selectedProvinceForScroll" class="border rounded px-2 py-1 text-sm">
+                                <template x-for="row in dynamicRows" :key="row.wilayah">
+                                    <option :value="row.wilayah" x-text="row.wilayah"></option>
+                                </template>
+                            </select>
+                            <button type="button" @click="scrollToProvince()" class="px-3 py-1.5 bg-blue-600 text-white rounded text-sm">Scroll ke Provinsi</button>
+                            <button type="button" @click="toggleLegend()" class="px-3 py-1.5 bg-neutral-700 text-white rounded text-sm" x-text="showLegend ? 'Sembunyikan Legend' : 'Tampilkan Legend'"></button>
+                        </div>
+                        <!-- Horizontal scroll so all provinces (labels) can be viewed -->
+                        <div id="chart-scroll" class="h-96 w-full overflow-x-auto">
+                            <canvas id="chart-container" class="h-full"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Metodologi Tab -->
+                    <div x-show="activeResultTab === 'metodologi'">
+                        <div class="prose max-w-none">
+                            <h3 class="text-lg font-semibold text-neutral-900 mb-4">Sumber:</h3>
+                            <p class="text-neutral-700 mb-6">
+                                Data benih produksi padi, jagung dan kedelai diperoleh dari Direktorat Perbenihan - Direktorat Jenderal Tanaman Pangan.
+                            </p>
+                            
+                            <h3 class="text-lg font-semibold text-neutral-900 mb-4">Metodologi:</h3>
+                            <p class="text-neutral-700">
+                                Data benih produksi padi, jagung dan kedelai diperoleh dari Badan Pengawasan dan Sertifikasi Benih yang ada di tiap-tiap provinsi dan dilaporkan tiap bulan ke Direktorat Perbenihan - Direktorat Jenderal Tanaman Pangan.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1035,8 +1844,8 @@
                 isProcessing: false,
                 addingToQueue: false,
                 activeTab: 'tabel',
-                
-                // Queue system
+                selectedResultIndex: null,
+                wilayahLevel: 'nasional',
                 filterQueue: [],
                 searchResults: [], // Initialize searchResults to an empty array
 
