@@ -78,7 +78,7 @@
 - Dinas Pertanian dan Ketahanan Pangan (Jambi - Jambi)
 - Dinas Ketahanan Pangan, Tanaman Pangan dan Hortikultura (Lampung - Bandar Lampung)
 - Dinas Pertanian dan Ketahanan Pangan (Banten - Serang)
-- Badan Ketahanan Pangan, Kementerian Pertanian (DKI Jakarta - Jakarta Selatan)
+- Badan Ketahanan Pangan, Kementerian Pertanian (Daerah Khusus Jakarta - Jakarta Selatan)
 - Dinas Pertanian dan Ketahanan Pangan (Jawa Timur - Surabaya)
 - Dinas Pertanian dan Ketahanan Pangan (Bali - Denpasar)
 - Dinas Ketahanan Pangan dan Pertanian (Kalimantan Timur - Samarinda)

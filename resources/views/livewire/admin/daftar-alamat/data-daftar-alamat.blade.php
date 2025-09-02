@@ -369,61 +369,164 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Provinsi *</label>
-                        <input wire:model="provinsi" placeholder="Nama provinsi" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <div class="relative">
+                            <select 
+                                wire:model.live="provinsi" 
+                                wire:change="validateProvinsi"
+                                class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent {{ $provinsiValidationError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}">
+                                <option value="">Pilih Provinsi</option>
+                                <option value="Aceh">Aceh</option>
+                                <option value="Sumatera Utara">Sumatera Utara</option>
+                                <option value="Sumatera Barat">Sumatera Barat</option>
+                                <option value="Riau">Riau</option>
+                                <option value="Kepulauan Riau">Kepulauan Riau</option>
+                                <option value="Jambi">Jambi</option>
+                                <option value="Sumatera Selatan">Sumatera Selatan</option>
+                                <option value="Bengkulu">Bengkulu</option>
+                                <option value="Lampung">Lampung</option>
+                                <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
+                                <option value="Daerah Khusus Jakarta">Daerah Khusus Jakarta</option>
+                                <option value="Jawa Barat">Jawa Barat</option>
+                                <option value="Jawa Tengah">Jawa Tengah</option>
+                                <option value="Daerah Istimewa Yogyakarta">Daerah Istimewa Yogyakarta</option>
+                                <option value="Jawa Timur">Jawa Timur</option>
+                                <option value="Banten">Banten</option>
+                                <option value="Bali">Bali</option>
+                                <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+                                <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+                                <option value="Kalimantan Barat">Kalimantan Barat</option>
+                                <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+                                <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+                                <option value="Kalimantan Timur">Kalimantan Timur</option>
+                                <option value="Kalimantan Utara">Kalimantan Utara</option>
+                                <option value="Sulawesi Utara">Sulawesi Utara</option>
+                                <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+                                <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+                                <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+                                <option value="Gorontalo">Gorontalo</option>
+                                <option value="Sulawesi Barat">Sulawesi Barat</option>
+                                <option value="Maluku">Maluku</option>
+                                <option value="Maluku Utara">Maluku Utara</option>
+                                <option value="Papua Barat">Papua Barat</option>
+                                <option value="Papua Barat Daya">Papua Barat Daya</option>
+                                <option value="Papua Selatan">Papua Selatan</option>
+                                <option value="Papua Tengah">Papua Tengah</option>
+                                <option value="Papua">Papua</option>
+                                <option value="Papua Pegunungan">Papua Pegunungan</option>
+                            </select>
+                            @if($provinsiValidationError)
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            @endif
+                        </div>
                         @error('provinsi') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+                        @if($provinsiValidationError)
+                            <span class="text-red-500 dark:text-red-400 text-sm">{{ $provinsiValidationError }}</span>
+                        @endif
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kabupaten/Kota *</label>
-                        <input wire:model="kabupaten_kota" placeholder="Nama kabupaten/kota" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                            Kabupaten/Kota *
+                            <span wire:loading wire:target="provinsi" class="text-accent font-normal text-xs ml-1">(Memproses...)</span>
+                        </label>
+                        <div class="relative">
+                            <select 
+                                wire:model.live="kabupaten_kota" 
+                                wire:change="validateKabupatenKota"
+                                class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent {{ !$provinsi ? 'opacity-50 cursor-not-allowed' : '' }} {{ $kabupatenValidationError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
+                                wire:loading.class="opacity-50 cursor-not-allowed"
+                                wire:target="provinsi"
+                                {{ !$provinsi ? 'disabled' : '' }}
+                                wire:loading.attr="disabled"
+                                wire:target="provinsi">
+                                
+                                <option value="" wire:loading.remove wire:target="provinsi">{{ $provinsi ? 'Pilih Kabupaten/Kota' : 'Pilih provinsi terlebih dahulu' }}</option>
+                                <option value="" wire:loading wire:target="provinsi">Memuat data kabupaten/kota...</option>
+                                
+                                @if($provinsi)
+                                    <div wire:loading.remove wire:target="provinsi">
+                                        @php
+                                            $kabupatenOptions = $this->getKabupatenByProvinsi($provinsi);
+                                        @endphp
+                                        @foreach($kabupatenOptions as $kabupaten)
+                                            <option value="{{ $kabupaten }}">{{ $kabupaten }}</option>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </select>
+                            
+                            <!-- Loading Spinner when province is changing -->
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" wire:loading wire:target="provinsi">
+                                <svg class="animate-spin h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
+                            
+                            <!-- Error icon when not loading -->
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" wire:loading.remove wire:target="provinsi">
+                                @if($kabupatenValidationError)
+                                    <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                @endif
+                            </div>
+                        </div>
                         @error('kabupaten_kota') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
+                        @if($kabupatenValidationError)
+                            <span class="text-red-500 dark:text-red-400 text-sm">{{ $kabupatenValidationError }}</span>
+                        @endif
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Urut</label>
-                        <input wire:model="urut" type="number" placeholder="Urutan" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <input wire:model="urut" type="number" placeholder="Urutan" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                         @error('urut') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Dinas *</label>
-                        <input wire:model="nama_dinas" placeholder="Nama lengkap dinas" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <input wire:model="nama_dinas" placeholder="Nama lengkap dinas" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                         @error('nama_dinas') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Alamat *</label>
-                        <textarea wire:model="alamat" placeholder="Alamat lengkap" rows="3" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent"></textarea>
+                        <textarea wire:model="alamat" placeholder="Alamat lengkap" rows="3" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent"></textarea>
                         @error('alamat') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Telepon</label>
-                        <input wire:model="telp" placeholder="Nomor telepon" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <input wire:model="telp" placeholder="Nomor telepon" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                         @error('telp') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Faks</label>
-                        <input wire:model="faks" placeholder="Nomor faks" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <input wire:model="faks" placeholder="Nomor faks" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                         @error('faks') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email</label>
-                        <input wire:model="email" type="email" placeholder="Alamat email" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <input wire:model="email" type="email" placeholder="Alamat email" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                         @error('email') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Website</label>
-                        <input wire:model="website" type="url" placeholder="URL website" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <input wire:model="website" type="url" placeholder="URL website" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                         @error('website') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Status *</label>
-                        <select wire:model="status" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                        <select wire:model="status" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
                             @foreach($statusOptions as $value => $label)
                                 <option value="{{ $value }}">{{ $label }}</option>
                             @endforeach
@@ -433,7 +536,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kategori</label>
-                        <select wire:model="kategori" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                        <select wire:model="kategori" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
                             <option value="">Pilih kategori</option>
                             @foreach($kategoriOptions as $value => $label)
                                 <option value="{{ $value }}">{{ $label }}</option>
@@ -444,25 +547,25 @@
 
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Latitude</label>
-                        <input wire:model="latitude" type="number" step="any" placeholder="Koordinat latitude" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <input wire:model="latitude" type="number" step="any" placeholder="Koordinat latitude" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                         @error('latitude') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Longitude</label>
-                        <input wire:model="longitude" type="number" step="any" placeholder="Koordinat longitude" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <input wire:model="longitude" type="number" step="any" placeholder="Koordinat longitude" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                         @error('longitude') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Posisi</label>
-                        <input wire:model="posisi" placeholder="Deskripsi posisi geografis" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
+                        <input wire:model="posisi" placeholder="Deskripsi posisi geografis" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                         @error('posisi') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Keterangan</label>
-                        <textarea wire:model="keterangan" placeholder="Keterangan tambahan" rows="2" class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent"></textarea>
+                        <textarea wire:model="keterangan" placeholder="Keterangan tambahan" rows="2" class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent"></textarea>
                         @error('keterangan') <span class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span> @enderror
                     </div>
 
