@@ -27,12 +27,12 @@ class DaftarAlamatExport implements FromCollection, WithHeadings, WithMapping, W
         $query = DaftarAlamat::query();
 
         // Apply filters
-        if (!empty($this->filters['wilayah'])) {
-            $query->byWilayah($this->filters['wilayah']);
+        if (!empty($this->filters['provinsi'])) {
+            $query->byProvinsi($this->filters['provinsi']);
         }
 
-        if (!empty($this->filters['kategori'])) {
-            $query->byKategori($this->filters['kategori']);
+        if (!empty($this->filters['kabupaten_kota'])) {
+            $query->byKabupatenKota($this->filters['kabupaten_kota']);
         }
 
         if (!empty($this->filters['status'])) {
@@ -56,19 +56,15 @@ class DaftarAlamatExport implements FromCollection, WithHeadings, WithMapping, W
     public function headings(): array
     {
         return [
-            'No',
-            'Wilayah',
+            'ID',
+            'Provinsi',
+            'Kabupaten/Kota',
             'Nama Dinas',
             'Alamat',
             'Telepon',
-            'Faks',
             'Email',
             'Website',
-            'Posisi',
-            'Urut',
             'Status',
-            'Kategori',
-            'Keterangan',
             'Latitude',
             'Longitude',
             'Tanggal Dibuat',
@@ -83,19 +79,15 @@ class DaftarAlamatExport implements FromCollection, WithHeadings, WithMapping, W
     public function map($alamat): array
     {
         return [
-            $alamat->no,
-            $alamat->wilayah,
+            $alamat->id,
+            $alamat->provinsi,
+            $alamat->kabupaten_kota,
             $alamat->nama_dinas,
             $alamat->alamat,
             $alamat->telp,
-            $alamat->faks,
             $alamat->email,
             $alamat->website,
-            $alamat->posisi,
-            $alamat->urut,
             $alamat->status,
-            $alamat->kategori,
-            $alamat->keterangan,
             $alamat->latitude,
             $alamat->longitude,
             $alamat->created_at ? $alamat->created_at->format('Y-m-d H:i:s') : '',

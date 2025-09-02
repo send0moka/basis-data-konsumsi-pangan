@@ -1,7 +1,7 @@
 // Alpine.js is provided by Livewire for admin pages
 // For landing pages, we'll dynamically load it if needed
 
-// Simple approach: Load Alpine.js for non-admin pages
+// Force dark mode for admin pages
 document.addEventListener('DOMContentLoaded', function() {
     const currentPath = window.location.pathname;
     const isAdminPage = currentPath.startsWith('/admin') || 
@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
                        document.querySelector('[wire\\:id]') ||
                        document.querySelector('[livewire\\:id]') ||
                        window.Livewire;
+    
+    // Force dark mode for admin pages
+    if (isAdminPage) {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+    }
     
     if (!isAdminPage && !window.Alpine) {
         // Load Alpine.js for landing pages

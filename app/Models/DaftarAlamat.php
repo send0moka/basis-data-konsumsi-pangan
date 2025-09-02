@@ -12,19 +12,14 @@ class DaftarAlamat extends Model
     protected $table = 'daftar_alamat';
 
     protected $fillable = [
-        'no',
-        'wilayah',
+        'provinsi',
+        'kabupaten_kota',
         'nama_dinas',
         'alamat',
         'telp',
-        'faks',
         'email',
         'website',
-        'posisi',
-        'urut',
         'status',
-        'kategori',
-        'keterangan',
         'latitude',
         'longitude',
         'gambar',
@@ -42,14 +37,14 @@ class DaftarAlamat extends Model
         return $query->where('status', 'Aktif');
     }
 
-    public function scopeByWilayah($query, $wilayah)
+    public function scopeByProvinsi($query, $provinsi)
     {
-        return $query->where('wilayah', 'like', '%' . $wilayah . '%');
+        return $query->where('provinsi', 'like', '%' . $provinsi . '%');
     }
 
-    public function scopeByKategori($query, $kategori)
+    public function scopeByKabupatenKota($query, $kabupatenKota)
     {
-        return $query->where('kategori', $kategori);
+        return $query->where('kabupaten_kota', 'like', '%' . $kabupatenKota . '%');
     }
 
     public function scopeWithCoordinates($query)

@@ -19,6 +19,20 @@
         /* Fallback if component uses data-state instead of data-current */
         [data-state='active'] .nav-link-text { @apply font-medium; }
     
+    /* Force dark mode background */
+    .dark body { background-color: #171717 !important; }
+    .dark html { background-color: #171717 !important; }
+    
+    /* Force dark background for admin panel selection */
+    body.bg-gradient-to-br.from-neutral-900 {
+        background: linear-gradient(to bottom right, #171717, #262626, #0a0a0a) !important;
+    }
+    
+    /* Force dark mode for admin pages */
+    .dark .bg-gradient-to-br {
+        background: linear-gradient(to bottom right, #171717, #262626, #0a0a0a) !important;
+    }
+    
     /* Print styles */
     @media print {
         .no-print {

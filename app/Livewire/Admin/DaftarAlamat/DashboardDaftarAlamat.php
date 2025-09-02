@@ -27,9 +27,10 @@ class DashboardDaftarAlamat extends Component
         $this->totalAlamat = DaftarAlamat::count();
         $this->totalAktif = DaftarAlamat::where('status', 'Aktif')->count();
         $this->totalWithCoordinates = DaftarAlamat::withCoordinates()->count();
-        $this->totalProvinsi = DaftarAlamat::distinct('wilayah')->count();
+        $this->totalProvinsi = DaftarAlamat::distinct('provinsi')->count();
         
-        $this->recentAlamat = DaftarAlamat::latest()
+        $this->recentAlamat = DaftarAlamat::whereNotNull('created_at')
+            ->latest()
             ->take(5)
             ->get();
 
@@ -39,21 +40,21 @@ class DashboardDaftarAlamat extends Component
             ->pluck('total', 'status')
             ->toArray();
 
-        $this->kategoriStats = DaftarAlamat::select('kategori', DB::raw('count(*) as total'))
-            ->whereNotNull('kategori')
-            ->groupBy('kategori')
+        $this->kategoriStats = DaftarAlamat::select('provinsi', DB::raw('count(*) as total'))
+            ->whereNotNull('provinsi')
+            ->groupBy('provinsi')
             ->orderByDesc('total')
             ->take(5)
             ->get()
-            ->pluck('total', 'kategori')
+            ->pluck('total', 'provinsi')
             ->toArray();
 
-        $this->wilayahStats = DaftarAlamat::select('wilayah', DB::raw('count(*) as total'))
-            ->groupBy('wilayah')
+        $this->wilayahStats = DaftarAlamat::select('kabupaten_kota', DB::raw('count(*) as total'))
+            ->groupBy('kabupaten_kota')
             ->orderByDesc('total')
             ->take(10)
             ->get()
-            ->pluck('total', 'wilayah')
+            ->pluck('total', 'kabupaten_kota')
             ->toArray();
     }
 
