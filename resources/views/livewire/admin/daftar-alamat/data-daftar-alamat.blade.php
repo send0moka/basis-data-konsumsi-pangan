@@ -1,4 +1,62 @@
 <div>
+    <!-- Leaflet.js for interactive maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    <style>
+        #location-map {
+            height: 320px;
+            width: 100%;
+            border-radius: 8px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Custom popup styling */
+        .custom-popup .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .custom-popup .leaflet-popup-content {
+            margin: 0;
+            border-radius: 12px;
+        }
+        .custom-popup .leaflet-popup-tip {
+            background-color: white;
+        }
+
+        /* Ensure map container is visible */
+        .leaflet-container {
+            background: #f8f9fa !important;
+        }
+
+        /* Ensure popup appears above map */
+        .leaflet-popup-pane {
+            z-index: 20;
+        }
+
+        /* Ensure all Leaflet controls are properly layered */
+        .leaflet-control-container {
+            z-index: 15;
+        }
+
+        .leaflet-tile-pane {
+            z-index: 5;
+        }
+
+        .leaflet-overlay-pane {
+            z-index: 10;
+        }
+
+        .leaflet-shadow-pane {
+            z-index: 12;
+        }
+
+        .leaflet-marker-pane {
+            z-index: 13;
+        }
+    </style>
+
     <!-- Flash Messages -->
     @if (session()->has('message'))
         <div class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50">
@@ -683,7 +741,8 @@
 
                                         <!-- Get Current Location Button -->
                                         <div class="mb-3">
-                                            <button type="button" id="get-current-location"
+                                            <button type="button" id="get-current-location" 
+                                                @click="$nextTick(() => { const mapEl = document.getElementById('location-map'); if (mapEl && mapEl._x_dataStack && mapEl._x_dataStack[0]) { mapEl._x_dataStack[0].getCurrentLocation(); } })"
                                                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -693,13 +752,239 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 </svg>
-                                                Gunakan Lokasi Saat Ini
+                                                Ambil Lokasi Saya
                                             </button>
                                         </div>
 
-                                        <!-- Map Container -->
+                                        <!-- Map Container with Leaflet.js -->
                                         <div id="location-map"
-                                            class="w-full h-80 border border-neutral-300 dark:border-neutral-600 rounded-lg mb-3">
+                                            class="w-full h-80 border border-neutral-300 dark:border-neutral-600 rounded-lg mb-3 relative"
+                                            style="min-height: 320px; height: 320px;"
+                                            wire:ignore
+                                            x-data="{
+                                                map: null,
+                                                marker: null,
+                                                mapReady: false,
+                                                initMap() {
+                                                    console.log('initMap called');
+                                                    // Wait longer for container to be fully rendered and stable
+                                                    setTimeout(() => {
+                                                        this.setupMap();
+                                                    }, 300);
+                                                },
+                                                setupMap() {
+                                                    try {
+                                                        console.log('Initializing Leaflet map...');
+                                                        
+                                                        if (typeof L === 'undefined') {
+                                                            console.error('Leaflet.js is not loaded');
+                                                            this.mapReady = true;
+                                                            return;
+                                                        }
+                                                        
+                                                        // Force container to have proper dimensions
+                                                        const container = document.getElementById('location-map');
+                                                        if (container) {
+                                                            container.style.width = '100%';
+                                                            container.style.height = '320px';
+                                                            container.style.minHeight = '320px';
+                                                        }
+                                                        
+                                                        this.map = L.map('location-map', {
+                                                            preferCanvas: true,
+                                                            fadeAnimation: false,
+                                                            zoomAnimation: false,
+                                                            closePopupOnClick: false,
+                                                            boxZoom: false,
+                                                            doubleClickZoom: false
+                                                        }).setView([-2.5, 118], 5);
+                                                        
+                                                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                                            attribution: '© OpenStreetMap contributors',
+                                                            maxZoom: 19
+                                                        }).addTo(this.map);
+
+                                                        // Force map to resize
+                                                        this.map.invalidateSize(true);
+                                                        
+                                                        this.mapReady = true;
+                                                        console.log('Map initialized successfully');
+
+                                                        this.setMarker(-2.5489, 118.0149);
+
+                                                        // Add click handler with error protection
+                                                        this.map.on('click', (e) => {
+                                                            try {
+                                                                console.log('Map clicked at:', e.latlng.lat, e.latlng.lng);
+                                                                this.setMarker(e.latlng.lat, e.latlng.lng);
+                                                            } catch (error) {
+                                                                console.error('Error handling map click:', error);
+                                                            }
+                                                        });
+
+                                                        // Prevent DOM updates during map interaction
+                                                        this.map.on('mousedown', () => {
+                                                            document.body.style.pointerEvents = 'none';
+                                                            setTimeout(() => {
+                                                                document.body.style.pointerEvents = 'auto';
+                                                            }, 100);
+                                                        });
+
+                                                        // Multiple resize attempts
+                                                        setTimeout(() => {
+                                                            if (this.map) {
+                                                                this.map.invalidateSize(true);
+                                                            }
+                                                        }, 100);
+                                                        
+                                                        setTimeout(() => {
+                                                            if (this.map) {
+                                                                this.map.invalidateSize(true);
+                                                            }
+                                                        }, 300);
+                                                        
+                                                        setTimeout(() => {
+                                                            if (this.map) {
+                                                                this.map.invalidateSize(true);
+                                                            }
+                                                        }, 1000);
+
+                                                    } catch (error) {
+                                                        console.error('Error initializing map:', error);
+                                                        this.mapReady = true;
+                                                    }
+                                                },
+                                                setMarker(lat, lng) {
+                                                    try {
+                                                        if (!this.map) {
+                                                            console.error('Map not initialized');
+                                                            return;
+                                                        }
+
+                                                        if (this.marker) {
+                                                            this.map.removeLayer(this.marker);
+                                                        }
+
+                                                        this.marker = L.marker([lat, lng], {
+                                                            draggable: true
+                                                        }).addTo(this.map);
+
+                                                        this.marker.on('dragend', (e) => {
+                                                            try {
+                                                                const pos = e.target.getLatLng();
+                                                                this.updateCoordinates(pos.lat, pos.lng);
+                                                            } catch (error) {
+                                                                console.error('Error handling marker drag:', error);
+                                                            }
+                                                        });
+
+                                                        this.updateCoordinates(lat, lng);
+                                                    } catch (error) {
+                                                        console.error('Error setting marker:', error);
+                                                    }
+                                                },
+                                                updateCoordinates(lat, lng) {
+                                                    try {
+                                                        const latEl = document.getElementById('current-latitude');
+                                                        const lngEl = document.getElementById('current-longitude');
+                                                        const latInput = document.getElementById('latitude-input');
+                                                        const lngInput = document.getElementById('longitude-input');
+
+                                                        if (latEl) latEl.textContent = lat.toFixed(6);
+                                                        if (lngEl) lngEl.textContent = lng.toFixed(6);
+                                                        if (latInput) latInput.value = lat.toFixed(6);
+                                                        if (lngInput) lngInput.value = lng.toFixed(6);
+
+                                                        // Delayed Livewire update to prevent interference
+                                                        setTimeout(() => {
+                                                            if (window.Livewire) {
+                                                                try {
+                                                                    const wireId = document.querySelector('[wire\\\\:id]')?.getAttribute('wire:id');
+                                                                    if (wireId && window.Livewire.find) {
+                                                                        const component = window.Livewire.find(wireId);
+                                                                        if (component) {
+                                                                            component.set('latitude', lat.toFixed(6));
+                                                                            component.set('longitude', lng.toFixed(6));
+                                                                        }
+                                                                    }
+                                                                } catch (error) {
+                                                                    console.log('Livewire update failed:', error);
+                                                                }
+                                                            }
+                                                        }, 100);
+                                                    } catch (error) {
+                                                        console.error('Error updating coordinates:', error);
+                                                    }
+                                                },
+                                                
+                                                getCurrentLocation() {
+                                                    if (!navigator.geolocation) {
+                                                        alert('Geolocation tidak didukung oleh browser ini.');
+                                                        return;
+                                                    }
+
+                                                    console.log('Getting current location...');
+                                                    
+                                                    navigator.geolocation.getCurrentPosition(
+                                                        (position) => {
+                                                            const lat = position.coords.latitude;
+                                                            const lng = position.coords.longitude;
+                                                            
+                                                            console.log('Current location found:', lat, lng);
+                                                            this.setMarker(lat, lng);
+                                                            if (this.map) {
+                                                                this.map.setView([lat, lng], 15);
+                                                            }
+                                                        },
+                                                        (error) => {
+                                                            console.error('Geolocation error:', error);
+                                                            let message = 'Gagal mendapatkan lokasi. ';
+                                                            switch (error.code) {
+                                                                case error.PERMISSION_DENIED:
+                                                                    message += 'Permisi akses lokasi ditolak.';
+                                                                    break;
+                                                                case error.POSITION_UNAVAILABLE:
+                                                                    message += 'Informasi lokasi tidak tersedia.';
+                                                                    break;
+                                                                case error.TIMEOUT:
+                                                                    message += 'Permintaan lokasi timeout.';
+                                                                    break;
+                                                                default:
+                                                                    message += 'Terjadi kesalahan yang tidak diketahui.';
+                                                                    break;
+                                                            }
+                                                            alert(message);
+                                                        }, 
+                                                        {
+                                                            enableHighAccuracy: true,
+                                                            timeout: 10000,
+                                                            maximumAge: 60000
+                                                        }
+                                                    );
+                                                }
+                                            }" x-init="initMap()">
+                                            <!-- Loading indicator -->
+                                            <div x-show="!mapReady" class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg z-20">
+                                                <div class="text-center">
+                                                    <svg class="animate-spin h-8 w-8 text-blue-600 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    <p class="text-sm text-gray-600">Memuat peta...</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Get Current Location Button -->
+                                        <div class="mb-3">
+                                            <button id="get-current-location" type="button"
+                                                class="inline-flex items-center px-3 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                                Ambil Lokasi Saya
+                                            </button>
                                         </div>
 
                                         <!-- Coordinates Display -->
@@ -821,62 +1106,6 @@
         </div>
 
         <script>
-            // Load Leaflet CSS and JS dynamically
-            function loadLeaflet() {
-                return new Promise((resolve, reject) => {
-                    // Check if Leaflet is already loaded
-                    if (window.L) {
-                        resolve();
-                        return;
-                    }
-
-                    // Load CSS
-                    const link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-                    link.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-                    link.crossOrigin = '';
-                    document.head.appendChild(link);
-
-                    // Load JS
-                    const script = document.createElement('script');
-                    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-                    script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
-                    script.crossOrigin = '';
-                    script.onload = () => {
-                        // Add custom styles
-                        const style = document.createElement('style');
-                        style.textContent = `
-                        .crosshair {
-                            z-index: 1000;
-                        }
-                        
-                        .dark .leaflet-popup-content-wrapper,
-                        .dark .leaflet-popup-tip {
-                            background: #374151;
-                            color: #f3f4f6;
-                        }
-                        
-                        .dark .leaflet-container {
-                            background: #1f2937;
-                        }
-                        
-                        .animate-spin {
-                            animation: spin 1s linear infinite;
-                        }
-                        
-                        @keyframes spin {
-                            from { transform: rotate(0deg); }
-                            to { transform: rotate(360deg); }
-                        }
-                    `;
-                        document.head.appendChild(style);
-                        resolve();
-                    };
-                    script.onerror = reject;
-                    document.head.appendChild(script);
-                });
-            }
 
             function previewImage(input) {
                 const preview = document.getElementById('image-preview');
@@ -895,163 +1124,6 @@
                     reader.readAsDataURL(input.files[0]);
                 }
             }
-
-            // Leaflet Map Implementation
-            let map;
-            let marker;
-            const defaultLat = -2.5489; // Indonesia center
-            const defaultLng = 118.0149;
-
-            // Initialize map when modal is opened
-            function initializeMap() {
-                // Load Leaflet first
-                loadLeaflet().then(() => {
-                    // Wait for the map container to be visible
-                    setTimeout(() => {
-                        if (document.getElementById('location-map')) {
-                            // Remove existing map if any
-                            if (map) {
-                                map.remove();
-                            }
-
-                            // Initialize map
-                            map = L.map('location-map').setView([defaultLat, defaultLng], 5);
-
-                            // Add OpenStreetMap tiles
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: '© OpenStreetMap contributors'
-                            }).addTo(map);
-
-                            // Add center crosshair
-                            const crosshairIcon = L.divIcon({
-                                className: 'crosshair',
-                                iconSize: [20, 20],
-                                iconAnchor: [10, 10],
-                                html: '<div style="width: 20px; height: 20px; position: relative;"><div style="position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #e74c3c; transform: translateY(-50%);"></div><div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #e74c3c; transform: translateX(-50%);"></div><div style="position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; background: #e74c3c; border: 2px solid white; border-radius: 50%; transform: translate(-50%, -50%);"></div></div>'
-                            });
-
-                            // Add fixed center marker
-                            const centerMarker = L.marker([defaultLat, defaultLng], {
-                                icon: crosshairIcon,
-                                interactive: false
-                            }).addTo(map);
-
-                            // Update coordinates when map moves
-                            map.on('move', function() {
-                                const center = map.getCenter();
-                                updateCoordinates(center.lat, center.lng);
-                                centerMarker.setLatLng(center);
-                            });
-
-                            // Initialize coordinates display
-                            updateCoordinates(defaultLat, defaultLng);
-
-                            // Check if there are existing coordinates from edit mode
-                            const existingLat = document.getElementById('latitude-input').value;
-                            const existingLng = document.getElementById('longitude-input').value;
-
-                            if (existingLat && existingLng && existingLat !== '' && existingLng !== '') {
-                                const lat = parseFloat(existingLat);
-                                const lng = parseFloat(existingLng);
-                                map.setView([lat, lng], 15);
-                                updateCoordinates(lat, lng);
-                            }
-                        }
-                    }, 100);
-                }).catch(error => {
-                    console.error('Failed to load Leaflet:', error);
-                });
-            }
-
-            // Update coordinate displays and hidden inputs
-            function updateCoordinates(lat, lng) {
-                document.getElementById('current-latitude').textContent = lat.toFixed(6);
-                document.getElementById('current-longitude').textContent = lng.toFixed(6);
-                document.getElementById('latitude-input').value = lat.toFixed(6);
-                document.getElementById('longitude-input').value = lng.toFixed(6);
-
-                // Trigger Livewire update
-                @this.set('latitude', lat.toFixed(6));
-                @this.set('longitude', lng.toFixed(6));
-            }
-
-            // Get current location
-            document.addEventListener('click', function(e) {
-                if (e.target.id === 'get-current-location' || e.target.closest('#get-current-location')) {
-                    e.preventDefault();
-
-                    if (!navigator.geolocation) {
-                        alert('Geolocation tidak didukung oleh browser ini.');
-                        return;
-                    }
-
-                    const button = document.getElementById('get-current-location');
-                    const originalText = button.innerHTML;
-
-                    // Show loading state
-                    button.innerHTML =
-                        '<svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Mengambil lokasi...';
-                    button.disabled = true;
-
-                    navigator.geolocation.getCurrentPosition(
-                        function(position) {
-                            const lat = position.coords.latitude;
-                            const lng = position.coords.longitude;
-
-                            if (map) {
-                                map.setView([lat, lng], 15);
-                                updateCoordinates(lat, lng);
-                            }
-
-                            // Restore button
-                            button.innerHTML = originalText;
-                            button.disabled = false;
-                        },
-                        function(error) {
-                            let message = 'Gagal mendapatkan lokasi. ';
-                            switch (error.code) {
-                                case error.PERMISSION_DENIED:
-                                    message += 'Permisi akses lokasi ditolak.';
-                                    break;
-                                case error.POSITION_UNAVAILABLE:
-                                    message += 'Informasi lokasi tidak tersedia.';
-                                    break;
-                                case error.TIMEOUT:
-                                    message += 'Permintaan lokasi timeout.';
-                                    break;
-                                default:
-                                    message += 'Terjadi kesalahan yang tidak diketahui.';
-                                    break;
-                            }
-                            alert(message);
-
-                            // Restore button
-                            button.innerHTML = originalText;
-                            button.disabled = false;
-                        }, {
-                            enableHighAccuracy: true,
-                            timeout: 10000,
-                            maximumAge: 60000
-                        }
-                    );
-                }
-            });
-
-            // Initialize map when modal opens
-            document.addEventListener('livewire:init', function() {
-                Livewire.hook('morph.updated', () => {
-                    if (document.getElementById('location-map')) {
-                        initializeMap();
-                    }
-                });
-
-                // Listen for map initialization event
-                Livewire.on('initializeMap', () => {
-                    setTimeout(() => {
-                        initializeMap();
-                    }, 200);
-                });
-            });
 
             function submitForm() {
                 const form = document.getElementById('alamat-form');
@@ -1090,7 +1162,6 @@
                         // Convert to base64 to bypass PHP temp file system
                         const reader = new FileReader();
                         reader.onload = function(e) {
-
                             formData.append('gambar_base64', e.target.result);
                             formData.append('gambar_name', file.name);
                             formData.append('gambar_type', file.type);
@@ -1124,7 +1195,6 @@
                     formData.append('id', selectedId);
                 }
 
-
                 fetch('{{ route('admin.daftar-alamat.save') }}', {
                         method: 'POST',
                         body: formData,
@@ -1140,7 +1210,6 @@
                         if (!contentType || !contentType.includes('application/json')) {
                             return response.text().then(text => {
                                 console.error('Server returned non-JSON response:', text);
-                                // Try to extract JSON from mixed content
                                 const jsonMatch = text.match(/\{.*\}$/);
                                 if (jsonMatch) {
                                     try {
@@ -1162,8 +1231,7 @@
 
                             // Show success message
                             const message = document.createElement('div');
-                            message.className =
-                                'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+                            message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
                             message.textContent = data.message;
                             document.body.appendChild(message);
                             setTimeout(() => message.remove(), 3000);
