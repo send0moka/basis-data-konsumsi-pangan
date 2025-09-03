@@ -141,8 +141,8 @@ Route::middleware(['auth'])->prefix('admin/daftar-alamat')->name('admin.daftar-a
     Route::get('/', function () {
         return view('admin.daftar-alamat.dashboard');
     })->name('dashboard');
-    
-    Route::get('data', \App\Livewire\Admin\DaftarAlamat\DataDaftarAlamat::class)->name('data');
+
+    Route::view('data', 'admin.daftar-alamat.data')->name('data');
     Route::view('maps', 'admin.daftar-alamat.maps')->name('maps');
     Route::view('reports', 'admin.daftar-alamat.reports')->name('reports');
     Route::view('settings', 'admin.daftar-alamat.settings')->name('settings');
