@@ -23,9 +23,6 @@ class DataDaftarAlamat extends Component
     public $statusFilter = '';
     
     #[Url]
-    public $kategoriFilter = '';
-    
-    #[Url]
     public $wilayahFilter = '';
     
     #[Url]
@@ -40,20 +37,14 @@ class DataDaftarAlamat extends Component
     public $selectedId = null;
 
     // Form properties
-    public $no = '';
     public $provinsi = '';
     public $kabupaten_kota = '';
     public $nama_dinas = '';
     public $alamat = '';
     public $telp = '';
-    public $faks = '';
     public $email = '';
     public $website = '';
-    public $posisi = '';
-    public $urut = '';
     public $status = 'Aktif';
-    public $kategori = '';
-    public $keterangan = '';
     public $latitude = '';
     public $longitude = '';
     public $gambar = null;
@@ -69,16 +60,11 @@ class DataDaftarAlamat extends Component
         'nama_dinas' => 'required|string|max:255',
         'alamat' => 'required|string',
         'telp' => 'nullable|string|max:255',
-        'faks' => 'nullable|string|max:255',
         'email' => 'nullable|email|max:255',
         'website' => 'nullable|url|max:255',
-        'posisi' => 'nullable|string|max:255',
-        'urut' => 'nullable|integer',
         'status' => 'required|in:Aktif,Tidak Aktif,Draft,Arsip,Pending',
-        'kategori' => 'nullable|string|max:255',
-        'keterangan' => 'nullable|string',
-        'latitude' => 'nullable|numeric|between:-90,90',
-        'longitude' => 'nullable|numeric|between:-180,180',
+        'latitude' => 'required|numeric|between:-90,90',
+        'longitude' => 'required|numeric|between:-180,180',
         'gambar' => 'nullable|file|image|max:2048',
     ];
 
@@ -88,11 +74,6 @@ class DataDaftarAlamat extends Component
     }
 
     public function updatingStatusFilter()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingKategoriFilter()
     {
         $this->resetPage();
     }
@@ -404,6 +385,13 @@ class DataDaftarAlamat extends Component
         $this->resetForm();
         $this->modalMode = 'create';
         $this->showModal = true;
+        $this->dispatch('initializeMap');
+    }
+
+    public function test()
+    {
+        // Simple test method
+        session()->flash('message', 'Test berhasil!');
     }
 
     public function edit($id)
@@ -414,6 +402,7 @@ class DataDaftarAlamat extends Component
         $this->existingGambar = $alamat->gambar;
         $this->modalMode = 'edit';
         $this->showModal = true;
+        $this->dispatch('initializeMap');
     }
 
     public function save()
@@ -437,14 +426,9 @@ class DataDaftarAlamat extends Component
                 'nama_dinas' => $this->nama_dinas,
                 'alamat' => $this->alamat,
                 'telp' => $this->telp,
-                'faks' => $this->faks,
                 'email' => $this->email,
                 'website' => $this->website,
-                'posisi' => $this->posisi,
-                'urut' => $this->urut,
                 'status' => $this->status,
-                'kategori' => $this->kategori,
-                'keterangan' => $this->keterangan,
                 'latitude' => $this->latitude,
                 'longitude' => $this->longitude,
             ];
@@ -536,17 +520,19 @@ class DataDaftarAlamat extends Component
     public function resetForm()
     {
         $this->reset([
-            'provinsi', 'kabupaten_kota', 'nama_dinas', 'alamat', 'telp', 'faks', 
-            'email', 'website', 'posisi', 'urut', 'status', 'kategori', 
-            'keterangan', 'latitude', 'longitude', 'gambar', 'existingGambar',
+            'provinsi', 'kabupaten_kota', 'nama_dinas', 'alamat', 'telp', 
+            'email', 'website', 'status', 
+            'latitude', 'longitude', 'gambar', 'existingGambar',
             'provinsiValidationError', 'kabupatenValidationError'
         ]);
         $this->status = 'Aktif';
+        $this->latitude = -2.5489;  // Indonesia center
+        $this->longitude = 118.0149;
     }
 
     public function resetFilters()
     {
-        $this->reset(['search', 'statusFilter', 'kategoriFilter', 'wilayahFilter']);
+        $this->reset(['search', 'statusFilter', 'wilayahFilter']);
         $this->resetPage();
     }
 
@@ -568,10 +554,6 @@ class DataDaftarAlamat extends Component
             $query->where('status', $this->statusFilter);
         }
 
-        if ($this->kategoriFilter) {
-            $query->where('kategori', $this->kategoriFilter);
-        }
-
         if ($this->wilayahFilter) {
             $query->where(function ($q) {
                 $q->where('provinsi', 'like', '%' . $this->wilayahFilter . '%')
@@ -583,7 +565,6 @@ class DataDaftarAlamat extends Component
                         ->paginate($this->perPage);
 
         $statusOptions = DaftarAlamat::getStatusOptions();
-        $kategoriOptions = DaftarAlamat::getKategoriOptions();
         
         $wilayahOptions = collect()
             ->merge(DaftarAlamat::distinct('provinsi')->orderBy('provinsi')->pluck('provinsi'))
@@ -595,7 +576,7 @@ class DataDaftarAlamat extends Component
             ->toArray();
 
         return view('livewire.admin.daftar-alamat.data-daftar-alamat', compact(
-            'alamats', 'statusOptions', 'kategoriOptions', 'wilayahOptions'
+            'alamats', 'statusOptions', 'wilayahOptions'
         ));
     }
 }
