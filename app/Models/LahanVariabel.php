@@ -5,28 +5,34 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LahanVariabel extends Model
 {
     use HasFactory;
     
     protected $table = 'lahan_variabel';
+    public $timestamps = false;
     
     protected $fillable = [
-        'nama',
+        'id_topik',
+        'deskripsi',
         'satuan',
+        'sorter',
     ];
 
-    protected function casts(): array
+    public function topik(): BelongsTo
     {
-        return [
-            'created_at' => 'datetime:Y-m-d H:i:s',
-            'updated_at' => 'datetime:Y-m-d H:i:s',
-        ];
+        return $this->belongsTo(LahanTopik::class, 'id_topik');
     }
 
-    public function lahanData(): HasMany
+    public function klasifikasis(): HasMany
     {
-        return $this->hasMany(LahanData::class, 'id_lahan_variabel');
+        return $this->hasMany(LahanKlasifikasi::class, 'id_variabel');
+    }
+
+    public function data(): HasMany
+    {
+        return $this->hasMany(LahanData::class, 'id_variabel');
     }
 }

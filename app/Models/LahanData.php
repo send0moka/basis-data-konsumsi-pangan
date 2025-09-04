@@ -13,55 +13,49 @@ class LahanData extends Model
     protected $table = 'lahan_data';
     
     protected $fillable = [
-        'nilai',
-        'wilayah',
         'tahun',
+        'id_bulan',
+        'id_wilayah',
+        'id_variabel',
+        'id_klasifikasi',
+        'nilai',
         'status',
-        'id_lahan_topik',
-        'id_lahan_variabel',
-        'id_lahan_klasifikasi',
     ];
 
     protected function casts(): array
     {
         return [
-            'nilai' => 'decimal:2',
+            'nilai' => 'decimal:4',
             'tahun' => 'integer',
             'created_at' => 'datetime:Y-m-d H:i:s',
             'updated_at' => 'datetime:Y-m-d H:i:s',
         ];
     }
 
-    public function lahanTopik(): BelongsTo
+    public function bulan(): BelongsTo
     {
-        return $this->belongsTo(LahanTopik::class, 'id_lahan_topik');
+        return $this->belongsTo(Bulan::class, 'id_bulan');
     }
 
-    // Alias for lahanTopik to match the relationship name used in the component
-    public function topik()
+    public function wilayah(): BelongsTo
     {
-        return $this->belongsTo(LahanTopik::class, 'id_lahan_topik');
+        return $this->belongsTo(Wilayah::class, 'id_wilayah');
     }
 
-    public function lahanVariabel(): BelongsTo
+    public function variabel(): BelongsTo
     {
-        return $this->belongsTo(LahanVariabel::class, 'id_lahan_variabel');
+        return $this->belongsTo(LahanVariabel::class, 'id_variabel');
     }
 
-    // Alias for lahanVariabel to match the relationship name used in the component
-    public function variabel()
+    public function klasifikasi(): BelongsTo
     {
-        return $this->belongsTo(LahanVariabel::class, 'id_lahan_variabel');
+        return $this->belongsTo(LahanKlasifikasi::class, 'id_klasifikasi');
     }
 
-    public function lahanKlasifikasi(): BelongsTo
+    // Get the topik through variabel relationship
+    public function topik(): BelongsTo
     {
-        return $this->belongsTo(LahanKlasifikasi::class, 'id_lahan_klasifikasi');
-    }
-
-    // Alias for lahanKlasifikasi to match the relationship name used in the component
-    public function klasifikasi()
-    {
-        return $this->belongsTo(LahanKlasifikasi::class, 'id_lahan_klasifikasi');
+        return $this->belongsTo(LahanTopik::class, 'id_topik')
+                    ->through('variabel');
     }
 }

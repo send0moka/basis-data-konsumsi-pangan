@@ -11,21 +11,19 @@ class LahanTopik extends Model
     use HasFactory;
     
     protected $table = 'lahan_topik';
+    public $timestamps = false;
     
     protected $fillable = [
-        'nama',
+        'deskripsi',
     ];
 
-    protected function casts(): array
+    public function variabels(): HasMany
     {
-        return [
-            'created_at' => 'datetime:Y-m-d H:i:s',
-            'updated_at' => 'datetime:Y-m-d H:i:s',
-        ];
+        return $this->hasMany(LahanVariabel::class, 'id_topik');
     }
 
-    public function lahanData(): HasMany
+    public function data(): HasMany
     {
-        return $this->hasMany(LahanData::class, 'id_lahan_topik');
+        return $this->hasMany(LahanData::class, 'id_topik');
     }
 }
