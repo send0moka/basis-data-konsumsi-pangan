@@ -147,7 +147,7 @@ class DaftarAlamatController extends Controller
             }
 
             if ($request->mode === 'create') {
-                DaftarAlamat::create($data);
+                $alamat = DaftarAlamat::create($data);
                 $message = 'Data alamat berhasil ditambahkan.';
             } else {
                 $alamat = DaftarAlamat::findOrFail($request->id);

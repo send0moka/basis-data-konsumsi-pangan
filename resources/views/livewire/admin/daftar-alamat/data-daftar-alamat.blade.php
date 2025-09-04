@@ -894,19 +894,15 @@
                                                         if (latInput) latInput.value = lat.toFixed(6);
                                                         if (lngInput) lngInput.value = lng.toFixed(6);
 
-                                                        // Update Livewire data directly
-                                                        if (window.Livewire) {
+                                                        // Update Livewire data using the new method
+                                                        if (window.livewire) {
                                                             try {
-                                                                // Find the component by looking for any element with wire:id
                                                                 const wireElement = document.querySelector('[wire\\:id]');
                                                                 if (wireElement) {
                                                                     const wireId = wireElement.getAttribute('wire:id');
-                                                                    if (wireId && window.Livewire.find) {
-                                                                        const component = window.Livewire.find(wireId);
-                                                                        if (component) {
-                                                                            component.set('latitude', lat.toFixed(6));
-                                                                            component.set('longitude', lng.toFixed(6));
-                                                                        }
+                                                                    const component = window.livewire.find(wireId);
+                                                                    if (component) {
+                                                                        component.call('updateCoordinates', lat.toFixed(6), lng.toFixed(6));
                                                                     }
                                                                 }
                                                             } catch (error) {
@@ -1013,9 +1009,8 @@
 
                                         <!-- File Input -->
                                         <div class="mt-1">
-                                            <input id="gambar-upload" type="file" accept="image/*"
-                                                class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300"
-                                                onchange="previewImage(this)" />
+                                            <input wire:model="gambar" id="gambar-upload" type="file" accept="image/*"
+                                                class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300" />
                                             @error('gambar')
                                                 <span
                                                     class="text-red-500 dark:text-red-400 text-sm">{{ $message }}</span>
@@ -1136,29 +1131,26 @@
                                 
                                 console.log('Current location found:', lat, lng);
                                 
-                                // Update the form fields
-                                const latInput = document.getElementById('latitude-input');
-                                const lngInput = document.getElementById('longitude-input');
+                                // Update display elements and hidden inputs
                                 const latDisplay = document.getElementById('current-latitude');
                                 const lngDisplay = document.getElementById('current-longitude');
+                                const latInput = document.getElementById('latitude-input');
+                                const lngInput = document.getElementById('longitude-input');
                                 
-                                if (latInput) latInput.value = lat.toFixed(6);
-                                if (lngInput) lngInput.value = lng.toFixed(6);
                                 if (latDisplay) latDisplay.textContent = lat.toFixed(6);
                                 if (lngDisplay) lngDisplay.textContent = lng.toFixed(6);
+                                if (latInput) latInput.value = lat.toFixed(6);
+                                if (lngInput) lngInput.value = lng.toFixed(6);
                                 
-                                // Update Livewire
-                                if (window.Livewire) {
+                                // Update Livewire using the updateCoordinates method
+                                if (window.livewire) {
                                     try {
                                         const wireElement = document.querySelector('[wire\\:id]');
                                         if (wireElement) {
                                             const wireId = wireElement.getAttribute('wire:id');
-                                            if (wireId && window.Livewire.find) {
-                                                const component = window.Livewire.find(wireId);
-                                                if (component) {
-                                                    component.set('latitude', lat.toFixed(6));
-                                                    component.set('longitude', lng.toFixed(6));
-                                                }
+                                            const component = window.livewire.find(wireId);
+                                            if (component) {
+                                                component.call('updateCoordinates', lat.toFixed(6), lng.toFixed(6));
                                             }
                                         }
                                     } catch (error) {
@@ -1229,8 +1221,35 @@
                 formData.append('email', document.querySelector('input[name="email"]').value || '');
                 formData.append('website', document.querySelector('input[name="website"]').value || '');
                 formData.append('status', document.querySelector('select[name="status"]').value || '');
-                formData.append('latitude', document.querySelector('input[name="latitude"]').value || '');
-                formData.append('longitude', document.querySelector('input[name="longitude"]').value || '');
+                
+                // Get coordinates from Livewire component to ensure they're preserved
+                if (window.livewire) {
+                    try {
+                        const wireElement = document.querySelector('[wire\\:id]');
+                        if (wireElement) {
+                            const wireId = wireElement.getAttribute('wire:id');
+                            const component = window.livewire.find(wireId);
+                            if (component) {
+                                // Try to get data from component properties
+                                latValue = component.get('latitude') || component.latitude || '';
+                                lngValue = component.get('longitude') || component.longitude || '';
+                                console.log('✅ Sending coordinates from Livewire (first function):', { latitude: latValue, longitude: lngValue });
+                            }
+                        }
+                    } catch (error) {
+                        console.log('⚠️ Error getting coordinates from Livewire (first function):', error);
+                    }
+                }
+
+                // Fallback to DOM if Livewire failed
+                if (!latValue || !lngValue) {
+                    latValue = document.querySelector('input[name="latitude"]').value || '';
+                    lngValue = document.querySelector('input[name="longitude"]').value || '';
+                    console.log('📍 Fallback: Sending coordinates from DOM (first function):', { latitude: latValue, longitude: lngValue });
+                }
+
+                formData.append('latitude', latValue);
+                formData.append('longitude', lngValue);
 
                 // Handle file upload with base64 encoding to bypass PHP temp file issues
                 const fileInput = document.getElementById('gambar-upload');
@@ -1457,20 +1476,29 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        // Close modal and refresh
-                        if (window.livewire) {
-                            window.livewire.find(document.querySelector("[wire\\:id]").getAttribute("wire:id")).set("showModal", false);
-                            window.livewire.find(document.querySelector("[wire\\:id]").getAttribute("wire:id")).call("$refresh");
-                        }
+                        console.log('✅ Save successful (first function):', data.message);
+
+                        // Close modal and refresh with delay to ensure data is saved
+                        setTimeout(() => {
+                            if (window.livewire) {
+                                const wireElement = document.querySelector('[wire\\:id]');
+                                if (wireElement) {
+                                    const wireId = wireElement.getAttribute('wire:id');
+                                    console.log('🔄 Refreshing Livewire component (first function):', wireId);
+                                    window.livewire.find(wireId).set('showModal', false);
+                                    window.livewire.find(wireId).call('$refresh');
+                                }
+                            }
+                        }, 500); // Small delay to ensure server processing is complete
 
                         // Show success message
-                        const message = document.createElement("div");
-                        message.className = "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50";
+                        const message = document.createElement('div');
+                        message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
                         message.textContent = data.message;
                         document.body.appendChild(message);
                         setTimeout(() => message.remove(), 3000);
                     } else {
-                        throw new Error(data.message || "Terjadi kesalahan");
+                        throw new Error(data.message || 'Terjadi kesalahan');
                     }
                 })
                 .catch(error => {
@@ -1511,6 +1539,17 @@
             }
         }
 
+        // Listen for Livewire events
+        document.addEventListener('livewire:loaded', () => {
+            Livewire.on('imageUploaded', () => {
+                // Handle image preview when Livewire updates the gambar property
+                const fileInput = document.getElementById('gambar-upload');
+                if (fileInput && fileInput.files && fileInput.files[0]) {
+                    previewImage(fileInput);
+                }
+            });
+        });
+
         function submitForm() {
             const form = document.getElementById('alamat-form');
             const submitBtn = document.getElementById('submit-btn');
@@ -1526,7 +1565,7 @@
             const modalMode = document.getElementById('modal-mode').value;
             const selectedId = document.getElementById('selected-id').value;
 
-            // Add all form fields manually
+            // Add all form fields manually - get coordinates from Livewire component
             formData.append('provinsi', document.querySelector('select[name="provinsi"]').value || '');
             formData.append('kabupaten_kota', document.querySelector('select[name="kabupaten_kota"]').value || '');
             formData.append('nama_dinas', document.querySelector('input[name="nama_dinas"]').value || '');
@@ -1535,8 +1574,39 @@
             formData.append('email', document.querySelector('input[name="email"]').value || '');
             formData.append('website', document.querySelector('input[name="website"]').value || '');
             formData.append('status', document.querySelector('select[name="status"]').value || '');
-            formData.append('latitude', document.querySelector('input[name="latitude"]').value || '');
-            formData.append('longitude', document.querySelector('input[name="longitude"]').value || '');
+            
+            // Get coordinates from Livewire component to ensure they're preserved
+            let latValue = '';
+            let lngValue = '';
+
+            // Try multiple ways to get Livewire component
+            if (window.livewire) {
+                try {
+                    const wireElement = document.querySelector('[wire\\:id]');
+                    if (wireElement) {
+                        const wireId = wireElement.getAttribute('wire:id');
+                        const component = window.livewire.find(wireId);
+                        if (component) {
+                            // Try to get data from component properties
+                            latValue = component.get('latitude') || component.latitude || '';
+                            lngValue = component.get('longitude') || component.longitude || '';
+                            console.log('✅ Sending coordinates from Livewire:', { latitude: latValue, longitude: lngValue });
+                        }
+                    }
+                } catch (error) {
+                    console.log('⚠️ Error getting coordinates from Livewire:', error);
+                }
+            }
+
+            // Fallback to DOM if Livewire failed
+            if (!latValue || !lngValue) {
+                latValue = document.querySelector('input[name="latitude"]').value || '';
+                lngValue = document.querySelector('input[name="longitude"]').value || '';
+                console.log('📍 Fallback: Sending coordinates from DOM:', { latitude: latValue, longitude: lngValue });
+            }
+
+            formData.append('latitude', latValue);
+            formData.append('longitude', lngValue);
 
             // Handle file upload with base64 encoding to bypass PHP temp file issues
             const fileInput = document.getElementById('gambar-upload');
@@ -1611,15 +1681,20 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        // Close modal and refresh
-                        if (window.livewire) {
-                            const wireElement = document.querySelector('[wire\\:id]');
-                            if (wireElement) {
-                                const wireId = wireElement.getAttribute('wire:id');
-                                window.livewire.find(wireId).set('showModal', false);
-                                window.livewire.find(wireId).call('$refresh');
+                        console.log('✅ Save successful:', data.message);
+
+                        // Close modal and refresh with delay to ensure data is saved
+                        setTimeout(() => {
+                            if (window.livewire) {
+                                const wireElement = document.querySelector('[wire\\:id]');
+                                if (wireElement) {
+                                    const wireId = wireElement.getAttribute('wire:id');
+                                    console.log('🔄 Refreshing Livewire component:', wireId);
+                                    window.livewire.find(wireId).set('showModal', false);
+                                    window.livewire.find(wireId).call('$refresh');
+                                }
                             }
-                        }
+                        }, 500); // Small delay to ensure server processing is complete
 
                         // Show success message
                         const message = document.createElement('div');

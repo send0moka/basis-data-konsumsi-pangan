@@ -48,6 +48,8 @@ class DataDaftarAlamat extends Component
     public $latitude = '';
     public $longitude = '';
     public $gambar = null;
+    public $oldLatitude = '';
+    public $oldLongitude = '';
     public $existingGambar = null;
 
     // Validation error properties
@@ -93,6 +95,42 @@ class DataDaftarAlamat extends Component
     public function updatingKabupatenKota()
     {
         $this->kabupatenValidationError = null; // Clear validation error when typing
+    }
+
+    public function updatedGambar()
+    {
+        // Preserve coordinates before image upload processing
+        $this->preserveCoordinates();
+        
+        // Handle image preview when file is uploaded
+        $this->dispatch('imageUploaded');
+        
+        // Restore coordinates after processing
+        $this->restoreCoordinates();
+    }
+
+    public function updateCoordinates($lat, $lng)
+    {
+        $this->latitude = $lat;
+        $this->longitude = $lng;
+    }
+
+    protected function preserveCoordinates()
+    {
+        // Store current coordinates before any update
+        $this->oldLatitude = $this->latitude;
+        $this->oldLongitude = $this->longitude;
+    }
+
+    protected function restoreCoordinates()
+    {
+        // Restore coordinates if they were reset
+        if (empty($this->latitude) && !empty($this->oldLatitude)) {
+            $this->latitude = $this->oldLatitude;
+        }
+        if (empty($this->longitude) && !empty($this->oldLongitude)) {
+            $this->longitude = $this->oldLongitude;
+        }
     }
 
     public function validateProvinsi()
