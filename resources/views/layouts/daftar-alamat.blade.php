@@ -153,5 +153,6 @@
 
         @stack('scripts')
         @fluxScripts
+        @livewireScripts
     </body>
 </html>

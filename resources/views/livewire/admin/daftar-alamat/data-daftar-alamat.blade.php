@@ -522,7 +522,7 @@
                                             class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Provinsi
                                             *</label>
                                         <div class="relative">
-                                            <select wire:model.live="provinsi" wire:change="validateProvinsi"
+                                            <select wire:model.live="provinsi" wire:change="validateProvinsi" name="provinsi"
                                                 class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent {{ $provinsiValidationError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}">
                                                 <option value="">Pilih Provinsi</option>
                                                 <option value="Aceh">Aceh</option>
@@ -598,7 +598,7 @@
                                         </label>
                                         <div class="relative">
                                             <select wire:model.live="kabupaten_kota"
-                                                wire:change="validateKabupatenKota"
+                                                wire:change="validateKabupatenKota" name="kabupaten_kota"
                                                 class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent {{ !$provinsi ? 'opacity-50 cursor-not-allowed' : '' }} {{ $kabupatenValidationError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}"
                                                 wire:loading.class="opacity-50 cursor-not-allowed"
                                                 wire:target="provinsi" {{ !$provinsi ? 'disabled' : '' }}
@@ -665,7 +665,7 @@
                                         <label
                                             class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama
                                             Dinas *</label>
-                                        <input wire:model="nama_dinas" placeholder="Nama lengkap dinas"
+                                        <input wire:model="nama_dinas" name="nama_dinas" placeholder="Nama lengkap dinas"
                                             class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                                         @error('nama_dinas')
                                             <span
@@ -677,7 +677,7 @@
                                         <label
                                             class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Alamat
                                             *</label>
-                                        <textarea wire:model="alamat" placeholder="Alamat lengkap" rows="3"
+                                        <textarea wire:model="alamat" name="alamat" placeholder="Alamat lengkap" rows="3"
                                             class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent"></textarea>
                                         @error('alamat')
                                             <span
@@ -688,7 +688,7 @@
                                     <div>
                                         <label
                                             class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Telepon</label>
-                                        <input wire:model="telp" placeholder="Nomor telepon"
+                                        <input wire:model="telp" name="telp" placeholder="Nomor telepon"
                                             class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                                         @error('telp')
                                             <span
@@ -699,7 +699,7 @@
                                     <div>
                                         <label
                                             class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email</label>
-                                        <input wire:model="email" type="email" placeholder="Alamat email"
+                                        <input wire:model="email" name="email" type="email" placeholder="Alamat email"
                                             class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                                         @error('email')
                                             <span
@@ -710,7 +710,7 @@
                                     <div>
                                         <label
                                             class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Website</label>
-                                        <input wire:model="website" type="url" placeholder="URL website"
+                                        <input wire:model="website" name="website" type="url" placeholder="URL website"
                                             class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" />
                                         @error('website')
                                             <span
@@ -722,7 +722,7 @@
                                         <label
                                             class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Status
                                             *</label>
-                                        <select wire:model="status"
+                                        <select wire:model="status" name="status"
                                             class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
                                             @foreach ($statusOptions as $value => $label)
                                                 <option value="{{ $value }}">{{ $label }}</option>
@@ -741,8 +741,7 @@
 
                                         <!-- Get Current Location Button -->
                                         <div class="mb-3">
-                                            <button type="button" id="get-current-location" 
-                                                @click="$nextTick(() => { const mapEl = document.getElementById('location-map'); if (mapEl && mapEl._x_dataStack && mapEl._x_dataStack[0]) { mapEl._x_dataStack[0].getCurrentLocation(); } })"
+                                            <button type="button" id="get-location-btn" 
                                                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -895,11 +894,13 @@
                                                         if (latInput) latInput.value = lat.toFixed(6);
                                                         if (lngInput) lngInput.value = lng.toFixed(6);
 
-                                                        // Delayed Livewire update to prevent interference
-                                                        setTimeout(() => {
-                                                            if (window.Livewire) {
-                                                                try {
-                                                                    const wireId = document.querySelector('[wire\\\\:id]')?.getAttribute('wire:id');
+                                                        // Update Livewire data directly
+                                                        if (window.Livewire) {
+                                                            try {
+                                                                // Find the component by looking for any element with wire:id
+                                                                const wireElement = document.querySelector('[wire\\:id]');
+                                                                if (wireElement) {
+                                                                    const wireId = wireElement.getAttribute('wire:id');
                                                                     if (wireId && window.Livewire.find) {
                                                                         const component = window.Livewire.find(wireId);
                                                                         if (component) {
@@ -907,11 +908,11 @@
                                                                             component.set('longitude', lng.toFixed(6));
                                                                         }
                                                                     }
-                                                                } catch (error) {
-                                                                    console.log('Livewire update failed:', error);
                                                                 }
+                                                            } catch (error) {
+                                                                console.log('Livewire update failed:', error);
                                                             }
-                                                        }, 100);
+                                                        }
                                                     } catch (error) {
                                                         console.error('Error updating coordinates:', error);
                                                     }
@@ -975,18 +976,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Get Current Location Button -->
-                                        <div class="mb-3">
-                                            <button id="get-current-location" type="button"
-                                                class="inline-flex items-center px-3 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                </svg>
-                                                Ambil Lokasi Saya
-                                            </button>
-                                        </div>
-
                                         <!-- Coordinates Display -->
                                         <div class="grid grid-cols-2 gap-4 text-sm">
                                             <div class="flex items-center">
@@ -1004,8 +993,8 @@
                                         </div>
 
                                         <!-- Hidden inputs for Livewire -->
-                                        <input type="hidden" wire:model="latitude" id="latitude-input">
-                                        <input type="hidden" wire:model="longitude" id="longitude-input">
+                                        <input type="hidden" wire:model="latitude" name="latitude" id="latitude-input">
+                                        <input type="hidden" wire:model="longitude" name="longitude" id="longitude-input">
 
                                         @error('latitude')
                                             <span class="text-red-500 dark:text-red-400 text-sm">Latitude
@@ -1125,6 +1114,97 @@
                 }
             }
 
+            // Handle get location button
+            document.addEventListener('DOMContentLoaded', function() {
+                const getLocationBtn = document.getElementById('get-location-btn');
+                if (getLocationBtn) {
+                    getLocationBtn.addEventListener('click', function() {
+                        if (!navigator.geolocation) {
+                            alert('Geolocation tidak didukung oleh browser ini.');
+                            return;
+                        }
+
+                        console.log('Getting current location...');
+                        
+                        getLocationBtn.disabled = true;
+                        getLocationBtn.textContent = 'Mendapatkan lokasi...';
+                        
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                const lat = position.coords.latitude;
+                                const lng = position.coords.longitude;
+                                
+                                console.log('Current location found:', lat, lng);
+                                
+                                // Update the form fields
+                                const latInput = document.getElementById('latitude-input');
+                                const lngInput = document.getElementById('longitude-input');
+                                const latDisplay = document.getElementById('current-latitude');
+                                const lngDisplay = document.getElementById('current-longitude');
+                                
+                                if (latInput) latInput.value = lat.toFixed(6);
+                                if (lngInput) lngInput.value = lng.toFixed(6);
+                                if (latDisplay) latDisplay.textContent = lat.toFixed(6);
+                                if (lngDisplay) lngDisplay.textContent = lng.toFixed(6);
+                                
+                                // Update Livewire
+                                if (window.Livewire) {
+                                    try {
+                                        const wireElement = document.querySelector('[wire\\:id]');
+                                        if (wireElement) {
+                                            const wireId = wireElement.getAttribute('wire:id');
+                                            if (wireId && window.Livewire.find) {
+                                                const component = window.Livewire.find(wireId);
+                                                if (component) {
+                                                    component.set('latitude', lat.toFixed(6));
+                                                    component.set('longitude', lng.toFixed(6));
+                                                }
+                                            }
+                                        }
+                                    } catch (error) {
+                                        console.log('Livewire update failed:', error);
+                                    }
+                                }
+                                
+                                // Reset button
+                                getLocationBtn.disabled = false;
+                                getLocationBtn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Ambil Lokasi Saya';
+                                
+                                alert('Lokasi berhasil didapatkan!');
+                            },
+                            (error) => {
+                                console.error('Geolocation error:', error);
+                                let message = 'Gagal mendapatkan lokasi. ';
+                                switch (error.code) {
+                                    case error.PERMISSION_DENIED:
+                                        message += 'Permisi akses lokasi ditolak.';
+                                        break;
+                                    case error.POSITION_UNAVAILABLE:
+                                        message += 'Informasi lokasi tidak tersedia.';
+                                        break;
+                                    case error.TIMEOUT:
+                                        message += 'Permintaan lokasi timeout.';
+                                        break;
+                                    default:
+                                        message += 'Terjadi kesalahan yang tidak diketahui.';
+                                        break;
+                                }
+                                alert(message);
+                                
+                                // Reset button
+                                getLocationBtn.disabled = false;
+                                getLocationBtn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Ambil Lokasi Saya';
+                            }, 
+                            {
+                                enableHighAccuracy: true,
+                                timeout: 10000,
+                                maximumAge: 60000
+                            }
+                        );
+                    });
+                }
+            });
+
             function submitForm() {
                 const form = document.getElementById('alamat-form');
                 const submitBtn = document.getElementById('submit-btn');
@@ -1141,16 +1221,16 @@
                 const selectedId = document.getElementById('selected-id').value;
 
                 // Add all form fields manually
-                formData.append('provinsi', document.querySelector('select[wire\\:model="provinsi"]').value || '');
-                formData.append('kabupaten_kota', document.querySelector('select[wire\\:model="kabupaten_kota"]').value || '');
-                formData.append('nama_dinas', document.querySelector('input[wire\\:model="nama_dinas"]').value || '');
-                formData.append('alamat', document.querySelector('textarea[wire\\:model="alamat"]').value || '');
-                formData.append('telp', document.querySelector('input[wire\\:model="telp"]').value || '');
-                formData.append('email', document.querySelector('input[wire\\:model="email"]').value || '');
-                formData.append('website', document.querySelector('input[wire\\:model="website"]').value || '');
-                formData.append('status', document.querySelector('select[wire\\:model="status"]').value || '');
-                formData.append('latitude', document.querySelector('input[wire\\:model="latitude"]').value || '');
-                formData.append('longitude', document.querySelector('input[wire\\:model="longitude"]').value || '');
+                formData.append('provinsi', document.querySelector('select[name="provinsi"]').value || '');
+                formData.append('kabupaten_kota', document.querySelector('select[name="kabupaten_kota"]').value || '');
+                formData.append('nama_dinas', document.querySelector('input[name="nama_dinas"]').value || '');
+                formData.append('alamat', document.querySelector('textarea[name="alamat"]').value || '');
+                formData.append('telp', document.querySelector('input[name="telp"]').value || '');
+                formData.append('email', document.querySelector('input[name="email"]').value || '');
+                formData.append('website', document.querySelector('input[name="website"]').value || '');
+                formData.append('status', document.querySelector('select[name="status"]').value || '');
+                formData.append('latitude', document.querySelector('input[name="latitude"]').value || '');
+                formData.append('longitude', document.querySelector('input[name="longitude"]').value || '');
 
                 // Handle file upload with base64 encoding to bypass PHP temp file issues
                 const fileInput = document.getElementById('gambar-upload');
@@ -1254,8 +1334,319 @@
                         submitBtn.disabled = false;
                         submitText.classList.remove('hidden');
                         loadingText.classList.add('hidden');
-                    });
-            }
-        </script>
+                });
+        }
+    </script>
     @endif
+</div>    <script>
+        function previewImage(input) {
+            const preview = document.getElementById("image-preview");
+            const previewImg = document.getElementById("preview-img");
+            const existingImage = document.getElementById("existing-image");
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.classList.remove("hidden");
+                    if (existingImage) {
+                        existingImage.style.display = "none";
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function submitForm() {
+            const form = document.getElementById("alamat-form");
+            const submitBtn = document.getElementById("submit-btn");
+            const submitText = document.getElementById("submit-text");
+            const loadingText = document.getElementById("loading-text");
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitText.classList.add("hidden");
+            loadingText.classList.remove("hidden");
+
+            const formData = new FormData();
+            const modalMode = document.getElementById("modal-mode").value;
+            const selectedId = document.getElementById("selected-id").value;
+
+            // Add all form fields manually
+            formData.append("provinsi", document.querySelector("select[name=\"provinsi\"]").value || "");
+            formData.append("kabupaten_kota", document.querySelector("select[name=\"kabupaten_kota\"]").value || "");
+            formData.append("nama_dinas", document.querySelector("input[name=\"nama_dinas\"]").value || "");
+            formData.append("alamat", document.querySelector("textarea[name=\"alamat\"]").value || "");
+            formData.append("telp", document.querySelector("input[name=\"telp\"]").value || "");
+            formData.append("email", document.querySelector("input[name=\"email\"]").value || "");
+            formData.append("website", document.querySelector("input[name=\"website\"]").value || "");
+            formData.append("status", document.querySelector("select[name=\"status\"]").value || "");
+            formData.append("latitude", document.querySelector("input[name=\"latitude\"]").value || "");
+            formData.append("longitude", document.querySelector("input[name=\"longitude\"]").value || "");
+
+            // Handle file upload with base64 encoding to bypass PHP temp file issues
+            const fileInput = document.getElementById("gambar-upload");
+
+            if (fileInput && fileInput.files[0]) {
+                const file = fileInput.files[0];
+
+                if (file.type.startsWith("image/") && file.size <= 2048000) {
+                    // Convert to base64 to bypass PHP temp file system
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        formData.append("gambar_base64", e.target.result);
+                        formData.append("gambar_name", file.name);
+                        formData.append("gambar_type", file.type);
+
+                        // Submit form after file is read
+                        submitFormData(formData);
+                    };
+                    reader.onerror = function(e) {
+                        console.error("FileReader error:", e);
+                        submitFormData(formData); // Submit without image
+                    };
+                    reader.readAsDataURL(file);
+                    return; // Exit here, will continue in reader.onload
+                }
+            }
+
+            // Submit form without file
+            submitFormData(formData);
+        }
+
+        function submitFormData(formData) {
+            const submitBtn = document.getElementById("submit-btn");
+            const submitText = document.getElementById("submit-text");
+            const loadingText = document.getElementById("loading-text");
+            const modalMode = document.getElementById("modal-mode").value;
+            const selectedId = document.getElementById("selected-id").value;
+
+            // Add mode and ID to formData
+            formData.append("mode", modalMode);
+            if (selectedId) {
+                formData.append("id", selectedId);
+            }
+
+            fetch("/admin/daftar-alamat/save", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector("input[name=\"_token\"]").value
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const contentType = response.headers.get("content-type");
+                    if (!contentType || !contentType.includes("application/json")) {
+                        return response.text().then(text => {
+                            console.error("Server returned non-JSON response:", text);
+                            const jsonMatch = text.match(/\{.*\}$/);
+                            if (jsonMatch) {
+                                try {
+                                    return JSON.parse(jsonMatch[0]);
+                                } catch (e) {
+                                    throw new Error("Server returned HTML instead of JSON. Check server logs.");
+                                }
+                            }
+                            throw new Error("Server returned HTML instead of JSON. Check server logs.");
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Close modal and refresh
+                        if (window.livewire) {
+                            window.livewire.find(document.querySelector("[wire\\:id]").getAttribute("wire:id")).set("showModal", false);
+                            window.livewire.find(document.querySelector("[wire\\:id]").getAttribute("wire:id")).call("$refresh");
+                        }
+
+                        // Show success message
+                        const message = document.createElement("div");
+                        message.className = "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50";
+                        message.textContent = data.message;
+                        document.body.appendChild(message);
+                        setTimeout(() => message.remove(), 3000);
+                    } else {
+                        throw new Error(data.message || "Terjadi kesalahan");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+
+                    // Show error message
+                    const message = document.createElement("div");
+                    message.className = "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50";
+                    message.textContent = error.message || "Terjadi kesalahan saat menyimpan data";
+                    document.body.appendChild(message);
+                    setTimeout(() => message.remove(), 5000);
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitText.classList.remove("hidden");
+                    loadingText.classList.add("hidden");
+                });
+        }
+    </script>
+
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            const existingImage = document.getElementById('existing-image');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    if (existingImage) {
+                        existingImage.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function submitForm() {
+            const form = document.getElementById('alamat-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const submitText = document.getElementById('submit-text');
+            const loadingText = document.getElementById('loading-text');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitText.classList.add('hidden');
+            loadingText.classList.remove('hidden');
+
+            const formData = new FormData();
+            const modalMode = document.getElementById('modal-mode').value;
+            const selectedId = document.getElementById('selected-id').value;
+
+            // Add all form fields manually
+            formData.append('provinsi', document.querySelector('select[name="provinsi"]').value || '');
+            formData.append('kabupaten_kota', document.querySelector('select[name="kabupaten_kota"]').value || '');
+            formData.append('nama_dinas', document.querySelector('input[name="nama_dinas"]').value || '');
+            formData.append('alamat', document.querySelector('textarea[name="alamat"]').value || '');
+            formData.append('telp', document.querySelector('input[name="telp"]').value || '');
+            formData.append('email', document.querySelector('input[name="email"]').value || '');
+            formData.append('website', document.querySelector('input[name="website"]').value || '');
+            formData.append('status', document.querySelector('select[name="status"]').value || '');
+            formData.append('latitude', document.querySelector('input[name="latitude"]').value || '');
+            formData.append('longitude', document.querySelector('input[name="longitude"]').value || '');
+
+            // Handle file upload with base64 encoding to bypass PHP temp file issues
+            const fileInput = document.getElementById('gambar-upload');
+
+            if (fileInput && fileInput.files[0]) {
+                const file = fileInput.files[0];
+
+                if (file.type.startsWith('image/') && file.size <= 2048000) {
+                    // Convert to base64 to bypass PHP temp file system
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        formData.append('gambar_base64', e.target.result);
+                        formData.append('gambar_name', file.name);
+                        formData.append('gambar_type', file.type);
+
+                        // Submit form after file is read
+                        submitFormData(formData);
+                    };
+                    reader.onerror = function(e) {
+                        console.error('FileReader error:', e);
+                        submitFormData(formData); // Submit without image
+                    };
+                    reader.readAsDataURL(file);
+                    return; // Exit here, will continue in reader.onload
+                }
+            }
+
+            // Submit form without file
+            submitFormData(formData);
+        }
+
+        function submitFormData(formData) {
+            const submitBtn = document.getElementById('submit-btn');
+            const submitText = document.getElementById('submit-text');
+            const loadingText = document.getElementById('loading-text');
+            const modalMode = document.getElementById('modal-mode').value;
+            const selectedId = document.getElementById('selected-id').value;
+
+            // Add mode and ID to formData
+            formData.append('mode', modalMode);
+            if (selectedId) {
+                formData.append('id', selectedId);
+            }
+
+            fetch('/admin/daftar-alamat/save', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        return response.text().then(text => {
+                            console.error('Server returned non-JSON response:', text);
+                            const jsonMatch = text.match(/\{.*\}$/);
+                            if (jsonMatch) {
+                                try {
+                                    return JSON.parse(jsonMatch[0]);
+                                } catch (e) {
+                                    throw new Error('Server returned HTML instead of JSON. Check server logs.');
+                                }
+                            }
+                            throw new Error('Server returned HTML instead of JSON. Check server logs.');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Close modal and refresh
+                        if (window.livewire) {
+                            const wireElement = document.querySelector('[wire\\:id]');
+                            if (wireElement) {
+                                const wireId = wireElement.getAttribute('wire:id');
+                                window.livewire.find(wireId).set('showModal', false);
+                                window.livewire.find(wireId).call('$refresh');
+                            }
+                        }
+
+                        // Show success message
+                        const message = document.createElement('div');
+                        message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+                        message.textContent = data.message;
+                        document.body.appendChild(message);
+                        setTimeout(() => message.remove(), 3000);
+                    } else {
+                        throw new Error(data.message || 'Terjadi kesalahan');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+
+                    // Show error message
+                    const message = document.createElement('div');
+                    message.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+                    message.textContent = error.message || 'Terjadi kesalahan saat menyimpan data';
+                    document.body.appendChild(message);
+                    setTimeout(() => message.remove(), 5000);
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitText.classList.remove('hidden');
+                    loadingText.classList.add('hidden');
+                });
+        }
+    </script>
 </div>
