@@ -27,6 +27,9 @@ RUN git config --global --add safe.directory /var/www/html
 
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
+# Copy custom php.ini for debugging
+COPY docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
+
 # Install npm dependencies and build assets
 RUN if [ -f package.json ]; then \
       npm install && npm run build; \
