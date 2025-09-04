@@ -231,6 +231,7 @@ Route::prefix('api/iklim-opt-dpi')->name('api.iklim-opt-dpi.')->group(function (
     Route::post('klasifikasis', [App\Http\Controllers\IklimOptDpiController::class, 'getKlasifikasiByVariabels'])->name('klasifikasis');
     Route::get('provinces', [App\Http\Controllers\IklimOptDpiController::class, 'getProvinces'])->name('provinces');
     Route::get('years', [App\Http\Controllers\IklimOptDpiController::class, 'getAvailableYears'])->name('years');
+    Route::post('filter', [App\Http\Controllers\IklimOptDpiController::class, 'filter'])->name('filter');
     Route::post('search', [App\Http\Controllers\IklimOptDpiController::class, 'search'])->name('search');
 });
 
