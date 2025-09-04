@@ -1010,6 +1010,7 @@
                                         <!-- File Input -->
                                         <div class="mt-1">
                                             <input wire:model="gambar" id="gambar-upload" type="file" accept="image/*"
+                                                onchange="validateFileSize(this); previewImage(this);"
                                                 class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300" />
                                             @error('gambar')
                                                 <span
@@ -1357,170 +1358,44 @@
         }
     </script>
     @endif
-</div>    <script>
-        function previewImage(input) {
-            const preview = document.getElementById("image-preview");
-            const previewImg = document.getElementById("preview-img");
-            const existingImage = document.getElementById("existing-image");
-
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    preview.classList.remove("hidden");
-                    if (existingImage) {
-                        existingImage.style.display = "none";
-                    }
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function submitForm() {
-            const form = document.getElementById("alamat-form");
-            const submitBtn = document.getElementById("submit-btn");
-            const submitText = document.getElementById("submit-text");
-            const loadingText = document.getElementById("loading-text");
-
-            // Show loading state
-            submitBtn.disabled = true;
-            submitText.classList.add("hidden");
-            loadingText.classList.remove("hidden");
-
-            const formData = new FormData();
-            const modalMode = document.getElementById("modal-mode").value;
-            const selectedId = document.getElementById("selected-id").value;
-
-            // Add all form fields manually
-            formData.append("provinsi", document.querySelector("select[name=\"provinsi\"]").value || "");
-            formData.append("kabupaten_kota", document.querySelector("select[name=\"kabupaten_kota\"]").value || "");
-            formData.append("nama_dinas", document.querySelector("input[name=\"nama_dinas\"]").value || "");
-            formData.append("alamat", document.querySelector("textarea[name=\"alamat\"]").value || "");
-            formData.append("telp", document.querySelector("input[name=\"telp\"]").value || "");
-            formData.append("email", document.querySelector("input[name=\"email\"]").value || "");
-            formData.append("website", document.querySelector("input[name=\"website\"]").value || "");
-            formData.append("status", document.querySelector("select[name=\"status\"]").value || "");
-            formData.append("latitude", document.querySelector("input[name=\"latitude\"]").value || "");
-            formData.append("longitude", document.querySelector("input[name=\"longitude\"]").value || "");
-
-            // Handle file upload with base64 encoding to bypass PHP temp file issues
-            const fileInput = document.getElementById("gambar-upload");
-
-            if (fileInput && fileInput.files[0]) {
-                const file = fileInput.files[0];
-
-                if (file.type.startsWith("image/") && file.size <= 2048000) {
-                    // Convert to base64 to bypass PHP temp file system
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        formData.append("gambar_base64", e.target.result);
-                        formData.append("gambar_name", file.name);
-                        formData.append("gambar_type", file.type);
-
-                        // Submit form after file is read
-                        submitFormData(formData);
-                    };
-                    reader.onerror = function(e) {
-                        console.error("FileReader error:", e);
-                        submitFormData(formData); // Submit without image
-                    };
-                    reader.readAsDataURL(file);
-                    return; // Exit here, will continue in reader.onload
-                }
-            }
-
-            // Submit form without file
-            submitFormData(formData);
-        }
-
-        function submitFormData(formData) {
-            const submitBtn = document.getElementById("submit-btn");
-            const submitText = document.getElementById("submit-text");
-            const loadingText = document.getElementById("loading-text");
-            const modalMode = document.getElementById("modal-mode").value;
-            const selectedId = document.getElementById("selected-id").value;
-
-            // Add mode and ID to formData
-            formData.append("mode", modalMode);
-            if (selectedId) {
-                formData.append("id", selectedId);
-            }
-
-            fetch("/admin/daftar-alamat/save", {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                        "X-CSRF-TOKEN": document.querySelector("input[name=\"_token\"]").value
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const contentType = response.headers.get("content-type");
-                    if (!contentType || !contentType.includes("application/json")) {
-                        return response.text().then(text => {
-                            console.error("Server returned non-JSON response:", text);
-                            const jsonMatch = text.match(/\{.*\}$/);
-                            if (jsonMatch) {
-                                try {
-                                    return JSON.parse(jsonMatch[0]);
-                                } catch (e) {
-                                    throw new Error("Server returned HTML instead of JSON. Check server logs.");
-                                }
-                            }
-                            throw new Error("Server returned HTML instead of JSON. Check server logs.");
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        console.log('✅ Save successful (first function):', data.message);
-
-                        // Close modal and refresh with delay to ensure data is saved
-                        setTimeout(() => {
-                            if (window.livewire) {
-                                const wireElement = document.querySelector('[wire\\:id]');
-                                if (wireElement) {
-                                    const wireId = wireElement.getAttribute('wire:id');
-                                    console.log('🔄 Refreshing Livewire component (first function):', wireId);
-                                    window.livewire.find(wireId).set('showModal', false);
-                                    window.livewire.find(wireId).call('$refresh');
-                                }
-                            }
-                        }, 500); // Small delay to ensure server processing is complete
-
-                        // Show success message
-                        const message = document.createElement('div');
-                        message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
-                        message.textContent = data.message;
-                        document.body.appendChild(message);
-                        setTimeout(() => message.remove(), 3000);
-                    } else {
-                        throw new Error(data.message || 'Terjadi kesalahan');
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-
-                    // Show error message
-                    const message = document.createElement("div");
-                    message.className = "fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50";
-                    message.textContent = error.message || "Terjadi kesalahan saat menyimpan data";
-                    document.body.appendChild(message);
-                    setTimeout(() => message.remove(), 5000);
-                })
-                .finally(() => {
-                    // Reset button state
-                    submitBtn.disabled = false;
-                    submitText.classList.remove("hidden");
-                    loadingText.classList.add("hidden");
-                });
-        }
-    </script>
+</div>
 
     <script>
+        function validateFileSize(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const maxSize = 1536000; // 1.5MB in bytes
+
+                if (!file.type.startsWith('image/')) {
+                    // Show error message
+                    const message = document.createElement('div');
+                    message.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+                    message.textContent = 'File harus berupa gambar (JPG, PNG, GIF, dll.)';
+                    document.body.appendChild(message);
+                    setTimeout(() => message.remove(), 5000);
+                    
+                    // Clear the input
+                    input.value = '';
+                    return false;
+                }
+
+                if (file.size > maxSize) {
+                    // Show error message
+                    const message = document.createElement('div');
+                    message.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+                    message.textContent = `Ukuran file terlalu besar (${(file.size/1024/1024).toFixed(2)}MB). Maksimal 1.5MB`;
+                    document.body.appendChild(message);
+                    setTimeout(() => message.remove(), 5000);
+                    
+                    // Clear the input
+                    input.value = '';
+                    return false;
+                }
+                
+                return true;
+            }
+        }
+
         function previewImage(input) {
             const preview = document.getElementById('image-preview');
             const previewImg = document.getElementById('preview-img');
@@ -1614,24 +1489,66 @@
             if (fileInput && fileInput.files[0]) {
                 const file = fileInput.files[0];
 
-                if (file.type.startsWith('image/') && file.size <= 2048000) {
-                    // Convert to base64 to bypass PHP temp file system
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        formData.append('gambar_base64', e.target.result);
-                        formData.append('gambar_name', file.name);
-                        formData.append('gambar_type', file.type);
-
-                        // Submit form after file is read
-                        submitFormData(formData);
-                    };
-                    reader.onerror = function(e) {
-                        console.error('FileReader error:', e);
-                        submitFormData(formData); // Submit without image
-                    };
-                    reader.readAsDataURL(file);
-                    return; // Exit here, will continue in reader.onload
+                // Check file type
+                if (!file.type.startsWith('image/')) {
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitText.classList.remove('hidden');
+                    loadingText.classList.add('hidden');
+                    
+                    // Show error message
+                    const message = document.createElement('div');
+                    message.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+                    message.textContent = 'File harus berupa gambar (JPG, PNG, GIF, dll.)';
+                    document.body.appendChild(message);
+                    setTimeout(() => message.remove(), 5000);
+                    return;
                 }
+
+                // Check file size - reduced to 1.5MB to account for base64 encoding overhead
+                if (file.size > 1536000) { // 1.5MB limit
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitText.classList.remove('hidden');
+                    loadingText.classList.add('hidden');
+                    
+                    // Show error message
+                    const message = document.createElement('div');
+                    message.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+                    message.textContent = 'Ukuran file terlalu besar. Maksimal 1.5MB';
+                    document.body.appendChild(message);
+                    setTimeout(() => message.remove(), 5000);
+                    return;
+                }
+
+                // Convert to base64 to bypass PHP temp file system
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    formData.append('gambar_base64', e.target.result);
+                    formData.append('gambar_name', file.name);
+                    formData.append('gambar_type', file.type);
+
+                    // Submit form after file is read
+                    submitFormData(formData);
+                };
+                reader.onerror = function(e) {
+                    console.error('FileReader error:', e);
+                    
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitText.classList.remove('hidden');
+                    loadingText.classList.add('hidden');
+                    
+                    // Show error message
+                    const message = document.createElement('div');
+                    message.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg z-50';
+                    message.textContent = 'Gagal membaca file gambar';
+                    document.body.appendChild(message);
+                    setTimeout(() => message.remove(), 5000);
+                    return;
+                };
+                reader.readAsDataURL(file);
+                return; // Exit here, will continue in reader.onload
             }
 
             // Submit form without file
@@ -1660,7 +1577,16 @@
                 })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        // Handle specific HTTP error codes
+                        if (response.status === 413) {
+                            throw new Error('File terlalu besar untuk diupload. Silakan pilih file yang lebih kecil (maksimal 1.5MB).');
+                        } else if (response.status === 422) {
+                            throw new Error('Data tidak valid. Silakan periksa kembali form Anda.');
+                        } else if (response.status === 500) {
+                            throw new Error('Terjadi kesalahan server. Silakan coba lagi nanti.');
+                        } else {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
                     }
                     const contentType = response.headers.get('content-type');
                     if (!contentType || !contentType.includes('application/json')) {
