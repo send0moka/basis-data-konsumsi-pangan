@@ -28,7 +28,6 @@ class DaftarAlamat extends Model
     protected $casts = [
         'latitude' => 'decimal:8',
         'longitude' => 'decimal:8',
-        'urut' => 'integer',
     ];
 
     // Scopes
@@ -98,20 +97,6 @@ class DaftarAlamat extends Model
             'Draft' => 'Draft',
             'Arsip' => 'Arsip',
             'Pending' => 'Pending',
-        ];
-    }
-
-    public static function getKategoriOptions()
-    {
-        return [
-            'Dinas Pertanian' => 'Dinas Pertanian',
-            'Dinas Peternakan' => 'Dinas Peternakan',
-            'Dinas Perkebunan' => 'Dinas Perkebunan',
-            'Dinas Kehutanan' => 'Dinas Kehutanan',
-            'Dinas Perikanan' => 'Dinas Perikanan',
-            'Badan Ketahanan Pangan' => 'Badan Ketahanan Pangan',
-            'Balai Pengkajian Teknologi' => 'Balai Pengkajian Teknologi',
-            'Lainnya' => 'Lainnya',
         ];
     }
 }

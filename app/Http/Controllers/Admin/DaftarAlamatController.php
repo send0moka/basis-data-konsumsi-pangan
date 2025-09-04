@@ -84,18 +84,14 @@ class DaftarAlamatController extends Controller
         
         try {
             $validator = Validator::make($request->all(), [
-                'wilayah' => 'required|string|max:255',
+                'provinsi' => 'required|string|max:255',
+                'kabupaten_kota' => 'required|string|max:255',
                 'nama_dinas' => 'required|string|max:255',
                 'alamat' => 'required|string',
                 'telp' => 'nullable|string|max:255',
-                'faks' => 'nullable|string|max:255',
                 'email' => 'nullable|email|max:255',
                 'website' => 'nullable|url|max:255',
-                'posisi' => 'nullable|string|max:255',
-                'urut' => 'nullable|integer',
                 'status' => 'required|in:Aktif,Tidak Aktif,Draft,Arsip,Pending',
-                'kategori' => 'nullable|string|max:255',
-                'keterangan' => 'nullable|string',
                 'latitude' => 'nullable|numeric|between:-90,90',
                 'longitude' => 'nullable|numeric|between:-180,180',
                 'mode' => 'required|in:create,edit',
@@ -110,9 +106,8 @@ class DaftarAlamatController extends Controller
             }
 
             $data = $request->only([
-                'no', 'wilayah', 'nama_dinas', 'alamat', 'telp', 'faks', 
-                'email', 'website', 'posisi', 'urut', 'status', 'kategori', 
-                'keterangan', 'latitude', 'longitude'
+                'provinsi', 'kabupaten_kota', 'nama_dinas', 'alamat', 'telp', 
+                'email', 'website', 'status', 'latitude', 'longitude'
             ]);
 
             // Handle base64 image upload to bypass PHP temp file issues
@@ -152,7 +147,7 @@ class DaftarAlamatController extends Controller
             }
 
             if ($request->mode === 'create') {
-                DaftarAlamat::create($data);
+                $alamat = DaftarAlamat::create($data);
                 $message = 'Data alamat berhasil ditambahkan.';
             } else {
                 $alamat = DaftarAlamat::findOrFail($request->id);
