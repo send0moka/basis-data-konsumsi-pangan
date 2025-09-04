@@ -112,7 +112,7 @@
             </div>
             <div>
                 <select wire:model.live="statusFilter"
-                    class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
+                    class="w-full p-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
                     <option value="">Semua Status</option>
                     @foreach ($statusOptions as $value => $label)
                         <option value="{{ $value }}">{{ $label }}</option>
@@ -120,13 +120,20 @@
                 </select>
             </div>
             <div>
-                <select wire:model.live="wilayahFilter"
-                    class="w-full text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent">
-                    <option value="">Semua Wilayah</option>
-                    @foreach ($wilayahOptions as $wilayah)
-                        <option value="{{ $wilayah }}">{{ $wilayah }}</option>
-                    @endforeach
-                </select>
+                    <select wire:model.live.url="provinsiFilter"
+                        class="w-full p-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent mb-2" wire:key="provinsi-filter">
+                        <option value="">Semua Provinsi</option>
+                        @foreach ($provinsiOptions as $provinsi)
+                            <option value="{{ $provinsi }}">{{ $provinsi }}</option>
+                        @endforeach
+                    </select>
+                    <select wire:model.live.url="kabupatenKotaFilter"
+                        class="w-full p-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent" wire:key="kabupatenkota-filter">
+                        <option value="">Semua Kabupaten/Kota</option>
+                        @foreach ($kabupatenKotaOptions as $kabupatenKota)
+                            <option value="{{ $kabupatenKota }}">{{ $kabupatenKota }}</option>
+                        @endforeach
+                    </select>
             </div>
         </div>
         <div class="mt-4 flex justify-between items-center">
@@ -528,47 +535,47 @@
                                                 name="provinsi"
                                                 class="w-full px-3 py-2 text-sm rounded-md border-neutral-300 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-200 focus:ring-accent focus:border-accent {{ $provinsiValidationError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '' }}">
                                                 <option value="">Pilih Provinsi</option>
-                                                <option value="Aceh">Aceh</option>
-                                                <option value="Sumatera Utara">Sumatera Utara</option>
-                                                <option value="Sumatera Barat">Sumatera Barat</option>
-                                                <option value="Riau">Riau</option>
-                                                <option value="Kepulauan Riau">Kepulauan Riau</option>
-                                                <option value="Jambi">Jambi</option>
-                                                <option value="Sumatera Selatan">Sumatera Selatan</option>
-                                                <option value="Bengkulu">Bengkulu</option>
-                                                <option value="Lampung">Lampung</option>
-                                                <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung
+                                                <option value="Provinsi Aceh">Provinsi Aceh</option>
+                                                <option value="Provinsi Sumatera Utara">Provinsi Sumatera Utara</option>
+                                                <option value="Provinsi Sumatera Barat">Provinsi Sumatera Barat</option>
+                                                <option value="Provinsi Riau">Provinsi Riau</option>
+                                                <option value="Provinsi Kepulauan Riau">Provinsi Kepulauan Riau</option>
+                                                <option value="Provinsi Jambi">Provinsi Jambi</option>
+                                                <option value="Provinsi Sumatera Selatan">Provinsi Sumatera Selatan</option>
+                                                <option value="Provinsi Bengkulu">Provinsi Bengkulu</option>
+                                                <option value="Provinsi Lampung">Provinsi Lampung</option>
+                                                <option value="Provinsi Kepulauan Bangka Belitung">Provinsi Kepulauan Bangka Belitung
                                                 </option>
-                                                <option value="Daerah Khusus Jakarta">Daerah Khusus Jakarta
+                                                <option value="Provinsi Daerah Khusus Jakarta">Provinsi Daerah Khusus Jakarta
                                                 </option>
-                                                <option value="Jawa Barat">Jawa Barat</option>
-                                                <option value="Jawa Tengah">Jawa Tengah</option>
-                                                <option value="Daerah Istimewa Yogyakarta">Daerah Istimewa
+                                                <option value="Provinsi Jawa Barat">Provinsi Jawa Barat</option>
+                                                <option value="Provinsi Jawa Tengah">Provinsi Jawa Tengah</option>
+                                                <option value="Provinsi Daerah Istimewa Yogyakarta">Provinsi Daerah Istimewa
                                                     Yogyakarta</option>
-                                                <option value="Jawa Timur">Jawa Timur</option>
-                                                <option value="Banten">Banten</option>
-                                                <option value="Bali">Bali</option>
-                                                <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
-                                                <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
-                                                <option value="Kalimantan Barat">Kalimantan Barat</option>
-                                                <option value="Kalimantan Tengah">Kalimantan Tengah</option>
-                                                <option value="Kalimantan Selatan">Kalimantan Selatan</option>
-                                                <option value="Kalimantan Timur">Kalimantan Timur</option>
-                                                <option value="Kalimantan Utara">Kalimantan Utara</option>
-                                                <option value="Sulawesi Utara">Sulawesi Utara</option>
-                                                <option value="Sulawesi Tengah">Sulawesi Tengah</option>
-                                                <option value="Sulawesi Selatan">Sulawesi Selatan</option>
-                                                <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
-                                                <option value="Gorontalo">Gorontalo</option>
-                                                <option value="Sulawesi Barat">Sulawesi Barat</option>
-                                                <option value="Maluku">Maluku</option>
-                                                <option value="Maluku Utara">Maluku Utara</option>
-                                                <option value="Papua Barat">Papua Barat</option>
-                                                <option value="Papua Barat Daya">Papua Barat Daya</option>
-                                                <option value="Papua Selatan">Papua Selatan</option>
-                                                <option value="Papua Tengah">Papua Tengah</option>
-                                                <option value="Papua">Papua</option>
-                                                <option value="Papua Pegunungan">Papua Pegunungan</option>
+                                                <option value="Provinsi Jawa Timur">Provinsi Jawa Timur</option>
+                                                <option value="Provinsi Banten">Provinsi Banten</option>
+                                                <option value="Provinsi Bali">Provinsi Bali</option>
+                                                <option value="Provinsi Nusa Tenggara Barat">Provinsi Nusa Tenggara Barat</option>
+                                                <option value="Provinsi Nusa Tenggara Timur">Provinsi Nusa Tenggara Timur</option>
+                                                <option value="Provinsi Kalimantan Barat">Provinsi Kalimantan Barat</option>
+                                                <option value="Provinsi Kalimantan Tengah">Provinsi Kalimantan Tengah</option>
+                                                <option value="Provinsi Kalimantan Selatan">Provinsi Kalimantan Selatan</option>
+                                                <option value="Provinsi Kalimantan Timur">Provinsi Kalimantan Timur</option>
+                                                <option value="Provinsi Kalimantan Utara">Provinsi Kalimantan Utara</option>
+                                                <option value="Provinsi Sulawesi Utara">Provinsi Sulawesi Utara</option>
+                                                <option value="Provinsi Sulawesi Tengah">Provinsi Sulawesi Tengah</option>
+                                                <option value="Provinsi Sulawesi Selatan">Provinsi Sulawesi Selatan</option>
+                                                <option value="Provinsi Sulawesi Tenggara">Provinsi Sulawesi Tenggara</option>
+                                                <option value="Provinsi Gorontalo">Provinsi Gorontalo</option>
+                                                <option value="Provinsi Sulawesi Barat">Provinsi Sulawesi Barat</option>
+                                                <option value="Provinsi Maluku">Provinsi Maluku</option>
+                                                <option value="Provinsi Maluku Utara">Provinsi Maluku Utara</option>
+                                                <option value="Provinsi Papua Barat">Provinsi Papua Barat</option>
+                                                <option value="Provinsi Papua Barat Daya">Provinsi Papua Barat Daya</option>
+                                                <option value="Provinsi Papua Selatan">Provinsi Papua Selatan</option>
+                                                <option value="Provinsi Papua Tengah">Provinsi Papua Tengah</option>
+                                                <option value="Provinsi Papua">Provinsi Papua</option>
+                                                <option value="Provinsi Papua Pegunungan">Provinsi Papua Pegunungan</option>
                                             </select>
                                             @if ($provinsiValidationError)
                                                 <div
@@ -614,17 +621,9 @@
                                                     data kabupaten/kota...</option>
 
                                                 @if ($provinsi)
-                                                    <div wire:loading.remove wire:target="provinsi">
-                                                        @php
-                                                            $kabupatenOptions = $this->getKabupatenByProvinsi(
-                                                                $provinsi,
-                                                            );
-                                                        @endphp
-                                                        @foreach ($kabupatenOptions as $kabupaten)
-                                                            <option value="{{ $kabupaten }}">
-                                                                {{ $kabupaten }}</option>
-                                                        @endforeach
-                                                    </div>
+                                                    @foreach ($this->kabupatenOptions as $kabupaten)
+                                                        <option value="{{ $kabupaten }}">{{ $kabupaten }}</option>
+                                                    @endforeach
                                                 @endif
                                             </select>
 
