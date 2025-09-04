@@ -19,12 +19,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set PHP upload limits
-RUN echo "upload_max_filesize = 3M" >> /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "post_max_size = 3M" >> /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "max_file_uploads = 20" >> /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/uploads.ini
-
 WORKDIR /var/www/html
 
 COPY . /var/www/html
@@ -32,6 +26,9 @@ COPY . /var/www/html
 RUN git config --global --add safe.directory /var/www/html
 
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+# Copy custom php.ini for debugging
+COPY docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
 
 # Install npm dependencies and build assets
 RUN if [ -f package.json ]; then \
